@@ -1,6 +1,7 @@
 package dharaksavalia.madcourse.neu.edu.numad17s_dharaksavalia;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import dharaksavalia.madcourse.neu.edu.numad17s_dharaksavalia.assignment1.aboutFunction;
 import dharaksavalia.madcourse.neu.edu.numad17s_dharaksavalia.assignment1.tickTackToe;
+
 
 public class MainActivity extends Activity {
 
@@ -49,9 +51,8 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                aboutFunction tr;
-                tr = new aboutFunction();
-                setContentView(R.layout.about);
+                Intent intent = new Intent(MainActivity.this,aboutFunction.class);
+                startActivity(intent);
 
             }
         });
@@ -59,7 +60,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-
+            int d=0/0;
             }
         });
         quit.setOnClickListener(new View.OnClickListener(){
