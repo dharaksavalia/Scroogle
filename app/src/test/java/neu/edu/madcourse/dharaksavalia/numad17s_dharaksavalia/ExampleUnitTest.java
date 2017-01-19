@@ -1,4 +1,4 @@
-package dharaksavalia.madcourse.neu.edu.numad17s_dharaksavalia;
+package neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia;
 
 import org.junit.Test;
 

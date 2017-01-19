@@ -1,13 +1,9 @@
-package dharaksavalia.madcourse.neu.edu.numad17s_dharaksavalia.assignment1;
+package neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
-
-import dharaksavalia.madcourse.neu.edu.numad17s_dharaksavalia.R;
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
 
 
 /**

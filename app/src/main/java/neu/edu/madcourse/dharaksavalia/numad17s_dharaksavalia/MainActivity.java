@@ -1,4 +1,4 @@
-package dharaksavalia.madcourse.neu.edu.numad17s_dharaksavalia;
+package neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,8 +12,8 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import dharaksavalia.madcourse.neu.edu.numad17s_dharaksavalia.assignment1.aboutFunction;
-import dharaksavalia.madcourse.neu.edu.numad17s_dharaksavalia.assignment1.tickTackToe;
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.aboutFunction;
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.tickTackToe;
 
 
 public class MainActivity extends Activity {

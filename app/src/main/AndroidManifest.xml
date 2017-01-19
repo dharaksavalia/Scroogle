@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="dharaksavalia.madcourse.neu.edu.numad17s_dharaksavalia">
+    package="neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia">
 
     <application
         android:allowBackup="true"
