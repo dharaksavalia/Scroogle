@@ -10,10 +10,17 @@
     android:orientation="vertical"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="dharaksavalia.madcourse.neu.edu.numad17s_dharaksavalia.MainActivity">
-
-
-
-
-
+    <TextView android:id="@+id/aboutName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dharak Savalia" />
+    <TextView android:id="@+id/aboutEmailId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="dharak.savalia@gmail.com" />
+    <TextView android:id="@+id/aboutProgram"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="First Year MS" />
 
 </LinearLayout>
