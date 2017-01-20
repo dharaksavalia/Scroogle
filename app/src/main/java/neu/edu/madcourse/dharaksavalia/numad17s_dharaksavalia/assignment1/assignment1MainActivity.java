@@ -25,7 +25,7 @@ public class assignment1MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        mMediaPlayer = MediaPlayer.create(this, R.raw.a_guy_1_epicbuilduploop);
+        mMediaPlayer = MediaPlayer.create(this, R.raw.bensound_happiness);
         mMediaPlayer.setVolume(0.5f, 0.5f);
         mMediaPlayer.setLooping(true);
         mMediaPlayer.start();
