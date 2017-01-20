@@ -16,7 +16,7 @@ import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.aboutFunction;
-import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.tickTackToe;
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.assignment1MainActivity;
 
 
 public class MainActivity extends Activity {
@@ -47,7 +47,8 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                tickTackToe tr= new tickTackToe();
+            Intent intenet1=new Intent(MainActivity.this,assignment1MainActivity.class);
+                startActivity(intenet1);
             }
         });
         aboutButton.setOnClickListener(new View.OnClickListener() {
