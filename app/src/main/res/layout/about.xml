@@ -10,17 +10,41 @@
     android:orientation="vertical"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.MainActivity">
+
+
     <TextView android:id="@+id/aboutName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:text="Dharak Savalia" />
     <TextView android:id="@+id/aboutEmailId"
         android:layout_width="wrap_content"
+        android:layout_gravity="center"
         android:layout_height="wrap_content"
         android:text="dharak.savalia@gmail.com" />
-    <TextView android:id="@+id/aboutProgram"
+
+
+    <TextView android:id="@+id/aboutYear"
         android:layout_width="wrap_content"
+        android:layout_gravity="center"
         android:layout_height="wrap_content"
         android:text="First Year MS" />
+    <TextView android:id="@+id/aboutProgram"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:text="Telecommunication Sytem Management" />
+    <TextView android:id="@+id/imeinumber"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:text= "0"/>
+
+    <ImageView
+        android:src="@drawable/dharaksavaliaphoto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/dharaksavaliaphoto" />
+
 
 </LinearLayout>
