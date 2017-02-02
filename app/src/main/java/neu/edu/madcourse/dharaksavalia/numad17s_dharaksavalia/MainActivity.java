@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -17,6 +16,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.aboutFunction;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.assignment1MainActivity;
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment2.DictionaryLoader;
 
 
 public class MainActivity extends Activity {
@@ -32,6 +32,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         variousMenu();
+        //DictionaryLoader dl=new DictionaryLoader();
+        //dl.run();
         this.setTitle("Dharak Savalia");
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -43,12 +45,20 @@ public class MainActivity extends Activity {
         Button aboutButton = (Button) findViewById(R.id.aboutButton);
         Button generateErrorButton = (Button) findViewById(R.id.generateErrorButton);
         Button quit = (Button) findViewById(R.id.quitButton);
+        Button dictionary=(Button)findViewById(R.id.dictionary);
         tickTackToeButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
             Intent intenet1=new Intent(MainActivity.this,assignment1MainActivity.class);
                 startActivity(intenet1);
+            }
+        });
+        dictionary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent= new Intent (MainActivity.this,DictionaryLoader.class);
+                startActivity(intent);
             }
         });
         aboutButton.setOnClickListener(new View.OnClickListener() {
