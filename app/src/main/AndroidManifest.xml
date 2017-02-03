@@ -22,7 +22,9 @@
         <activity android:name=".assignment2.TestDictionary"
             android:parentActivityName=".MainActivity"/>
         <activity android:name=".assignment2.Encoder" />
-        <activity android:name=".assignment2.DictionaryAcknowledge" /><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+        <activity android:name=".assignment2.DictionaryAcknowledge"
+            android:parentActivityName=".assignment2.TestDictionary"/>
+        /><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data
             android:name="com.google.android.gms.version"
