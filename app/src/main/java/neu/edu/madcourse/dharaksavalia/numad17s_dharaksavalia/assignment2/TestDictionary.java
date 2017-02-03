@@ -1,6 +1,7 @@
 package neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment2;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.MainActivity;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.assignment1MainActivity;
 
 /**
  * Created by Dharak on 2/2/2017.
@@ -39,6 +41,14 @@ public class TestDictionary extends Activity {
         outputText = (TextView) findViewById(R.id.dictiionaryOutput);
         inputText = (EditText) findViewById(R.id.dictionaryInput);
         Button clearButton=(Button)findViewById(R.id.dictionaryClear);
+        Button dictionaryAcknowlegements=(Button)findViewById(R.id.dictionaryAcknowlegements);
+        dictionaryAcknowlegements.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intenet1=new Intent(TestDictionary.this,DictionaryAcknowledge.class);
+                startActivity(intenet1);
+            }
+        });
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
