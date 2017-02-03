@@ -4,6 +4,9 @@ package neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment2;
  * Created by Dharak on 1/30/2017.
  */
 
+import android.app.Activity;
+import android.os.Bundle;
+
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -15,8 +18,8 @@ import java.util.HashMap;
 
 
 
-public class Encoder {
-    HashMap<Character,Integer> encoder=new HashMap<Character,Integer>();
+public class Encoder extends Activity {
+/*    HashMap<Character,Integer> encoder=new HashMap<Character,Integer>();
     File IntFile;
     DataOutputStream dataOutInt;
     File LongFile;
@@ -49,6 +52,9 @@ public class Encoder {
             // TODO Auto-generated catch block
             System.out.println("file already exit");			}
     }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     public void encodeWord(String word)
     {
@@ -58,7 +64,7 @@ public class Encoder {
 	 * and 13 we are not doing anything since it contains only 10 % words only.
 	 * This function basically words in length
 	 */
-        //System.out.println(word.length());
+  /*      //System.out.println(word.length());
         int lengthOfWord=word.length();
         if(3<=lengthOfWord && lengthOfWord<7){
             int intResult=encodeThreeToSixWord(word);
@@ -83,7 +89,7 @@ public class Encoder {
 		/*
 		 *
 		 */
-        int result=0;
+    /*    int result=0;
         for (int i=0;i<Word.length();i++){
             if (i==0)result=encoder.get(Word.charAt(0));
             else {
@@ -164,4 +170,6 @@ public class Encoder {
             e.printStackTrace();
         }
     }
+}
+*/
 }

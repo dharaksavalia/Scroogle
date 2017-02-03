@@ -17,9 +17,10 @@
         </activity>
         <activity android:name=".assignment1.aboutFunction" />
         <activity android:name=".assignment1.assignment1MainActivity" />
-        <activity android:name=".assignment2.DictionaryLoader" />
 
-        <activity android:name=".assignment1.GameActivity" /><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+        <activity android:name=".assignment1.GameActivity" />
+        <activity android:name=".assignment2.TestDictionary" />
+        <activity android:name=".assignment2.Encoder" /><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data
             android:name="com.google.android.gms.version"

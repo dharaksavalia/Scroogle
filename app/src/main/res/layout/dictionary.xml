@@ -9,12 +9,31 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:orientation="vertical"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment2.DictionaryLoader">
+    tools:context="neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment2.TestDictionary">
 
 
+    <EditText
+        android:id="@+id/dictionaryInput"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text" />
     <TextView
-        android:text="No text set"
+        android:layout_width="wrap_content"
+        android:id="@+id/dictiionaryOutput"
+        android:scrollbars = "vertical"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:text="Clear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/dictionaryText" />
+        android:id="@+id/dictionaryClear" />
+
+    <Button
+        android:text="Acknowdegements"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/dictionaryAcknowlegements" />
+
+
 </LinearLayout>
