@@ -20,6 +20,7 @@ public class DictionaryAcknowledge extends Activity {
         str+="\nCode Help"+'\n'+"1. https://developer.android.com/reference/android/text/"+'\n'+"2. http://stackoverflow.com/questions/10523801/java-save-binary-code-to-a-file"+'\n';
         str+="\nStrategy "+'\n'+"1. Converting ASCII format to five bits per word (Binary Format) and that storing it raw format. \n2.This not only saves loading time plus space on hard drive ";
         str+="\n3. Than a preprocessed File containing binary format is loaded into application starting phase";
+        str+="\n\nSpecial Thanks to my friend Raj Kukadia for Testing and UI Design refinement";
         textView.setText(str);
     }
 }

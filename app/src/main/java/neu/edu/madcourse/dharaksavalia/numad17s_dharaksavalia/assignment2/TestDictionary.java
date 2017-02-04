@@ -42,6 +42,13 @@ public class TestDictionary extends Activity {
         inputText = (EditText) findViewById(R.id.dictionaryInput);
         Button clearButton=(Button)findViewById(R.id.dictionaryClear);
         Button dictionaryAcknowlegements=(Button)findViewById(R.id.dictionaryAcknowlegements);
+        Button Return=(Button)findViewById(R.id.dictionaryReturn);
+        Return.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         dictionaryAcknowlegements.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -154,7 +161,7 @@ public class TestDictionary extends Activity {
     outputText.setText("");
     }
 public void makebeep(){
-    ToneGenerator beepsound = new ToneGenerator(AudioManager.STREAM_MUSIC, 250);
-    beepsound.startTone(ToneGenerator.TONE_CDMA_PIP,250);
+    ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
+    tg.startTone(ToneGenerator.TONE_PROP_BEEP);
 }
 }
