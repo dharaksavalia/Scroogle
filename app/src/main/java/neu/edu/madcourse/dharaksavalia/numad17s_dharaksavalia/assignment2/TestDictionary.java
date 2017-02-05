@@ -7,6 +7,7 @@ import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -29,6 +31,7 @@ public class TestDictionary extends Activity {
     TextView outputText;
     String wordInput;
     EditText inputText;
+    ArrayList<String> detectedWord;
     HashMap<Character,Integer> encoder=new HashMap<Character,Integer>();
     public void Encoder(){
         String aphabet="abcdefghijklmnopqrstuvwxyz";
@@ -37,12 +40,14 @@ public class TestDictionary extends Activity {
         }}
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        detectedWord=new ArrayList<String>(30);
         setContentView(R.layout.dictionary);
         outputText = (TextView) findViewById(R.id.dictiionaryOutput);
         inputText = (EditText) findViewById(R.id.dictionaryInput);
         Button clearButton=(Button)findViewById(R.id.dictionaryClear);
         Button dictionaryAcknowlegements=(Button)findViewById(R.id.dictionaryAcknowlegements);
         Button Return=(Button)findViewById(R.id.dictionaryReturn);
+        outputText.setMovementMethod(new ScrollingMovementMethod());
         Return.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,14 +91,19 @@ public class TestDictionary extends Activity {
     public void verifyInput(String verifyInput){
         int len=verifyInput.length();
         Log.d(verifyInput,verifyInput);
+        if(detectedWord.contains(verifyInput)){
+            return;
+        }
         if (len>=3&&len<7){
             int result=0;
+
             for (int i=0;i<wordInput.length();i++){
                 //result1=result1*32;S
                 //System.out.println(result1);
                 if(encoder.containsKey(verifyInput.charAt(i))==false)break;
                 //	System.out.println("result after multiplication= by 32="+result*32+"CharAt(i)="+Word.charAt(i)+encoder.get(Word.charAt(i)));
                 result=result*32+encoder.get(wordInput.charAt(i));
+
                 //	System.out.println("result= after adding char="+result);
             }
 
@@ -101,6 +111,7 @@ public class TestDictionary extends Activity {
             if(br){
                 appendText(verifyInput);
                 makebeep();
+                detectedWord.add(verifyInput);
             }
         }else if(7<=len&&len<13){
             long result=0;
@@ -118,6 +129,7 @@ public class TestDictionary extends Activity {
             if(br){
                 appendText(verifyInput);
                 makebeep();
+                detectedWord.add(verifyInput);
             }
         }else if(13<=len&&len<24){
         String string1=verifyInput.substring(0,11);
@@ -146,11 +158,13 @@ public class TestDictionary extends Activity {
             if(MainActivity.long1Data.contains(result1)&&MainActivity.long2Data.contains(result2)){
                 if(MainActivity.long1Data.indexOf(result1)==MainActivity.long2Data.indexOf(result2))
                 {appendText(verifyInput);makebeep();}
-
+                detectedWord.add(verifyInput);
             }
         }else if(24<=len){
             if(MainActivity.words24long.containsKey(verifyInput)){appendText(verifyInput);
-            makebeep();}
+            makebeep();
+                detectedWord.add(verifyInput);
+            }
         }
     }
     public void appendText(String Word){
