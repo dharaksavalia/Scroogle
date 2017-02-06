@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.ScrollingView;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.aboutFunction;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.assignment1MainActivity;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment2.TestDictionary;
@@ -107,6 +108,7 @@ public class MainActivity extends Activity {
                 e.printStackTrace();
             }
         }
+
         Log.d("loading.......","Loading.....ended");
         try {
             dataInt.close();
