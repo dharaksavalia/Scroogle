@@ -17,12 +17,13 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        >
     <Button
         android:id="@+id/utimateTicToeButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Ultimate Tic Toe"/>
+        android:text="Tic Tac Toe"/>
     <Button
         android:id="@+id/dictionary"
         android:layout_width="match_parent"

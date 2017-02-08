@@ -22,7 +22,8 @@
         android:id="@+id/dictionaryInput"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:inputType="text" />
+        android:inputType="text"
+        android:digits="abcdefghijklmnopqrstuvwxyz"/>
     <TextView
         android:layout_width="wrap_content"
         android:id="@+id/dictiionaryOutput"

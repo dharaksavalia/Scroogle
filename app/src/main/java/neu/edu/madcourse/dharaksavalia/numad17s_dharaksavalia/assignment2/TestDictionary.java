@@ -1,6 +1,7 @@
 package neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment2;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
@@ -19,9 +20,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.MainActivity;
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.DictionaryLoader;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
-import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.assignment1MainActivity;
+
+import static java.lang.Thread.sleep;
 
 /**
  * Created by Dharak on 2/2/2017.
@@ -94,6 +96,10 @@ public class TestDictionary extends Activity {
         if(detectedWord.contains(verifyInput)){
             return;
         }
+        ProgressDialog DialogBex = new ProgressDialog(this);
+        DialogBex.setTitle("Find Your Word");
+        DialogBex.setMessage("Finding.......");
+        DialogBex.setCancelable(false);
         if (len>=3&&len<7){
             int result=0;
 
@@ -106,8 +112,17 @@ public class TestDictionary extends Activity {
 
                 //	System.out.println("result= after adding char="+result);
             }
-
-            boolean br=MainActivity.intData.containsKey(result);
+            while(DictionaryLoader.intDataLoaded==false){
+                try {
+                    DialogBex.show();
+                    DialogBex.setProgress(0);
+                    sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            DialogBex.dismiss();
+            boolean br= DictionaryLoader.intData.containsKey(result);
             if(br){
                 appendText(verifyInput);
                 makebeep();
@@ -125,7 +140,16 @@ public class TestDictionary extends Activity {
 
                 //System.out.println("result= after adding char="+result);
             }
-            boolean br=MainActivity.longData.containsKey(result);
+            while(DictionaryLoader.longDataLoaded==false){
+                try {
+                    DialogBex.show();
+                    sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            DialogBex.dismiss();
+            boolean br=DictionaryLoader.longData.containsKey(result);
             if(br){
                 appendText(verifyInput);
                 makebeep();
@@ -155,14 +179,34 @@ public class TestDictionary extends Activity {
                 result2=result2*32+encoder.get(string2.charAt(i));
                 //System.out.println("result= after adding char="+result);
             }
-            if(MainActivity.long1Data.contains(result1)&&MainActivity.long2Data.contains(result2)){
-                if(MainActivity.long1Data.indexOf(result1)==MainActivity.long2Data.indexOf(result2))
+            if(DictionaryLoader.long1DataLoaded==false){
+                try {
+                    sleep(100);
+                    DialogBex.show();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            DialogBex.dismiss();
+            if(DictionaryLoader.long1Data.contains(result1)&&DictionaryLoader.long2Data.contains(result2)){
+                if(DictionaryLoader.long1Data.indexOf(result1)==DictionaryLoader.long2Data.indexOf(result2))
                 {appendText(verifyInput);makebeep();}
                 detectedWord.add(verifyInput);
             }
         }else if(24<=len){
-            if(MainActivity.words24long.containsKey(verifyInput)){appendText(verifyInput);
+            while(DictionaryLoader.words24longLoaded==false){
+                try {
+                    sleep(100);
+                    DialogBex.show();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            DialogBex.dismiss();
+            Log.d("inside ","24");
+            if(DictionaryLoader.words24long.containsKey(verifyInput)){appendText(verifyInput);
             makebeep();
+
                 detectedWord.add(verifyInput);
             }
         }
@@ -172,7 +216,7 @@ public class TestDictionary extends Activity {
         outputText.append(Word);
     }
     public void clearText(){
-    outputText.setText("");
+    outputText.setText("");detectedWord=new ArrayList<>();
     }
 public void makebeep(){
     ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);

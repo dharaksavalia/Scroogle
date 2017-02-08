@@ -59,10 +59,11 @@ public class MainActivity extends Activity {
         //DictionaryLoader dl=new DictionaryLoader();
         //dl.run();
         this.setTitle("Dharak Savalia");
+        /*
         intData=new HashMap<Integer, Integer>(60713);
         longData=new HashMap<Long, Long>(302298);
         long1Data=new ArrayList<>(69268);
-        long2Data=new ArrayList<>(69268);
+        long2Data=new ArrayList<>(69268);*/
         super.onCreate(savedInstanceState);
         InputStream is=getResources().openRawResource(R.raw.intfile);
         dataInt=new DataInputStream(is);
@@ -70,9 +71,15 @@ public class MainActivity extends Activity {
         InputStream inputlongfile2=getResources().openRawResource(R.raw.longfile2);
         dataLong=new DataInputStream(inputlongfile);
         dataLong2=new DataInputStream(inputlongfile2);
-        InputStream inputwordfile=getResources().openRawResource(R.raw.longfile);
+        InputStream inputwordfile=getResources().openRawResource(R.raw.wordfile);
         BufferedReader br= new BufferedReader(new InputStreamReader(inputwordfile));
         Log.d("loading started","loading............");
+        DictionaryLoader dr=DictionaryLoader.getInstance(dataInt,
+                dataLong,
+                dataLong2,br);
+        /*Long tsLong = System.currentTimeMillis()/1000;
+        String ts = tsLong.toString();
+        Log.d(ts,"1st time");
         for(int i=0;i<60712;i++) {
 
             try {
@@ -83,6 +90,9 @@ public class MainActivity extends Activity {
             }
 
         }
+        tsLong=System.currentTimeMillis()/1000;
+        ts=tsLong.toString();
+        Log.d(ts,"2 nd time");
         try {
             for (int i=0;i<302297;i++){
 
@@ -92,6 +102,9 @@ public class MainActivity extends Activity {
         }catch (IOException e) {
             Log.d("dictionary","");
         }
+        tsLong=System.currentTimeMillis()/1000;
+        ts=tsLong.toString();
+        Log.d(ts,"3 lacks files");
         for (int i=0;i<69267;i++){
             try {
                 long1Data.add(dataLong2.readLong());
@@ -101,6 +114,9 @@ public class MainActivity extends Activity {
                 Log.d("dictionary","file long2 dictionary unable to load");
             }
         }
+        tsLong=System.currentTimeMillis()/1000;
+        ts=tsLong.toString();
+        Log.d(ts,"60 thousand");
         for(int i=0;i<58;i++){
             try {
                 words24long.put(br.readLine(),br.readLine());
@@ -117,6 +133,7 @@ public class MainActivity extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        */
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();

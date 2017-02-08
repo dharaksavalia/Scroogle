@@ -20,7 +20,7 @@
 
         <activity android:name=".assignment1.GameActivity" />
         <activity android:name=".assignment2.TestDictionary"
-            android:parentActivityName=".MainActivity"/>
+            />
         <activity android:name=".assignment2.Encoder" />
         <activity android:name=".assignment2.DictionaryAcknowledge"
             android:parentActivityName=".assignment2.TestDictionary"/>
