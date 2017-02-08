@@ -58,9 +58,10 @@ public class DictionaryLoader implements Runnable {
 
     @Override
     public void run() {
-        Long tsLong = System.currentTimeMillis()/1000;
-        String ts = tsLong.toString();
-        Log.d(ts,"1st time");
+        //Long tsLong = System.currentTimeMillis()/1000;
+        //String ts = tsLong.toString();
+        //String ts = tsLong.toString();
+       // Log.d(ts,"1st time");
         for(int i=0;i<60712;i++) {
 
             try {
@@ -72,9 +73,9 @@ public class DictionaryLoader implements Runnable {
 
         }
         intDataLoaded=true;
-        tsLong=System.currentTimeMillis()/1000;
-        ts=tsLong.toString();
-        Log.d(ts,"2 nd time");
+        //tsLong=System.currentTimeMillis()/1000;
+        //ts=tsLong.toString();
+        //Log.d(ts,"2 nd time");
 
         try {
             for (int i=0;i<302297;i++){
@@ -86,22 +87,22 @@ public class DictionaryLoader implements Runnable {
             Log.d("dictionary","");
         }
         longDataLoaded=true;
-        tsLong=System.currentTimeMillis()/1000;
-        ts=tsLong.toString();
-        Log.d(ts,"3 lacks files");
+        //tsLong=System.currentTimeMillis()/1000;
+        //ts=tsLong.toString();
+        //Log.d(ts,"3 lacks files");
         for (int i=0;i<69267;i++){
             try {
                 long1Data.add(dataLong2.readLong());
-                long1Data.add(dataLong2.readLong());
+                long2Data.add(dataLong2.readLong());
 
             } catch (IOException e) {
                 Log.d("dictionary","file long2 dictionary unable to load");
             }
         }
         long1DataLoaded=true;
-        tsLong=System.currentTimeMillis()/1000;
-        ts=tsLong.toString();
-        Log.d(ts,"60 thousand");
+        //tsLong=System.currentTimeMillis()/1000;
+        //ts=tsLong.toString();
+        //Log.d(ts,"60 thousand");
         for(int i=0;i<58;i++){
             try {
 
@@ -111,7 +112,7 @@ public class DictionaryLoader implements Runnable {
             }
         }
         words24longLoaded=true;
-        Log.d("loading Succesfull","Loading.....ended");
+        //Log.d("loading Succesfull","Loading.....ended");
         try {
             dataInt.close();
             dataLong.close();

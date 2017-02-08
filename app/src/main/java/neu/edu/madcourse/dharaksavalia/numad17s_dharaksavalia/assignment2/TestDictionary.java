@@ -44,6 +44,7 @@ public class TestDictionary extends Activity {
         super.onCreate(savedInstanceState);
         detectedWord=new ArrayList<String>(30);
         setContentView(R.layout.dictionary);
+        this.setTitle("Test Dictionary");
         outputText = (TextView) findViewById(R.id.dictiionaryOutput);
         inputText = (EditText) findViewById(R.id.dictionaryInput);
         Button clearButton=(Button)findViewById(R.id.dictionaryClear);
@@ -92,7 +93,7 @@ public class TestDictionary extends Activity {
     }
     public void verifyInput(String verifyInput){
         int len=verifyInput.length();
-        Log.d(verifyInput,verifyInput);
+       // Log.d(verifyInput,verifyInput);
         if(detectedWord.contains(verifyInput)){
             return;
         }
@@ -156,6 +157,7 @@ public class TestDictionary extends Activity {
                 detectedWord.add(verifyInput);
             }
         }else if(13<=len&&len<24){
+            Log.d("Inside the 13 to 24","dharak");
         String string1=verifyInput.substring(0,11);
             String string2=verifyInput.substring(12);
             long result1=0;
@@ -164,7 +166,7 @@ public class TestDictionary extends Activity {
                 //result1=result1*32;S
                 //System.out.println(result1);
                 //System.out.println("result after multiplication= by 32="+result*32+"CharAt(i)="+Word.charAt(i)+encoder.get(Word.charAt(i)));
-                if(encoder.containsKey(string1.charAt(i))==false)break;
+
                 result1=result1*32+encoder.get(string1.charAt(i));
 
                 //System.out.println("result= after adding char="+result);
@@ -175,7 +177,6 @@ public class TestDictionary extends Activity {
                 //result1=result1*32;S
                 //System.out.println(result1);
                 //System.out.println("result after multiplication= by 32="+result*32+"CharAt(i)="+Word.charAt(i)+encoder.get(Word.charAt(i)));
-                if(encoder.containsKey(string2.charAt(i))==false)break;
                 result2=result2*32+encoder.get(string2.charAt(i));
                 //System.out.println("result= after adding char="+result);
             }
@@ -188,10 +189,19 @@ public class TestDictionary extends Activity {
                 }
             }
             DialogBex.dismiss();
+
+            Log.d("log1Data",Boolean.toString(DictionaryLoader.long1Data.contains(result1)));
+            Log.d("log2Data",Boolean.toString(DictionaryLoader.long2Data.contains(result2)));
             if(DictionaryLoader.long1Data.contains(result1)&&DictionaryLoader.long2Data.contains(result2)){
-                if(DictionaryLoader.long1Data.indexOf(result1)==DictionaryLoader.long2Data.indexOf(result2))
-                {appendText(verifyInput);makebeep();}
-                detectedWord.add(verifyInput);
+                //Log.d("inside the loop","inside the loop");
+                //Log.d("log1Data index=",Integer.toString(DictionaryLoader.long1Data.indexOf(result1)));
+                //Log.d("log2Data index=",Integer.toString(DictionaryLoader.long2Data.indexOf(result2)));
+                //int a=DictionaryLoader.long1Data.indexOf(result1);
+
+                //if(DictionaryLoader.long1Data.indexOf(result1)==DictionaryLoader.long2Data.indexOf(result2))
+                {appendText(verifyInput);makebeep();
+                    detectedWord.add(verifyInput);}
+
             }
         }else if(24<=len){
             while(DictionaryLoader.words24longLoaded==false){
