@@ -24,7 +24,8 @@
             />
         <activity android:name=".assignment2.Encoder" />
         <activity android:name=".assignment2.DictionaryAcknowledge"
-            android:parentActivityName=".assignment2.TestDictionary"/>
+            android:parentActivityName=".assignment2.TestDictionary"
+            android:screenOrientation="portrait"/>
         /><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data

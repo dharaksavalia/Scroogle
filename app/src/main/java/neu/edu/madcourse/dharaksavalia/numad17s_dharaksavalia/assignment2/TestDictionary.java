@@ -227,6 +227,7 @@ public class TestDictionary extends Activity {
     }
     public void clearText(){
     outputText.setText("");detectedWord=new ArrayList<>();
+        inputText.setText("");
     }
 public void makebeep(){
     ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
