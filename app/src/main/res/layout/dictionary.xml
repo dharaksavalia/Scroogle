@@ -37,7 +37,7 @@
         android:id="@+id/dictionaryClear" />
 
     <Button
-        android:text="Acknowlegments"
+        android:text="Acknowledgments"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/dictionaryAcknowlegements" />
