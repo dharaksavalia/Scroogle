@@ -11,41 +11,51 @@
     android:scrollbars="vertical"
     tools:context="neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.MainActivity">
 
-<ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
-    <Button
-        android:id="@+id/utimateTicToeButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Tic Tac Toe"/>
-    <Button
-        android:id="@+id/dictionary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Dictionary"/>
-    <Button
-        android:id="@+id/aboutButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="About"/>
-    <Button
-        android:id="@+id/generateErrorButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Generate Error"/>
+        android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/quitButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Quit"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    </LinearLayout>
-</ScrollView>
+            <Button
+                android:id="@+id/utimateTicToeButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tic Tac Toe" />
+
+            <Button
+                android:id="@+id/wordGame"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Word Game" />
+
+            <Button
+                android:id="@+id/dictionary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Dictionary" />
+
+            <Button
+                android:id="@+id/aboutButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="About" />
+
+            <Button
+                android:id="@+id/generateErrorButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Generate Error" />
+
+            <Button
+                android:id="@+id/quitButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Quit" />
+
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

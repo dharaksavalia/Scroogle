@@ -26,6 +26,7 @@ import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.Scroll
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.aboutFunction;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.assignment1MainActivity;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment2.TestDictionary;
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment5.WordGame;
 
 
 public class MainActivity extends Activity {
@@ -166,6 +167,14 @@ public class MainActivity extends Activity {
         Button generateErrorButton = (Button) findViewById(R.id.generateErrorButton);
         Button quit = (Button) findViewById(R.id.quitButton);
         Button dictionary=(Button)findViewById(R.id.dictionary);
+        Button wordGame=(Button)findViewById(R.id.wordGame);
+        wordGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intenet1=new Intent(MainActivity.this,WordGame.class);
+                startActivity(intenet1);
+            }
+        });
 
         tickTackToeButton.setOnClickListener(new View.OnClickListener() {
 

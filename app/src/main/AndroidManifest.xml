@@ -16,6 +16,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".assignment1.aboutFunction" />
+        <activity android:name=".assignment5.WordGame" />
+
         <activity android:name=".assignment1.assignment1MainActivity" />
 
         <activity android:name=".assignment1.GameActivity" />
