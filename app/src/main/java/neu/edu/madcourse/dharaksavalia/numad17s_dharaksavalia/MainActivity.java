@@ -36,10 +36,14 @@ public class MainActivity extends Activity {
      */
     private GoogleApiClient client;
     DataInputStream dataInt;
-    DataInputStream dataLong;
-    DataInputStream dataLong2;
+    DataInputStream dataLong7;
+    DataInputStream dataLong8;
+    DataInputStream dataLong10;
+    DataInputStream dataLong11;
+    DataInputStream dataLong12;
     Scanner dataWord;
-    public static HashMap<Integer,Integer> intData;
+    Scanner dataWord9;
+
 
     @Override
     public void startActivityFromChild(Activity child, Intent intent, int requestCode) {
@@ -67,16 +71,33 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         InputStream is=getResources().openRawResource(R.raw.intfile);
         dataInt=new DataInputStream(is);
-        InputStream inputlongfile=getResources().openRawResource(R.raw.longfile);
-        InputStream inputlongfile2=getResources().openRawResource(R.raw.longfile2);
-        dataLong=new DataInputStream(inputlongfile);
-        dataLong2=new DataInputStream(inputlongfile2);
+        InputStream inputlongfile7=getResources().openRawResource(R.raw.longfile7);
+        InputStream inputlongfile8=getResources().openRawResource(R.raw.longfile8);
+        InputStream inputlongfile10=getResources().openRawResource(R.raw.longfile10);
+        InputStream inputlongfile11=getResources().openRawResource(R.raw.longfile11);
+        InputStream inputlongfile12=getResources().openRawResource(R.raw.longfile12);
+
+        dataLong7=new DataInputStream(inputlongfile7);
+        dataLong8=new DataInputStream(inputlongfile8);
+        dataLong10=new DataInputStream(inputlongfile10);
+        dataLong11=new DataInputStream(inputlongfile11);
+        dataLong12=new DataInputStream(inputlongfile12);
+
         InputStream inputwordfile=getResources().openRawResource(R.raw.wordfile);
-        BufferedReader br= new BufferedReader(new InputStreamReader(inputwordfile));
+        BufferedReader word13= new BufferedReader(new InputStreamReader(inputwordfile));
+        InputStream inputwordfile9=getResources().openRawResource(R.raw.wordfile9);
+        BufferedReader word9= new BufferedReader(new InputStreamReader(inputwordfile9));
         Log.d("loading started","loading............");
         DictionaryLoader dr=DictionaryLoader.getInstance(dataInt,
-                dataLong,
-                dataLong2,br);
+                dataLong7,dataLong8,dataLong10,dataLong11,
+                dataLong12,word9,word13);
+        Long tsLong = System.currentTimeMillis()/1000;
+        String ts = tsLong.toString();
+        Log.d(ts,"Main");
+        dr.run9();
+        tsLong = System.currentTimeMillis()/1000;
+        ts = tsLong.toString();
+        Log.d(ts,"Main2");
         /*Long tsLong = System.currentTimeMillis()/1000;
         String ts = tsLong.toString();
         Log.d(ts,"1st time");

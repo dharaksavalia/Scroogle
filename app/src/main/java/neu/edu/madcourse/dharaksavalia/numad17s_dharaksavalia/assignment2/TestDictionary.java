@@ -89,6 +89,9 @@ public class TestDictionary extends Activity {
                 verifyInput(wordInput);
             }
         });
+        Long tsLong = System.currentTimeMillis()/1000;
+        String ts = tsLong.toString();
+        Log.d(ts,"time taken to run13");
 
     }
     public void verifyInput(String verifyInput){
@@ -97,10 +100,7 @@ public class TestDictionary extends Activity {
         if(detectedWord.contains(verifyInput)){
             return;
         }
-        ProgressDialog DialogBex = new ProgressDialog(this);
-        DialogBex.setTitle("Find Your Word");
-        DialogBex.setMessage("Finding.......");
-        DialogBex.setCancelable(false);
+
         if (len>=3&&len<7){
             int result=0;
 
@@ -115,14 +115,12 @@ public class TestDictionary extends Activity {
             }
             while(DictionaryLoader.intDataLoaded==false){
                 try {
-                    DialogBex.show();
-                    DialogBex.setProgress(0);
+
                     sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-            DialogBex.dismiss();
             boolean br= DictionaryLoader.intData.containsKey(result);
             if(br){
                 appendText(verifyInput);
@@ -141,86 +139,119 @@ public class TestDictionary extends Activity {
 
                 //System.out.println("result= after adding char="+result);
             }
-            while(DictionaryLoader.longDataLoaded==false){
-                try {
-                    DialogBex.show();
-                    sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            DialogBex.dismiss();
-            boolean br=DictionaryLoader.longData.containsKey(result);
+
+            boolean br=find7to13(len,verifyInput,result);
             if(br){
                 appendText(verifyInput);
                 makebeep();
                 detectedWord.add(verifyInput);
             }
-        }else if(13<=len&&len<24){
-            Log.d("Inside the 13 to 24","dharak");
-        String string1=verifyInput.substring(0,11);
-            String string2=verifyInput.substring(12);
-            long result1=0;
-            //long result1=1;
-            for (int i=0;i<string1.length();i++){
-                //result1=result1*32;S
-                //System.out.println(result1);
-                //System.out.println("result after multiplication= by 32="+result*32+"CharAt(i)="+Word.charAt(i)+encoder.get(Word.charAt(i)));
-
-                result1=result1*32+encoder.get(string1.charAt(i));
-
-                //System.out.println("result= after adding char="+result);
-            }
-            long result2=0;
-            //long result1=1;
-            for (int i=0;i<string2.length();i++){
-                //result1=result1*32;S
-                //System.out.println(result1);
-                //System.out.println("result after multiplication= by 32="+result*32+"CharAt(i)="+Word.charAt(i)+encoder.get(Word.charAt(i)));
-                result2=result2*32+encoder.get(string2.charAt(i));
-                //System.out.println("result= after adding char="+result);
-            }
-            if(DictionaryLoader.long1DataLoaded==false){
+        }else if(13<=len){
+           // Log.d("Inside the 13 to 24","dharak");
+            while(DictionaryLoader.words13longLoaded==false){
                 try {
                     sleep(100);
-                    DialogBex.show();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-            DialogBex.dismiss();
 
-            Log.d("log1Data",Boolean.toString(DictionaryLoader.long1Data.contains(result1)));
-            Log.d("log2Data",Boolean.toString(DictionaryLoader.long2Data.contains(result2)));
-            if(DictionaryLoader.long1Data.contains(result1)&&DictionaryLoader.long2Data.contains(result2)){
-                //Log.d("inside the loop","inside the loop");
-                //Log.d("log1Data index=",Integer.toString(DictionaryLoader.long1Data.indexOf(result1)));
-                //Log.d("log2Data index=",Integer.toString(DictionaryLoader.long2Data.indexOf(result2)));
-                //int a=DictionaryLoader.long1Data.indexOf(result1);
 
-                //if(DictionaryLoader.long1Data.indexOf(result1)==DictionaryLoader.long2Data.indexOf(result2))
-                {appendText(verifyInput);makebeep();
-                    detectedWord.add(verifyInput);}
-
-            }
-        }else if(24<=len){
-            while(DictionaryLoader.words24longLoaded==false){
-                try {
-                    sleep(100);
-                    DialogBex.show();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            DialogBex.dismiss();
-            Log.d("inside ","24");
-            if(DictionaryLoader.words24long.containsKey(verifyInput)){appendText(verifyInput);
-            makebeep();
-
+            if(DictionaryLoader.words13long.containsKey(verifyInput)){
+                appendText(verifyInput);
+                makebeep();
                 detectedWord.add(verifyInput);
             }
         }
     }
+
+    private boolean find7to13(int len, String verifyInput,long result) {
+        switch(len){
+            case 7:
+                if(DictionaryLoader.longDataLoaded7==false){
+                    while(DictionaryLoader.longDataLoaded7==false){
+                        try {
+
+                            sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                if(DictionaryLoader.longData7.containsKey(result))return true;
+                else return false;
+            case 8:
+                if(DictionaryLoader.longDataLoaded8==false){
+                    DictionaryLoader dr=DictionaryLoader.getInstance();
+                    while(DictionaryLoader.longDataLoaded8==false){
+                        try {
+
+                            sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                if(DictionaryLoader.longData8.containsKey(result))return true;
+                else return false;
+            case 9:
+                if(DictionaryLoader.words9longLoaded==false) {
+                    DictionaryLoader dr = DictionaryLoader.getInstance();
+                    while(DictionaryLoader.words9longLoaded==false){
+                        try {
+
+                            sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                if(DictionaryLoader.words9long.containsKey(verifyInput))return true;
+                else return false;
+            case 10:
+                if(DictionaryLoader.longDataLoaded10==false){
+                    while(DictionaryLoader.longDataLoaded10==false){
+                        try {
+
+                            sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                if(DictionaryLoader.longData10.containsKey(result))return true;
+                else return false;
+            case 11:
+                if(DictionaryLoader.longDataLoaded11==false){
+                    while(DictionaryLoader.longDataLoaded11==false){
+                        try {
+
+                            sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                if(DictionaryLoader.longData11.containsKey(result))return true;
+                else return false;
+            case 12:
+                if(DictionaryLoader.longDataLoaded12==false){
+                    while(DictionaryLoader.longDataLoaded12==false){
+                        try {
+
+                            sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                if(DictionaryLoader.longData12.containsKey(result))return true;
+                else return false;
+
+        }
+        return false;
+    }
+
     public void appendText(String Word){
         Word=Word+'\n';
         outputText.append(Word);
