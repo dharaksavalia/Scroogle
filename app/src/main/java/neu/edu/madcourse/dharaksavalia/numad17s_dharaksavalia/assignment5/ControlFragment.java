@@ -20,9 +20,9 @@ public class ControlFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView =
                 inflater.inflate(
-                        R.layout.fragment_control, container, false);
-        View main = rootView.findViewById(R.id.button_main);
-        View restart = rootView.findViewById(R.id.button_restart);
+                        R.layout.wordfragment_control, container, false);
+        View main = rootView.findViewById(R.id.wordbutton_main);
+        View restart = rootView.findViewById(R.id.wordbutton_restart);
 
         main.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -17,7 +17,7 @@ import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
 public class Tile {
 
     public enum Owner {
-        X, O /* letter O */, NEITHER, BOTH
+        X, O /* letter O */, NEITHER, BOTH,
     }
     public enum Status{
         selected,notselected,empty
