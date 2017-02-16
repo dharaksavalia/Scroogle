@@ -1,38 +1,24 @@
-package neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment2;
+package neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment5;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Intent;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
-import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.DictionaryLoader;
-import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
 
 import static java.lang.Thread.sleep;
 
 /**
- * Created by Dharak on 2/2/2017.
+ * Created by Dharak on 2/16/2017.
  */
 
-public class TestDictionary extends Activity {
-    TextView outputText;
+public class TestDictionary {
     String wordInput;
-    EditText inputText;
     ArrayList<String> detectedWord;
     HashMap<Character,Integer> encoder=new HashMap<Character,Integer>();
     public void Encoder(){
@@ -40,67 +26,18 @@ public class TestDictionary extends Activity {
         for(int i=0;i<aphabet.length();i++){
             encoder.put(aphabet.charAt(i),i+1);
         }}
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    TestDictionary(){
         detectedWord=new ArrayList<String>(30);
-        setContentView(R.layout.dictionary);
-        this.setTitle("Test Dictionary");
-        outputText = (TextView) findViewById(R.id.dictiionaryOutput);
-        inputText = (EditText) findViewById(R.id.dictionaryInput);
-        Button clearButton=(Button)findViewById(R.id.dictionaryClear);
-        Button dictionaryAcknowlegements=(Button)findViewById(R.id.dictionaryAcknowlegements);
-        Button Return=(Button)findViewById(R.id.dictionaryReturn);
-        outputText.setMovementMethod(new ScrollingMovementMethod());
-        Return.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        dictionaryAcknowlegements.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intenet1=new Intent(TestDictionary.this,DictionaryAcknowledge.class);
-                startActivity(intenet1);
-            }
-        });
-        clearButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clearText();
-            }
-        });
         Encoder();
-        inputText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                wordInput=inputText.getText().toString();
-                //appendText(wordInput);
-                verifyInput(wordInput);
-            }
-        });
-        Long tsLong = System.currentTimeMillis()/1000;
-        String ts = tsLong.toString();
-        Log.d(ts,"time taken to run13");
-
     }
     public void verifyInput(String verifyInput){
         int len=verifyInput.length();
-       // Log.d(verifyInput,verifyInput);
+        // Log.d(verifyInput,verifyInput);
         if(detectedWord.contains(verifyInput)){
             return;
         }
-
+        wordInput=verifyInput;
+Log.d("verifyInput",verifyInput);
         if (len>=3&&len<7){
             int result=0;
 
@@ -147,7 +84,7 @@ public class TestDictionary extends Activity {
                 detectedWord.add(verifyInput);
             }
         }else if(13<=len){
-           // Log.d("Inside the 13 to 24","dharak");
+            // Log.d("Inside the 13 to 24","dharak");
             while(DictionaryLoader.words13longLoaded==false){
                 try {
                     sleep(100);
@@ -251,18 +188,15 @@ public class TestDictionary extends Activity {
         }
         return false;
     }
-
     public void appendText(String Word){
         Word=Word+'\n';
-        outputText.append(Word);
     }
     public void clearText(){
-    outputText.setText("");detectedWord=new ArrayList<>();
-        inputText.setText("");
+        detectedWord=new ArrayList<>();
     }
-public void makebeep(){
-    Log.d("Word Detected","YIPEE");
-    ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
-    tg.startTone(ToneGenerator.TONE_PROP_BEEP);
-}
+    public void makebeep(){
+        ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
+        tg.startTone(ToneGenerator.TONE_PROP_BEEP);
+        Log.d("input_verified","YIPEE");
+    }
 }

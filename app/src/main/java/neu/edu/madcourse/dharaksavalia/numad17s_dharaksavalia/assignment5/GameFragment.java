@@ -32,7 +32,6 @@ import java.util.Set;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.DictionaryLoader;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
 
-
 public class GameFragment extends Fragment {
     static private int mLargeIds[] = {R.id.wordlarge1, R.id.wordlarge2, R.id.wordlarge3,
             R.id.wordlarge4, R.id.wordlarge5, R.id.wordlarge6, R.id.wordlarge7, R.id.wordlarge8,
@@ -40,6 +39,8 @@ public class GameFragment extends Fragment {
     static private int mSmallIds[] = {R.id.wordsmall1, R.id.wordsmall2, R.id.wordsmall3,
             R.id.wordsmall4, R.id.wordsmall5, R.id.wordsmall6, R.id.wordsmall7, R.id.wordsmall8,
             R.id.wordsmall9,};
+    TestDictionary dr;
+    String accumulator="";
     private Handler mHandler = new Handler();
     private Tile mEntireBoard = new Tile(this);
     private Tile mLargeTiles[] = new Tile[9];
@@ -60,6 +61,7 @@ public class GameFragment extends Fragment {
         // Retain this fragment across configuration changes.
         setRetainInstance(true);
         initGame();
+        dr=new TestDictionary();
         mSoundPool = new SoundPool(3, AudioManager.STREAM_MUSIC, 0);
         mSoundX = mSoundPool.load(getActivity(), R.raw.sergenious_movex, 1);
         mSoundO = mSoundPool.load(getActivity(), R.raw.sergenious_moveo, 1);
@@ -96,7 +98,7 @@ public class GameFragment extends Fragment {
         for (int i=0;i<9;i++){
             String str="";
             String str1=""+pattern.charAt(i);
-            Log.d("str1",str1);
+           // Log.d("str1",str1);
             str=""+word.charAt(i);
             result[Character.getNumericValue(pattern.charAt(i))]=word.charAt(i);
         }
@@ -133,10 +135,10 @@ public class GameFragment extends Fragment {
                         smallTile.animate();
                         // ...
                         if (isAvailable(smallTile)) {
-                            ((GameActivity)getActivity()).startThinking();
+                            //((GameActivity)getActivity()).startThinking();
                             mSoundPool.play(mSoundX, mVolume, mVolume, 1, 0, 1f);
                             makeMove(fLarge, fSmall);
-                            think();
+                            //think();
                         } else {
                             mSoundPool.play(mSoundMiss, mVolume, mVolume, 1, 0, 1f);
                         }
@@ -201,17 +203,23 @@ public class GameFragment extends Fragment {
     }
 
     private void switchTurns() {
-        mPlayer = mPlayer == Tile.Owner.X ? Tile.Owner.O : Tile
-                .Owner.X;
+       // mPlayer = mPlayer == Tile.Owner.X ? Tile.Owner.O : Tile
+                //.Owner.X;
+    }
+    private void StringAccumulator(String string){
+    accumulator+=string;
+        dr.verifyInput(accumulator);
     }
 
     private void makeMove(int large, int small) {
         mLastLarge = large;
         mLastSmall = small;
         Tile smallTile = mSmallTiles[large][small];
+        String st=smallTile.getStr();
+        StringAccumulator(st);
         Tile largeTile = mLargeTiles[large];
         smallTile.setOwner(mPlayer);
-        setAvailableFromLastMove(small);
+        setAvailableFromLastMove(large);
         Tile.Owner oldWinner = largeTile.getOwner();
         Tile.Owner winner = largeTile.findWinner();
         if (winner != oldWinner) {
@@ -237,6 +245,7 @@ public class GameFragment extends Fragment {
     public void initGame() {
         Log.d("UT3", "init game");
         //Log.d("Called","1");
+        accumulator="";
         mEntireBoard = new Tile(this);
         // Create all the tiles
         for (int large = 0; large < 9; large++) {
