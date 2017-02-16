@@ -98,6 +98,7 @@ public class GameActivity extends Activity {
         mMediaPlayer.start();
     }
 
+
     @Override
     protected void onPause() {
         super.onPause();

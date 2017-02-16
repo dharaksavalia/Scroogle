@@ -24,10 +24,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.DictionaryLoader;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
 
 
@@ -49,6 +51,8 @@ public class GameFragment extends Fragment {
     private float mVolume = 1f;
     private int mLastLarge;
     private int mLastSmall;
+    private String [] pattern={"036784512", "036478512", "401367852", "425103678", "748521036", "037852146", "036785214", "214587630", "254103678",
+                "043678521", "630124785", "031467852"};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,13 +90,33 @@ public class GameFragment extends Fragment {
         return rootView;
     }
 
+    private char[] arrange(String pattern, String word){
+//        ArrayList<String> result=new ArrayList<>();
+        char[] result= new char[9];
+        for (int i=0;i<9;i++){
+            String str="";
+            String str1=""+pattern.charAt(i);
+            Log.d("str1",str1);
+            str=""+word.charAt(i);
+            result[Character.getNumericValue(pattern.charAt(i))]=word.charAt(i);
+        }
+        Log.d("result",result.toString());
+        return result;
+    }
     private void initViews(View rootView) {
         mEntireBoard.setView(rootView);
         Log.d("d","hi1");
+        Random random=new Random();
+        ArrayList<String> words;
+        words=randomWord();
+
+        Log.d("words",words.toString());
         for (int large = 0; large < 9; large++) {
             View outer = rootView.findViewById(mLargeIds[large]);
+            String word=words.get(large);
             mLargeTiles[large].setView(outer);
-
+            int n=random.nextInt(pattern.length);
+            char[] str=arrange(pattern[n],word);
             for (int small = 0; small < 9; small++) {
                 Button inner = (Button) outer.findViewById
                         (mSmallIds[small]);
@@ -100,7 +124,7 @@ public class GameFragment extends Fragment {
                 final int fSmall = small;
                 final Tile smallTile = mSmallTiles[large][small];
                 smallTile.setView(inner);
-                smallTile.setStr(randomWord());
+                smallTile.setStr(Character.toString(str[small]));
                 //smallTile.setStr(randomWord());
                 // ...
                 inner.setOnClickListener(new View.OnClickListener() {
@@ -246,13 +270,30 @@ public class GameFragment extends Fragment {
             setAllAvailable();
         }
     }
-    public String randomWord(){
+    public ArrayList<String> randomWord(){
         Random random=new Random();
-        int i=random.nextInt(26);
-        String returnstr="";
-        String letterstr="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        returnstr+=letterstr.charAt(i);
-        return returnstr;
+        int a=DictionaryLoader.words9long.size();
+        String[] wordString=new String[a];
+        wordString=DictionaryLoader.words9long.keySet().toArray(wordString);
+
+        ArrayList<Integer> integers=new ArrayList<>(9);
+        for (int i=0;i<9;i++) {
+
+            while (true) {
+                int j=random.nextInt(a);
+                if (integers.contains(j) == false) {
+                    integers.add(j);
+                    break;
+                }
+            }
+        }
+        ArrayList<String>word=new ArrayList<>();
+        for (int i=0;i<9;i++){
+
+            word.add(wordString[integers.get(i)]);
+        }
+
+        return word;
 
     }
 
@@ -292,6 +333,75 @@ public class GameFragment extends Fragment {
             }
         }
         return builder.toString();
+    }
+    public ArrayList<Integer> computeint(){
+        ArrayList<Integer> intArray=new ArrayList<>(9);
+        Random random=new Random();
+        for (int i=0;i<9;i++){
+            int k;
+            if(i==0){
+                k=random.nextInt(9);
+                intArray.add(k);
+                continue;
+            }
+
+            while(true){
+                k=random.nextInt(9);
+                if(intArray.contains(k)==false &&findAdj(intArray.get(i-1),k)){
+                    intArray.add(k);
+                    break;
+                }
+
+            }
+        }
+        return intArray;
+    }
+    public boolean findAdj(int i,int j){
+        switch(i){
+            case 0:
+                if(j==1||j==3||j==4)
+                    return true;
+                else
+                return false;
+            case 1:
+                if(j==6||j==7||j==8)
+                    return false;
+                else
+                    return true;
+            case 2:
+                if(j==1||j==4||j==5)
+                    return true;
+                else
+                    return false;
+            case 3:
+                if(j==2||j==5||j==8)
+                    return false;
+                else
+                    return true;
+            case 4:
+                return true;
+            case 5:
+                if(j==0||j==3||j==6)
+                    return false;
+                else
+                    return true;
+            case 6:
+                if(j==3||j==4||j==7)
+                    return true;
+                else
+                    return false;
+            case 7:
+                if(j==0||j==1||j==2)
+                    return false;
+                else
+                    return true;
+            case 8:
+                if(j==7||j==4||j==5)
+                    return true;
+                else
+                    return false;
+        }
+        return false;
     }
 
     /** Restore the state of the game from the given string. */
