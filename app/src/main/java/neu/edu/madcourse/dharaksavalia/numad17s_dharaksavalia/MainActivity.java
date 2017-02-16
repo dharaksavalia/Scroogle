@@ -26,7 +26,7 @@ import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.Scroll
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.aboutFunction;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.assignment1MainActivity;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment2.TestDictionary;
-import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment5.WordGame;
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment5.WordMainActivity;
 
 
 public class MainActivity extends Activity {
@@ -171,7 +171,7 @@ public class MainActivity extends Activity {
         wordGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intenet1=new Intent(MainActivity.this,WordGame.class);
+                Intent intenet1=new Intent(MainActivity.this,WordMainActivity.class);
                 startActivity(intenet1);
             }
         });
