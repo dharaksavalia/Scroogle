@@ -17,22 +17,23 @@ import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
 public class Tile {
 
     public enum Owner {
-        X, O /* letter O */, NEITHER, BOTH,
+        X /* letter O */, NEITHER, BOTH,
     }
     public enum Status{
-        selected,notselected,empty
+        selected,notselected,empty,intermediate
     }
     String str;
     // These levels are defined in the drawable definitions
-    private static final int selected=0;
+    private static final int selected=2;
     private static final int notselected=1;
-    private static final int empty=2;
+    private static final int empty=0;
+    private static final int intermediate=3;
     private static final int LEVEL_X = 0;
     private static final int LEVEL_O = 1; // letter O
     private static final int LEVEL_BLANK = 2;
     private static final int LEVEL_AVAILABLE = 3;
     private static final int LEVEL_TIE = 3;
-
+    private Status status=Status.notselected;
     private final GameFragment mGame;
     private Owner mOwner = Owner.NEITHER;
     private View mView;
@@ -44,12 +45,13 @@ public class Tile {
     public Tile(GameFragment game, String str){
         this.mGame=game;
         this.str=str;
+        status=Status.notselected;
     }
     public void setStr(String str){
-        this.str=str;
+        this.str=str.toUpperCase();
     }
     public String getStr(){
-        return this.str;
+        return this.str.toLowerCase();
     }
     public Tile deepCopy() {
         Tile tile = new Tile(mGame);
@@ -80,6 +82,9 @@ public class Tile {
     public void setOwner(Owner owner) {
         this.mOwner = owner;
     }
+    public void setStatus(Status status){this.status=status;}
+    public Status getStatus(){return status;}
+
 
     public Tile[] getSubTiles() {
         return mSubTiles;
@@ -105,19 +110,19 @@ public class Tile {
     }
 
     private int getLevel() {
-        int level = LEVEL_BLANK;
-        switch (mOwner) {
-            case X:
-                level = LEVEL_X;
+        int level=notselected;
+        switch (status) {
+            case selected:
+                level = selected;
                 break;
-            case O: // letter O
-                level = LEVEL_O;
+            case notselected:
+                level = notselected;
                 break;
-            case BOTH:
-                level = LEVEL_TIE;
+            case empty:
+                level = empty;
                 break;
-            case NEITHER:
-                level = mGame.isAvailable(this) ? LEVEL_AVAILABLE : LEVEL_BLANK;
+            case intermediate:
+                level=intermediate;
                 break;
         }
         return level;
@@ -131,7 +136,7 @@ public class Tile {
             for (int col = 0; col < 3; col++) {
                 Owner owner = mSubTiles[3 * row + col].getOwner();
                 if (owner == Owner.X || owner == Owner.BOTH) capturedX++;
-                if (owner == Owner.O || owner == Owner.BOTH) capturedO++;
+                //if (owner == Owner.O || owner == Owner.BOTH) capturedO++;
             }
             totalX[capturedX]++;
             totalO[capturedO]++;
@@ -143,7 +148,7 @@ public class Tile {
             for (int row = 0; row < 3; row++) {
                 Owner owner = mSubTiles[3 * row + col].getOwner();
                 if (owner == Owner.X || owner == Owner.BOTH) capturedX++;
-                if (owner == Owner.O || owner == Owner.BOTH) capturedO++;
+                //if (owner == Owner.O || owner == Owner.BOTH) capturedO++;
             }
             totalX[capturedX]++;
             totalO[capturedO]++;
@@ -154,7 +159,7 @@ public class Tile {
         for (int diag = 0; diag < 3; diag++) {
             Owner owner = mSubTiles[3 * diag + diag].getOwner();
             if (owner == Owner.X || owner == Owner.BOTH) capturedX++;
-            if (owner == Owner.O || owner == Owner.BOTH) capturedO++;
+           // if (owner == Owner.O || owner == Owner.BOTH) capturedO++;
         }
         totalX[capturedX]++;
         totalO[capturedO]++;
@@ -162,7 +167,7 @@ public class Tile {
         for (int diag = 0; diag < 3; diag++) {
             Owner owner = mSubTiles[3 * diag + (2 - diag)].getOwner();
             if (owner == Owner.X || owner == Owner.BOTH) capturedX++;
-            if (owner == Owner.O || owner == Owner.BOTH) capturedO++;
+          //  if (owner == Owner.O || owner == Owner.BOTH) capturedO++;
         }
         totalX[capturedX]++;
         totalO[capturedO]++;
@@ -177,7 +182,7 @@ public class Tile {
         int totalO[] = new int[4];
         countCaptures(totalX, totalO);
         if (totalX[3] > 0) return Owner.X;
-        if (totalO[3] > 0) return Owner.O;
+     //   if (totalO[3] > 0) return Owner.O;
 
         // Check for a draw
         int total = 0;
@@ -197,8 +202,6 @@ public class Tile {
         switch (getOwner()) {
             case X:
                 return 100;
-            case O:
-                return -100;
             case NEITHER:
                 int total = 0;
                 if (getSubTiles() != null) {

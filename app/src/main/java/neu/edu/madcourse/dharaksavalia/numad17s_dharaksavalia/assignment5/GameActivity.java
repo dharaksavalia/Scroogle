@@ -68,11 +68,11 @@ public class GameActivity extends Activity {
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mMediaPlayer = MediaPlayer.create(GameActivity.this,
-                        winner == Tile.Owner.X ? R.raw.bensound_funnysong
-                                : winner == Tile.Owner.O ? R.raw.notr_loser
-                                : R.raw.bensound_cute
-                );
+               // mMediaPlayer = MediaPlayer.create(GameActivity.this,
+                       // winner == Tile.Owner.X ? R.raw.bensound_funnysong
+                         //       : winner == Tile.Owner.O ? R.raw.notr_loser
+                           //     : R.raw.bensound_cute
+               // );
                 mMediaPlayer.start();
                 dialog.show();
             }
@@ -115,4 +115,9 @@ public class GameActivity extends Activity {
                 .commit();
         Log.d("UT3", "state = " + gameData);
     }
+    public void Done(){
+        mGameFragment.Done();
+    }
+
+
 }

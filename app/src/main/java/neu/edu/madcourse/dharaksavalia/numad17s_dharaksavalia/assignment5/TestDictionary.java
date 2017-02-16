@@ -30,11 +30,11 @@ public class TestDictionary {
         detectedWord=new ArrayList<String>(30);
         Encoder();
     }
-    public void verifyInput(String verifyInput){
+    public boolean verifyInput(String verifyInput){
         int len=verifyInput.length();
         // Log.d(verifyInput,verifyInput);
         if(detectedWord.contains(verifyInput)){
-            return;
+            return true;
         }
         wordInput=verifyInput;
 Log.d("verifyInput",verifyInput);
@@ -61,8 +61,10 @@ Log.d("verifyInput",verifyInput);
             boolean br= DictionaryLoader.intData.containsKey(result);
             if(br){
                 appendText(verifyInput);
+
                 makebeep();
-                detectedWord.add(verifyInput);
+                //detectedWord.add(verifyInput);
+                return true;
             }
         }else if(7<=len&&len<13){
             long result=0;
@@ -80,8 +82,9 @@ Log.d("verifyInput",verifyInput);
             boolean br=find7to13(len,verifyInput,result);
             if(br){
                 appendText(verifyInput);
-                makebeep();
+               makebeep();
                 detectedWord.add(verifyInput);
+                return true;
             }
         }else if(13<=len){
             // Log.d("Inside the 13 to 24","dharak");
@@ -98,8 +101,10 @@ Log.d("verifyInput",verifyInput);
                 appendText(verifyInput);
                 makebeep();
                 detectedWord.add(verifyInput);
+                return true;
             }
         }
+        return false;
     }
 
     private boolean find7to13(int len, String verifyInput,long result) {
