@@ -23,6 +23,7 @@ public class GameActivity extends Activity {
     private MediaPlayer mMediaPlayer;
     private Handler mHandler = new Handler();
     private GameFragment mGameFragment;
+    private static TimerCountDown Time = new TimerCountDown(120000, 1000);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,7 @@ public class GameActivity extends Activity {
         mGameFragment = (GameFragment) getFragmentManager()
                 .findFragmentById(R.id.wordfragment_game);
         boolean restore = getIntent().getBooleanExtra(KEY_RESTORE, false);
+        Time.start(this);
        // requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         if (restore) {
@@ -47,7 +49,7 @@ public class GameActivity extends Activity {
     public void restartGame() {
         mGameFragment.restartGame();
     }
-
+    public void TimeFinished(){mGameFragment.TimeFinished();}
     public void reportWinner(final Tile.Owner winner) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
@@ -91,6 +93,7 @@ public class GameActivity extends Activity {
         View thinkView = findViewById(R.id.thinking);
         thinkView.setVisibility(View.GONE);
     }
+
 
     @Override
     protected void onResume() {

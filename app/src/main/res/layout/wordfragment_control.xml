@@ -25,6 +25,7 @@
             android:elevation="@dimen/elevation_low"
             android:textSize="@dimen/menu_text_size"
             android:layout_height="wrap_content" />
+
 </LinearLayout>
 
 <LinearLayout
@@ -54,5 +55,6 @@
         android:elevation="@dimen/elevation_low"
         android:drawableTop="@drawable/home"
         android:text="@string/main_menu_label"/>
+
 </LinearLayout>
 </LinearLayout>
