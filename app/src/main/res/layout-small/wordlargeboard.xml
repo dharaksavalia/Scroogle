@@ -1,0 +1,52 @@
+<!--
+ ! Excerpted from "Hello, Android",
+ ! published by The Pragmatic Bookshelf.
+ ! Copyrights apply to this code. It may not be used to create training material,
+ ! courses, books, articles, and the like. Contact us if you are in doubt.
+ ! We make no guarantees that this code is fit for any purpose.
+ ! Visit http://www.pragmaticprogrammer.com/titles/eband4 for more book information.
+-->
+<GridLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:context="assignment5.GameActivity">
+
+    <include android:id="@+id/wordlarge1" layout="@layout/wordsmall_board"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_margin="@dimen/small_board_margin"
+        android:layout_column="0" android:layout_row="0"/>
+    <include android:id="@+id/wordlarge2" layout="@layout/wordsmall_board"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_margin="@dimen/small_board_margin"
+        android:layout_column="1" android:layout_row="0"/>
+    <include android:id="@+id/wordlarge3" layout="@layout/wordsmall_board"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_margin="@dimen/small_board_margin"
+        android:layout_column="2" android:layout_row="0"/>
+    <include android:id="@+id/wordlarge4" layout="@layout/wordsmall_board"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_margin="@dimen/small_board_margin"
+        android:layout_column="0" android:layout_row="1"/>
+    <include android:id="@+id/wordlarge5" layout="@layout/wordsmall_board"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_margin="@dimen/small_board_margin"
+        android:layout_column="1" android:layout_row="1"/>
+    <include android:id="@+id/wordlarge6" layout="@layout/wordsmall_board"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_margin="@dimen/small_board_margin"
+        android:layout_column="2" android:layout_row="1"/>
+    <include android:id="@+id/wordlarge7" layout="@layout/wordsmall_board"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_margin="@dimen/small_board_margin"
+        android:layout_column="0" android:layout_row="2"/>
+    <include android:id="@+id/wordlarge8" layout="@layout/wordsmall_board"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_margin="@dimen/small_board_margin"
+        android:layout_column="1" android:layout_row="2"/>
+    <include android:id="@+id/wordlarge9" layout="@layout/wordsmall_board"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_margin="@dimen/small_board_margin"
+        android:layout_column="2" android:layout_row="2"/>
+</GridLayout>

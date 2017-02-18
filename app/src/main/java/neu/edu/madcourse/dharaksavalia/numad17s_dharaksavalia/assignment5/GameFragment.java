@@ -219,7 +219,17 @@ public class GameFragment extends Fragment {
 
         for (int i=0;i<9;i++){
             for (int j=0;j<9;j++){
-                if(mSmallTiles[i][j].getStatus()==Tile.Status.notselected)return false;
+                if(mSmallTiles[i][j].getStatus()==Tile.Status.notselected||mSmallTiles[i][j].getStatus()==Tile.Status.intermediate)return false;
+            }
+
+        }
+        return true;
+    }
+    private boolean countFinished(){
+
+        for (int i=0;i<9;i++){
+            for (int j=0;j<9;j++){
+                if(mSmallTiles[i][j].getStatus()==Tile.Status.notselected||mSmallTiles[i][j].getStatus()==Tile.Status.intermediate)return false;
             }
 
         }
@@ -345,7 +355,7 @@ public class GameFragment extends Fragment {
     }
 
     private void makeMove(int large, int small) {
-        if(firstLevel)patternInput="";
+        if(firstLevel==false)patternInput="";
         if(patternInput.length()<1 ){
 
         }
@@ -371,6 +381,8 @@ public class GameFragment extends Fragment {
         if(mAvailable.contains(smallTile)==false)return;
         currentLarge=mLargeTiles[large];
        // Log.d("pattern:",String.valueOf(small));
+       // if(first)
+
         if(firstLevel)
         patternAccumulator(small);
         if(firstLevel)
@@ -540,7 +552,8 @@ public void DialogBox(String Message,int time){
         clearAvailable();
        // mLargeUsed.add(currentLarge);
         if(firstLevel)
-        for (int large = 0; large < 9; large++) {
+        for (int large
+             = 0; large < 9; large++) {
             if (mLargeTiles[large] == currentLarge) {
                 for (int small = 0; small < 9; small++) {
                     if (mSmallTiles[large][small].getStatus() == Tile.Status.notselected)
@@ -583,7 +596,7 @@ public void DialogBox(String Message,int time){
         for(int j=0;j<9;j++){
             Tile t1=mSmallTiles[i][j];
             if(t1.getStatus()==Tile.Status.correct){
-                Log.d("iniside","the availabe ");
+                //Log.d("iniside","the availabe ");
                 t1.setStatus(Tile.Status.notselected);
                 mAvailable.add(t1);
 
@@ -594,10 +607,15 @@ public void DialogBox(String Message,int time){
         }
 
         }
+
         updateAllTiles();
+
         patternInput="";
        // updateTextView();
         firstLevel=false;
+        if(mAvailable.size()<=0){
+            GameFinished();
+        }
     }
     public void initGame() {
         Log.d("UT3", "init game");
@@ -715,9 +733,18 @@ public void DialogBox(String Message,int time){
                 builder.append(',');
             }
         }
+        Log.d("d=",String.valueOf(detectedWord.size()));
+        builder.append(detectedWord.size());
+        builder.append(',');
+        for(int j=0;j<detectedWord.size();j++){
+            builder.append(detectedWord.toArray()[j]);
+            builder.append(',');
+        }
         builder.append(n);
         builder.append(',');
         builder.append(firstLevel);
+        builder.append(',');
+        builder.append(secondlevel);
         builder.append(',');
         builder.append(Score);
         builder.append(',');
@@ -850,8 +877,14 @@ public void DialogBox(String Message,int time){
                 mSmallTiles[large][small].setStr(fields[index++]);
             }
         }
+        int k=Integer.parseInt(fields[index++]);
+        Log.d("K=",String.valueOf(k));
+        for(int j=0;j<k;j++){
+            detectedWord.add(fields[index++]);
+        }
         n=Integer.parseInt(fields[index++]);
         firstLevel=Boolean.parseBoolean(fields[index++]);
+        secondlevel=Boolean.parseBoolean(fields[index++]);
         Score=Integer.parseInt(fields[index++]);
 
         try {
