@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:elevation="@dimen/elevation_low"
                 android:layout_alignParentRight="true"
-                android:text="D"
+                android:text=""
                 android:textSize="@dimen/menu_text_size"/>
 
         </RelativeLayout>

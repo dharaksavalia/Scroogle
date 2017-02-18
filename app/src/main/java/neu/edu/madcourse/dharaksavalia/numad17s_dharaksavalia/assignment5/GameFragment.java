@@ -15,10 +15,12 @@ package neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment5;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,10 +30,15 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
+import java.util.StringJoiner;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.RunnableFuture;
 
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.DictionaryLoader;
@@ -66,21 +73,33 @@ public class GameFragment extends Fragment {
     TextView txt;
     private int Score=0;
     private boolean firstLevel=true;
+    private boolean secondlevel=true;
     TextView ScoreView;
      boolean Flag=false;
     private Handler handler=new Handler();
     private Runnable runnable;
+    private Set<String>detectedWord=new HashSet<String>();
+
+    int numberCorrectWord=0;
     HashMap<Character,Integer> ScoreMap=new HashMap<>();
     private String [] pattern={"036784512", "036478512", "401367852", "425103678", "748521036", "037852146", "036785214", "214587630", "254103678",
                 "043678521", "630124785", "031467852"};
-
+    private void addDetectedWord(String Str){
+        detectedWord.add(Str);
+    }
+    private boolean inDetectedWord(String Str){
+        return detectedWord.contains(Str);
+    }
+    private void clearDetectedWord(){
+        detectedWord.clear();
+    }
     private void updateTextView(){
        // Log.d("accumulator",accumulator);
         txt=(TextView)getActivity().findViewById(R.id.wordTextView);
         txt.setText(accumulator.toUpperCase());
         ScoreView=(TextView)getActivity().findViewById(R.id.wordScore);
 
-        ScoreView.setText("Score:"+String.valueOf(Score));
+        ScoreView.setText("Score  "+String.valueOf(Score));
     }
     public void TimeFinished(){
         mAvailable.clear();
@@ -93,7 +112,9 @@ public class GameFragment extends Fragment {
 
     private void GameFinished() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("Game Finished \nYour Score is:"+String.valueOf(Score));
+        handler.removeCallbacks(runnable);
+        mAvailable.clear();
+        builder.setMessage("Game Finished \nYour Score is: "+String.valueOf(Score));
         builder.setCancelable(false);
         builder.setPositiveButton(R.string.ok_label,
                 new DialogInterface.OnClickListener() {
@@ -103,6 +124,7 @@ public class GameFragment extends Fragment {
                     }
                 });
         mDialog = builder.show();
+        secondlevel=false;
     }
 
     public void calculateScore(String str){
@@ -369,6 +391,7 @@ public class GameFragment extends Fragment {
         smallTile.setStatus(Tile.Status.selected);
         if(firstLevel)setAvailableFromLastMove(large);
         //Tile.Owner oldWinner = largeTile.getOwner();
+        if(firstLevel==false)setAavailableforsecond();
         largeTile.setStatus(Tile.Status.selected);
         /*Tile.Owner winner = largeTile.findWinner();
         if (winner != oldWinner) {
@@ -386,10 +409,24 @@ public class GameFragment extends Fragment {
         */
     }
 
+    private void setAavailableforsecond() {
+        clearAvailable();
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+            if(mSmallTiles[i][j].getStatus()==Tile.Status.notselected)
+                mAvailable.add(mSmallTiles[i][j]);
+            }
+        }
+
+    }
+
     public void restartGame() {
         mSoundPool.play(mSoundRewind, mVolume, mVolume, 1, 0, 1f);
         handler.removeCallbacks(runnable);
         // ...
+        firstLevel=true;
+        secondlevel=true;
+        Score=0;
         initGame();
         this.n=20;
         initViews(getView());
@@ -401,53 +438,67 @@ public class GameFragment extends Fragment {
 
     private void updateTime() {
         TextView txt=(TextView) getActivity().findViewById(R.id.wordTimer);
-        txt.setText(String.valueOf(n));
-        n--;
-        if(n==0)secondLevelInitialze();
-    }
+        if(n>-1){
+            if(n<10){
+                txt.setTextColor(Color.RED);
 
+            }else{
+                txt.setTextColor(Color.GREEN);
+            }
+
+            txt.setText(String.valueOf(n));
+
+        }
+        if(n==10){
+            DialogBox( String.valueOf(n)+" Seconds to GO ",10);
+        }
+        n--;
+        if(n==0&&firstLevel)secondLevelInitialze();
+        if(n==0&&firstLevel==false)GameFinished();
+    }
+public void DialogBox(String Message,int time){
+    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+    builder.setMessage(Message);
+    builder.setCancelable(false);
+    builder.setPositiveButton(R.string.ok_label,
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    // nothing
+                }
+            });
+    final Timer innerTimer=new Timer();
+    innerTimer.schedule(new TimerTask() {
+        @Override
+        public void run() {
+            mDialog.dismiss();
+            innerTimer.cancel();
+        }
+    },1000);
+    mDialog = builder.show();
+}
     public void Done(){
+        if(secondlevel==false)return;
         if(accumulator.length()<3){
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage("Please select atleast  three letters to form word");
-            builder.setCancelable(false);
-            builder.setPositiveButton(R.string.ok_label,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // nothing
-                        }
-                    });
-            mDialog = builder.show();
+            String message="Select atleast THREE letter";
+            DialogBox(message,1000);
             return;
         }
-        if(dr.verifyInput(accumulator)){
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage("CORRECT!!!\n Click OK "+String.valueOf(Score));
-            builder.setCancelable(false);
-            builder.setPositiveButton(R.string.ok_label,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // nothing
-                        }
-                    });
-            mDialog = builder.show();
+        if(dr.verifyInput(accumulator)&& inDetectedWord(accumulator)==false){
+            addDetectedWord(accumulator);
+            String message="CORRECT!!!\n Click OK ";
+            DialogBox(message,2000);
             calculateScore(accumulator);
         }
         else{
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            Score-=10;
-            builder.setMessage("WRONG WORD"+"You -10");
-            builder.setCancelable(false);
-            builder.setPositiveButton(R.string.ok_label,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // nothing
-                        }
-                    });
-            mDialog = builder.show();
+            String message;
+            if(inDetectedWord(accumulator)){
+                message =accumulator.toUpperCase()+" this word already was used.";
+            }else {
+                Score -= 3;
+                message="WRONG WORD " + "\n THREE Point Substracted from Total";
+            }
+            DialogBox(message,3000);
             if(firstLevel)
             for (int large = 0; large < 9; large++) {
                 if (mLargeTiles[large].equals(currentLarge)) {
@@ -523,29 +574,21 @@ public class GameFragment extends Fragment {
         }
     }
     public void secondLevelInitialze(){
-        n=100;
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("Second Level Started");
-        builder.setCancelable(false);
-        builder.setPositiveButton(R.string.ok_label,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        // nothing
-                    }
-                });
-        mDialog = builder.show();
+        n=20;
+        accumulator="";
+        updateTextView();
+        DialogBox("LEVEL 2 STARTED ",3000);
         mAvailable.clear();
         for (int i=0;i<9;i++){
         for(int j=0;j<9;j++){
-            Tile t=mSmallTiles[i][j];
-            if(t.getStatus()==Tile.Status.correct){
+            Tile t1=mSmallTiles[i][j];
+            if(t1.getStatus()==Tile.Status.correct){
                 Log.d("iniside","the availabe ");
-                t.setStatus(Tile.Status.notselected);
-                mAvailable.add(t);
+                t1.setStatus(Tile.Status.notselected);
+                mAvailable.add(t1);
 
             }else{
-                t.setStatus(Tile.Status.empty);
+                t1.setStatus(Tile.Status.empty);
             }
 
         }
