@@ -21,5 +21,8 @@ In the case of a tie in a small board, that will count as a win for
 both sides in the larger game.
 </string>
     <string name="wordgameabout_text">\
-    This game is Word Game. You have make word from each tile more  </string>
+    Select a letter from green box to create a word and click on Done to get points.\n
+        After 120 seconds you go to level 2 to score more points. Level two has no restriction for letters to be to each adjacent to make a word. You can not repeat any words\n
+        For each 9 letter word you create you get a extra 20 points.
+    </string>
 </resources>

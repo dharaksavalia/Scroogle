@@ -47,7 +47,12 @@
         android:elevation="4dp"
         android:drawableTop="@drawable/pause"
         android:text="Pause"/>
-
+    <Button
+        android:id="@+id/wordmute"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:elevation="@dimen/elevation_low"
+        android:text="Music"/>
     <Button
         android:id="@+id/wordbutton_main"
         android:layout_width="wrap_content"

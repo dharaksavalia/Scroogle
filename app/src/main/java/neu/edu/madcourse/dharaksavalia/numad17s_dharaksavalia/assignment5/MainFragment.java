@@ -29,6 +29,14 @@ public class MainFragment extends Fragment {
         View newButton = rootView.findViewById(R.id.wordnew_button);
         View continueButton = rootView.findViewById(R.id.wordcontinue_button);
         View aboutButton = rootView.findViewById(R.id.wordabout_button);
+        View quitButton=rootView.findViewById(R.id.wordquit);
+        View acknowledgment=rootView.findViewById(R.id.wordAcknowledgment);
+        quitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.exit(0);
+            }
+        });
         newButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -58,6 +66,13 @@ public class MainFragment extends Fragment {
                             }
                         });
                 mDialog = builder.show();
+            }
+        });
+        acknowledgment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), WordAcknowledge.class);
+                getActivity().startActivity(intent);
             }
         });
         return rootView;

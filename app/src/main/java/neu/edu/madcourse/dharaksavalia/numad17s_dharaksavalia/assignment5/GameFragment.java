@@ -79,7 +79,6 @@ public class GameFragment extends Fragment {
     private Handler handler=new Handler();
     private Runnable runnable;
     private Set<String>detectedWord=new HashSet<String>();
-
     int numberCorrectWord=0;
     HashMap<Character,Integer> ScoreMap=new HashMap<>();
     private String [] pattern={"036784512", "036478512", "401367852", "425103678", "748521036", "037852146", "036785214", "214587630", "254103678",
@@ -100,6 +99,10 @@ public class GameFragment extends Fragment {
         ScoreView=(TextView)getActivity().findViewById(R.id.wordScore);
 
         ScoreView.setText("Score  "+String.valueOf(Score));
+    }
+    public void  setSoundPool(){
+        if(mSoundPool==null)
+            mSoundPool=null;
     }
     public void TimeFinished(){
         mAvailable.clear();
@@ -177,6 +180,8 @@ public class GameFragment extends Fragment {
         mSoundO = mSoundPool.load(getActivity(), R.raw.sergenious_moveo, 1);
         mSoundMiss = mSoundPool.load(getActivity(), R.raw.erkanozan_miss, 1);
         mSoundRewind = mSoundPool.load(getActivity(), R.raw.joanne_rewind, 1);
+        Button music=(Button)getActivity().findViewById(R.id.wordmute);
+
     }
 
     private void clearAvailable() {

@@ -27,8 +27,11 @@
         <activity android:name=".assignment2.DictionaryAcknowledge"
             android:parentActivityName=".assignment2.TestDictionary"
             android:screenOrientation="portrait"/>
-        <activity android:name=".assignment5.GameActivity" />
-        <activity android:name=".assignment5.WordMainActivity" />
+        <activity android:name=".assignment5.GameActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".assignment5.WordMainActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".assignment5.WordAcknowledge" />
         /><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data

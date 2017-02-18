@@ -18,7 +18,7 @@ import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.assign
 
 
 public class WordMainActivity extends Activity {
-    MediaPlayer mMediaPlayer;
+    static boolean music;
     // ...
 
     @Override
@@ -26,36 +26,18 @@ public class WordMainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.wordativity_main);
         setTitle("Word Game");
-        Button music=(Button)findViewById(R.id.wordmute);
-        music.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                if(mMediaPlayer.isPlaying()){
-                    mMediaPlayer.pause();
-
-                }else{
-
-                    mMediaPlayer.start();
-                }
-            }
-        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mMediaPlayer = MediaPlayer.create(this, R.raw.bensound_happiness);
-        mMediaPlayer.setVolume(0.5f, 0.5f);
-        mMediaPlayer.setLooping(true);
-        mMediaPlayer.start();
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mMediaPlayer.stop();
-        mMediaPlayer.reset();
-        mMediaPlayer.release();
+
     }
 }
