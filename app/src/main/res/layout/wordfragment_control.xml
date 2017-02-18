@@ -5,7 +5,6 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="@dimen/control_padding"
     tools:context=".assignment5.GameActivity">
     <LinearLayout
         android:layout_width="wrap_content"
@@ -38,28 +37,26 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:elevation="@dimen/elevation_low"
-        android:drawableTop="@drawable/restart"
-        android:text="@string/restart_label"/>
+        android:drawableTop="@drawable/restart"></Button>
     <Button
         android:id="@+id/wordbutton_pause"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:elevation="4dp"
-        android:drawableTop="@drawable/pause"
-        android:text="Pause"/>
+        android:drawableTop="@drawable/pause"></Button>
     <Button
         android:id="@+id/wordmute"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:elevation="@dimen/elevation_low"
-        android:text="Music"/>
+        android:text="Music"></Button>
+
     <Button
         android:id="@+id/wordbutton_main"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:elevation="@dimen/elevation_low"
-        android:drawableTop="@drawable/home"
-        android:text="@string/main_menu_label"/>
+        android:drawableTop="@drawable/home"></Button>
 
 </LinearLayout>
 </LinearLayout>

@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
 
@@ -44,6 +45,52 @@ public class GameActivity extends Activity {
             }
         }
         Log.d("UT3", "restore = " + restore);
+        final Button mute=(Button)findViewById(R.id.stopMusic);
+        mute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopStartMusic();
+            }
+        });
+        Button resume=(Button) findViewById(R.id.wordbutton_pause);
+        resume.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mGameFragment.pauseTimer=true;
+                AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
+                builder.setMessage("");
+                builder.setCancelable(true);
+                final View view1=findViewById(R.id.wordfragment_game);
+                view1.setVisibility(View.GONE);
+                builder.setPositiveButton("Resume",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                mGameFragment.pauseTimer=false;
+                                view1.setVisibility(View.VISIBLE);
+
+                            }
+                        });
+
+                Dialog mDialog = builder.show();
+            }
+        });
+    }
+
+    private void stopStartMusic() {
+        if(mMediaPlayer.isPlaying()){mMediaPlayer.pause();
+        GameFragment.musicValue=false;}
+        else {mMediaPlayer.start();
+        GameFragment.musicValue=true;}
+    }
+    public void MusicSetting(){
+        if(mMediaPlayer==null)return;
+        if(GameFragment.musicValue) {
+            mMediaPlayer.start();
+        }
+        else{
+            if(mMediaPlayer.isPlaying())mMediaPlayer.stop();
+        }
     }
 
     public void restartGame() {
@@ -85,12 +132,12 @@ public class GameActivity extends Activity {
     }
 
     public void startThinking() {
-        View thinkView = findViewById(R.id.thinking);
+        View thinkView = findViewById(R.id.wordthinking);
         thinkView.setVisibility(View.VISIBLE);
     }
 
     public void stopThinking() {
-        View thinkView = findViewById(R.id.thinking);
+        View thinkView = findViewById(R.id.wordthinking);
         thinkView.setVisibility(View.GONE);
     }
 

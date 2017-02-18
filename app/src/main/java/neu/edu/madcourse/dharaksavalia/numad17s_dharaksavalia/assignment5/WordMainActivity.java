@@ -19,6 +19,8 @@ import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.assign
 
 public class WordMainActivity extends Activity {
     static boolean music;
+
+
     // ...
 
     @Override
@@ -33,11 +35,13 @@ public class WordMainActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+
 
     }
 }

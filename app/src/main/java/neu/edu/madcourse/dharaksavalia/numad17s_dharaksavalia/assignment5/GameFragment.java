@@ -36,7 +36,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
-import java.util.StringJoiner;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.RunnableFuture;
@@ -53,7 +52,8 @@ public class GameFragment extends Fragment {
             R.id.wordsmall4, R.id.wordsmall5, R.id.wordsmall6, R.id.wordsmall7, R.id.wordsmall8,
             R.id.wordsmall9,};
     TestDictionary dr;
-    int n=20;
+    int n=120;
+    public static boolean musicValue=true;
     private AlertDialog mDialog;
     static String accumulator="";
     static String patternInput="";
@@ -75,6 +75,7 @@ public class GameFragment extends Fragment {
     private boolean firstLevel=true;
     private boolean secondlevel=true;
     TextView ScoreView;
+    boolean pauseTimer=false;
      boolean Flag=false;
     private Handler handler=new Handler();
     private Runnable runnable;
@@ -108,9 +109,9 @@ public class GameFragment extends Fragment {
         mAvailable.clear();
         //if(firstLevel)
         //Done();
+        if(firstLevel==false)GameFinished();
         if(firstLevel)
         secondLevelInitialze();
-        if(firstLevel==false)GameFinished();
     }
 
     private void GameFinished() {
@@ -132,7 +133,7 @@ public class GameFragment extends Fragment {
 
     public void calculateScore(String str){
         if(str.length()==9)
-            Score+=100;
+            Score+=20;
         for (int i=0;i<str.length();i++){
             Score+=ScoreMap.get(str.charAt(i));
         }
@@ -180,7 +181,7 @@ public class GameFragment extends Fragment {
         mSoundO = mSoundPool.load(getActivity(), R.raw.sergenious_moveo, 1);
         mSoundMiss = mSoundPool.load(getActivity(), R.raw.erkanozan_miss, 1);
         mSoundRewind = mSoundPool.load(getActivity(), R.raw.joanne_rewind, 1);
-        Button music=(Button)getActivity().findViewById(R.id.wordmute);
+        Button music=(Button)getActivity().findViewById(R.id.stopMusic);
 
     }
 
@@ -445,7 +446,7 @@ public class GameFragment extends Fragment {
         secondlevel=true;
         Score=0;
         initGame();
-        this.n=20;
+        this.n=120;
         initViews(getView());
         updateTextView();
         updateAllTiles();
@@ -469,6 +470,7 @@ public class GameFragment extends Fragment {
         if(n==10){
             DialogBox( String.valueOf(n)+" Seconds to GO ",10);
         }
+        if(pauseTimer==false)
         n--;
         if(n==0&&firstLevel)secondLevelInitialze();
         if(n==0&&firstLevel==false)GameFinished();
@@ -587,12 +589,12 @@ public void DialogBox(String Message,int time){
         updateTextView();
         if(countFinshed()) {
             if(firstLevel)TimeFinished();
-            else GameFinished();
+            else if(secondlevel)GameFinished();
 
         }
     }
     public void secondLevelInitialze(){
-        n=20;
+        n=60;
         accumulator="";
         updateTextView();
         DialogBox("LEVEL 2 STARTED ",3000);
@@ -628,6 +630,8 @@ public void DialogBox(String Message,int time){
         accumulator="";
         patternInput="";
         mEntireBoard = new Tile(this);
+        ((GameActivity)getActivity()).MusicSetting();
+       // getActivity().
         // Create all the tiles
         for (int large = 0; large < 9; large++) {
             mLargeTiles[large] = new Tile(this);
@@ -652,6 +656,7 @@ public void DialogBox(String Message,int time){
         mLastLarge = -1;
         if(Flag)return;
        setAvailableFromLastMove(mLastSmall);
+
     }
 
     private void setAvailableFromLastMove(int large) {
@@ -745,6 +750,8 @@ public void DialogBox(String Message,int time){
             builder.append(detectedWord.toArray()[j]);
             builder.append(',');
         }
+        builder.append(GameFragment.musicValue);
+        builder.append(',');
         builder.append(n);
         builder.append(',');
         builder.append(firstLevel);
@@ -887,6 +894,7 @@ public void DialogBox(String Message,int time){
         for(int j=0;j<k;j++){
             detectedWord.add(fields[index++]);
         }
+        GameFragment.musicValue=Boolean.valueOf(fields[index++]);
         n=Integer.parseInt(fields[index++]);
         firstLevel=Boolean.parseBoolean(fields[index++]);
         secondlevel=Boolean.parseBoolean(fields[index++]);

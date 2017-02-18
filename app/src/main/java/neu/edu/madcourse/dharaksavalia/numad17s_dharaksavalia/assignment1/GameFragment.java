@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 
 import java.util.HashSet;
@@ -83,6 +84,13 @@ public class GameFragment extends Fragment {
                 inflater.inflate(R.layout.large_board, container, false);
         initViews(rootView);
         updateAllTiles();
+        Button mute=(Button)getActivity().findViewById(R.id.wordmute);
+        mute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSoundPool.autoPause();
+            }
+        });
         return rootView;
     }
 

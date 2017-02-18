@@ -20,6 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/long_word_game"
+        android:gravity="center"
         android:textAppearance="?android:textAppearanceLarge"
         android:textSize="35sp"/>
 
@@ -56,7 +57,7 @@
         android:id="@+id/wordquit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:layout_margin="@dimen/menu_button_margin"
+        android:elevation="@dimen/elevation_low"
         android:text="Quit"/>
 </LinearLayout>

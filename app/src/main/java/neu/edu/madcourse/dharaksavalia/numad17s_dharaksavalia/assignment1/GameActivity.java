@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
 
@@ -38,6 +39,14 @@ public class GameActivity extends Activity {
             }
         }
         Log.d("UT3", "restore = " + restore);
+        Button mute=(Button)findViewById(R.id.wordmute);
+        mute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mMediaPlayer.isPlaying())mMediaPlayer.pause();
+                else mMediaPlayer.start();
+            }
+        });
     }
 
     public void restartGame() {

@@ -12,7 +12,7 @@
     tools:context="neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment5.WordAcknowledge">
 
 
-    <TextView android:id="@+id/WordAcknowlegements"
+    <TextView android:id="@+id/WordAcknowlegementsText"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
