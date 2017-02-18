@@ -45,7 +45,7 @@
         android:elevation="4dp"
         android:drawableTop="@drawable/pause"></Button>
     <Button
-        android:id="@+id/wordmute"
+        android:id="@+id/stopMusic"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:elevation="@dimen/elevation_low"

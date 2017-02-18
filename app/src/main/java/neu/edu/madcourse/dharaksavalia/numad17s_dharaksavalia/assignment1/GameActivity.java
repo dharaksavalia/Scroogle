@@ -39,14 +39,7 @@ public class GameActivity extends Activity {
             }
         }
         Log.d("UT3", "restore = " + restore);
-        Button mute=(Button)findViewById(R.id.wordmute);
-        mute.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mMediaPlayer.isPlaying())mMediaPlayer.pause();
-                else mMediaPlayer.start();
-            }
-        });
+
     }
 
     public void restartGame() {

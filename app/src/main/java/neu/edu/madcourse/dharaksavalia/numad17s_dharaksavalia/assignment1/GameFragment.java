@@ -84,13 +84,7 @@ public class GameFragment extends Fragment {
                 inflater.inflate(R.layout.large_board, container, false);
         initViews(rootView);
         updateAllTiles();
-        Button mute=(Button)getActivity().findViewById(R.id.wordmute);
-        mute.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSoundPool.autoPause();
-            }
-        });
+
         return rootView;
     }
 
