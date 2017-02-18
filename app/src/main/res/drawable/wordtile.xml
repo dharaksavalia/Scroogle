@@ -21,4 +21,7 @@
    <item
       android:drawable="@drawable/tile_purple"
       android:maxLevel="3"/>
+   <item
+      android:drawable="@drawable/tile_blue"
+      android:maxLevel="4"/>
 </level-list>

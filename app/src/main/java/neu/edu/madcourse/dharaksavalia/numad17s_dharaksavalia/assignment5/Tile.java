@@ -20,7 +20,7 @@ public class Tile {
         X /* letter O */, NEITHER, BOTH,
     }
     public enum Status{
-        selected,notselected,empty,intermediate
+        selected,notselected,empty,intermediate,correct
     }
     String str;
     // These levels are defined in the drawable definitions
@@ -28,6 +28,7 @@ public class Tile {
     private static final int notselected=1;
     private static final int empty=0;
     private static final int intermediate=3;
+    private static final int correct=4;
     private static final int LEVEL_X = 0;
     private static final int LEVEL_O = 1; // letter O
     private static final int LEVEL_BLANK = 2;
@@ -55,7 +56,7 @@ public class Tile {
     }
     public Tile deepCopy() {
         Tile tile = new Tile(mGame);
-        tile.setOwner(getOwner());
+     //   tile.setStatus(setStatus());
         if (getSubTiles() != null) {
             Tile newTiles[] = new Tile[9];
             Tile oldTiles[] = getSubTiles();
@@ -74,15 +75,16 @@ public class Tile {
     public void setView(View view) {
         this.mView = view;
     }
-
+/*
     public Owner getOwner() {
         return mOwner;
     }
 
     public void setOwner(Owner owner) {
         this.mOwner = owner;
-    }
+    }*/
     public void setStatus(Status status){this.status=status;}
+
     public Status getStatus(){return status;}
 
 
@@ -124,10 +126,12 @@ public class Tile {
             case intermediate:
                 level=intermediate;
                 break;
+            case correct:
+                level=correct;
         }
         return level;
     }
-
+/*
     private void countCaptures(int totalX[], int totalO[]) {
         int capturedX, capturedO;
         // Check the horizontal
@@ -172,8 +176,8 @@ public class Tile {
         totalX[capturedX]++;
         totalO[capturedO]++;
     }
-
-    public Owner findWinner() {
+*/
+  /*  public Owner findWinner() {
         // If owner already calculated, return it
         if (getOwner() != Owner.NEITHER)
             return getOwner();
@@ -218,7 +222,7 @@ public class Tile {
         }
         return 0;
     }
-
+*/
     public void animate() {
         Animator anim = AnimatorInflater.loadAnimator(mGame.getActivity(),
                 R.animator.tictactoe);

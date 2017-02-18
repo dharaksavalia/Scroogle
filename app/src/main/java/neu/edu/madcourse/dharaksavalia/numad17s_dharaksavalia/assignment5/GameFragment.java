@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.RunnableFuture;
 
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.DictionaryLoader;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
@@ -45,6 +46,7 @@ public class GameFragment extends Fragment {
             R.id.wordsmall4, R.id.wordsmall5, R.id.wordsmall6, R.id.wordsmall7, R.id.wordsmall8,
             R.id.wordsmall9,};
     TestDictionary dr;
+    int n=20;
     private AlertDialog mDialog;
     static String accumulator="";
     static String patternInput="";
@@ -63,11 +65,15 @@ public class GameFragment extends Fragment {
     private int mLastSmall;
     TextView txt;
     private int Score=0;
+    private boolean firstLevel=true;
     TextView ScoreView;
      boolean Flag=false;
+    private Handler handler=new Handler();
+    private Runnable runnable;
     HashMap<Character,Integer> ScoreMap=new HashMap<>();
     private String [] pattern={"036784512", "036478512", "401367852", "425103678", "748521036", "037852146", "036785214", "214587630", "254103678",
                 "043678521", "630124785", "031467852"};
+
     private void updateTextView(){
        // Log.d("accumulator",accumulator);
         txt=(TextView)getActivity().findViewById(R.id.wordTextView);
@@ -78,8 +84,27 @@ public class GameFragment extends Fragment {
     }
     public void TimeFinished(){
         mAvailable.clear();
-        Done();
+        //if(firstLevel)
+        //Done();
+        if(firstLevel)
+        secondLevelInitialze();
+        if(firstLevel==false)GameFinished();
     }
+
+    private void GameFinished() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("Game Finished \nYour Score is:"+String.valueOf(Score));
+        builder.setCancelable(false);
+        builder.setPositiveButton(R.string.ok_label,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // nothing
+                    }
+                });
+        mDialog = builder.show();
+    }
+
     public void calculateScore(String str){
         if(str.length()==9)
             Score+=100;
@@ -210,6 +235,9 @@ public class GameFragment extends Fragment {
                     public void onClick(View view) {
                         smallTile.animate();
                         // ...
+                        if(firstLevel==false)
+                            Log.d("Second ","YIPEE");
+
                         if (isAvailable(smallTile)) {
                             //((GameActivity)getActivity()).startThinking();
                             mSoundPool.play(mSoundX, mVolume, mVolume, 1, 0, 1f);
@@ -295,14 +323,20 @@ public class GameFragment extends Fragment {
     }
 
     private void makeMove(int large, int small) {
-        if(patternInput.length()<1){
+        if(firstLevel)patternInput="";
+        if(patternInput.length()<1 ){
 
         }
-            //Log.d("inside","the thing");
-            else{
+        else{
             //Log.d("pattern",patternInput);
             //Log.d("inside the other","yipee");
+            if(firstLevel)
                 if(findAdj(Integer.parseInt(Character.toString(patternInput.charAt(patternInput.length()-1))),small)==false)return ;
+
+            }
+            if(firstLevel==false){
+                Log.d("Inide","second Level");
+             //   clearAvailable();
 
             }
 
@@ -311,10 +345,13 @@ public class GameFragment extends Fragment {
         mLastSmall = small;
         Flag=false;
         Tile smallTile = mSmallTiles[large][small];
+        smallTile.setStatus(Tile.Status.selected);
         if(mAvailable.contains(smallTile)==false)return;
         currentLarge=mLargeTiles[large];
        // Log.d("pattern:",String.valueOf(small));
+        if(firstLevel)
         patternAccumulator(small);
+        if(firstLevel)
         for (int big=0;big<9;big++){
             if(mLargeTiles[big]==currentLarge)continue;
             if(mLargeUsed.contains(mLargeTiles[big]))continue;
@@ -323,35 +360,52 @@ public class GameFragment extends Fragment {
             }
 
         }
+
         String st=smallTile.getStr();
         StringAccumulator(st);
+
         Tile largeTile = mLargeTiles[large];
         //smallTile.setOwner(mPlayer);
         smallTile.setStatus(Tile.Status.selected);
-        setAvailableFromLastMove(large);
-        Tile.Owner oldWinner = largeTile.getOwner();
+        if(firstLevel)setAvailableFromLastMove(large);
+        //Tile.Owner oldWinner = largeTile.getOwner();
         largeTile.setStatus(Tile.Status.selected);
-        Tile.Owner winner = largeTile.findWinner();
+        /*Tile.Owner winner = largeTile.findWinner();
         if (winner != oldWinner) {
             largeTile.animate();
             largeTile.setOwner(winner);
         }
+        */
         updateAllTiles();
+        if(firstLevel)
         if(patternInput.length()==9)Done();
+        /*
         if (winner != Tile.Owner.NEITHER) {
             ((GameActivity)getActivity()).reportWinner(winner);
         }
+        */
     }
 
     public void restartGame() {
         mSoundPool.play(mSoundRewind, mVolume, mVolume, 1, 0, 1f);
+        handler.removeCallbacks(runnable);
         // ...
         initGame();
+        this.n=20;
         initViews(getView());
         updateTextView();
         updateAllTiles();
         setAllAvailable();
+
     }
+
+    private void updateTime() {
+        TextView txt=(TextView) getActivity().findViewById(R.id.wordTimer);
+        txt.setText(String.valueOf(n));
+        n--;
+        if(n==0)secondLevelInitialze();
+    }
+
     public void Done(){
         if(accumulator.length()<3){
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -385,7 +439,6 @@ public class GameFragment extends Fragment {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             Score-=10;
             builder.setMessage("WRONG WORD"+"You -10");
-
             builder.setCancelable(false);
             builder.setPositiveButton(R.string.ok_label,
                     new DialogInterface.OnClickListener() {
@@ -395,6 +448,7 @@ public class GameFragment extends Fragment {
                         }
                     });
             mDialog = builder.show();
+            if(firstLevel)
             for (int large = 0; large < 9; large++) {
                 if (mLargeTiles[large].equals(currentLarge)) {
                    // Log.d("fadas","to reset");
@@ -410,23 +464,37 @@ public class GameFragment extends Fragment {
                         mAvailable.add(mSmallTiles[large][small]);
                     }
                 }
-                accumulator="";
-                patternInput="";
-                updateTextView();
-                updateAllTiles();
+
 
             }
+            accumulator="";
+            patternInput="";
+            if(firstLevel==false){
+                for(int large=0;large<9;large++){
+                    for(int small=0;small<9;small++){
+                        Tile.Status st=mSmallTiles[large][small].getStatus();
+                                if(st==Tile.Status.notselected||st==Tile.Status.selected){
+                                    mSmallTiles[large][small].setStatus(Tile.Status.notselected);
+                                    mAvailable.add(mSmallTiles[large][small]);
+                                }
+                    }
+                }
+            }
+            updateTextView();
+            updateAllTiles();
             return;
         }
         accumulator="";
         patternInput="";
         clearAvailable();
        // mLargeUsed.add(currentLarge);
+        if(firstLevel)
         for (int large = 0; large < 9; large++) {
             if (mLargeTiles[large] == currentLarge) {
                 for (int small = 0; small < 9; small++) {
                     if (mSmallTiles[large][small].getStatus() == Tile.Status.notselected)
                         mSmallTiles[large][small].setStatus(Tile.Status.empty);
+                    else mSmallTiles[large][small].setStatus(Tile.Status.correct);
                 }
             } else {
                 if (mLargeUsed.contains(mLargeTiles[large])) continue;
@@ -436,23 +504,57 @@ public class GameFragment extends Fragment {
                 }
             }
         }
+        if(firstLevel==false)
+            for (int large = 0; large < 9; large++) {
+                for (int small = 0; small < 9; small++) {
+                    if (mSmallTiles[large][small].getStatus() == Tile.Status.notselected)
+                        addAvailable(mSmallTiles[large][small]);
+                    else if(mSmallTiles[large][small].getStatus()==Tile.Status.selected)
+                        mSmallTiles[large][small].setStatus(Tile.Status.correct);
+                }
+            }
         mLargeUsed.add(currentLarge);
         updateAllTiles();
         updateTextView();
         if(countFinshed()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage("Game Finish");
-            builder.setCancelable(false);
-            builder.setPositiveButton(R.string.ok_label,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // nothing
-                        }
-                    });
-            mDialog = builder.show();
+            if(firstLevel)TimeFinished();
+            else GameFinished();
 
         }
+    }
+    public void secondLevelInitialze(){
+        n=100;
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("Second Level Started");
+        builder.setCancelable(false);
+        builder.setPositiveButton(R.string.ok_label,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // nothing
+                    }
+                });
+        mDialog = builder.show();
+        mAvailable.clear();
+        for (int i=0;i<9;i++){
+        for(int j=0;j<9;j++){
+            Tile t=mSmallTiles[i][j];
+            if(t.getStatus()==Tile.Status.correct){
+                Log.d("iniside","the availabe ");
+                t.setStatus(Tile.Status.notselected);
+                mAvailable.add(t);
+
+            }else{
+                t.setStatus(Tile.Status.empty);
+            }
+
+        }
+
+        }
+        updateAllTiles();
+        patternInput="";
+       // updateTextView();
+        firstLevel=false;
     }
     public void initGame() {
         Log.d("UT3", "init game");
@@ -468,7 +570,15 @@ public class GameFragment extends Fragment {
             }
             mLargeTiles[large].setSubTiles(mSmallTiles[large]);
         }
+        runnable=new Runnable(){
 
+            @Override
+            public void run() {
+                updateTime();
+                handler.postDelayed(this,1000);
+            }
+        };
+        handler.postDelayed(runnable,1000);
         mEntireBoard.setSubTiles(mLargeTiles);
 
         // If the player moves first, set which spots are available
@@ -529,7 +639,6 @@ public class GameFragment extends Fragment {
         for (int large = 0; large < 9; large++) {
             for (int small = 0; small < 9; small++) {
                 Tile tile = mSmallTiles[large][small];
-                if (tile.getOwner() == Tile.Owner.NEITHER)
                     addAvailable(tile);
             }
         }
@@ -554,6 +663,7 @@ public class GameFragment extends Fragment {
         builder.append(',');
         builder.append(mLastSmall);
         builder.append(',');
+        handler.removeCallbacks(runnable);
         for (int large = 0; large < 9; large++) {
             for (int small = 0; small < 9; small++) {
                 builder.append(mSmallTiles[large][small].getStatus().name());
@@ -562,6 +672,12 @@ public class GameFragment extends Fragment {
                 builder.append(',');
             }
         }
+        builder.append(n);
+        builder.append(',');
+        builder.append(firstLevel);
+        builder.append(',');
+        builder.append(Score);
+        builder.append(',');
         builder.append(accumulator);
         builder.append(',');
         builder.append(patternInput);
@@ -590,6 +706,10 @@ public class GameFragment extends Fragment {
                     case empty:
                         if(mLargeUsed.contains(mLargeTiles[i])==false)
                         mLargeUsed.add(mLargeTiles[i]);
+                        break;
+                    case correct:
+                        if(mLargeUsed.contains(mLargeTiles[i])==false)
+                            mLargeUsed.add(mLargeTiles[i]);
                         break;
 
 
@@ -675,6 +795,8 @@ public class GameFragment extends Fragment {
     /** Restore the state of the game from the given string. */
     public void putState(String gameData) {
         String[] fields = gameData.split(",");
+       // handler.removeCallbacks(runnable);
+
         int index = 0;
         mLastLarge = Integer.parseInt(fields[index++]);
         mLastSmall = Integer.parseInt(fields[index++]);
@@ -685,6 +807,10 @@ public class GameFragment extends Fragment {
                 mSmallTiles[large][small].setStr(fields[index++]);
             }
         }
+        n=Integer.parseInt(fields[index++]);
+        firstLevel=Boolean.parseBoolean(fields[index++]);
+        Score=Integer.parseInt(fields[index++]);
+
         try {
             accumulator = fields[index++];
             patternInput=fields[index++];
