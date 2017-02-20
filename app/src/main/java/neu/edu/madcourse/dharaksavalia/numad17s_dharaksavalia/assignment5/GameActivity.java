@@ -58,8 +58,8 @@ public class GameActivity extends Activity {
             public void onClick(View v) {
                 mGameFragment.pauseTimer=true;
                 AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
-                builder.setMessage("");
-                builder.setCancelable(true);
+                builder.setMessage("Detected words are "+mGameFragment.getDetectedWord());
+                builder.setCancelable(false);
                 final View view1=findViewById(R.id.wordfragment_game);
                 view1.setVisibility(View.GONE);
                 builder.setPositiveButton("Resume",
@@ -75,28 +75,35 @@ public class GameActivity extends Activity {
                 Dialog mDialog = builder.show();
             }
         });
+
     }
 
     private void stopStartMusic() {
         if(mMediaPlayer.isPlaying()){mMediaPlayer.pause();
-        GameFragment.musicValue=false;}
+        mGameFragment.musicValue=false;}
         else {mMediaPlayer.start();
-        GameFragment.musicValue=true;}
+        mGameFragment.musicValue=true;}
     }
-    public void MusicSetting(){
-        if(mMediaPlayer==null)return;
-        if(GameFragment.musicValue) {
-            mMediaPlayer.start();
+    public void stopMusic(){
+        if(mMediaPlayer.isPlaying()
+                ){
+            mMediaPlayer.pause();
+            mGameFragment.musicValue=false;
         }
-        else{
-            if(mMediaPlayer.isPlaying())mMediaPlayer.stop();
-        }
+    }
+    public void startMusic(){
+            if(mMediaPlayer!=null){
+                mMediaPlayer.start();
+                mGameFragment.musicValue=true;
+            }
+
+
     }
 
     public void restartGame() {
         mGameFragment.restartGame();
     }
-    public void TimeFinished(){mGameFragment.TimeFinished();}
+   // public void TimeFinished(){mGameFragment.TimeFinished();}
     public void reportWinner(final Tile.Owner winner) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
@@ -149,6 +156,7 @@ public class GameActivity extends Activity {
 
         mMediaPlayer.setLooping(true);
         mMediaPlayer.start();
+        if(mGameFragment.musicValue==false)mMediaPlayer.pause();
     }
 
 

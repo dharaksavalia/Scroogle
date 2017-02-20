@@ -52,8 +52,8 @@ public class GameFragment extends Fragment {
             R.id.wordsmall4, R.id.wordsmall5, R.id.wordsmall6, R.id.wordsmall7, R.id.wordsmall8,
             R.id.wordsmall9,};
     TestDictionary dr;
-    int n=120;
-    public static boolean musicValue=true;
+    int n=90;
+    public boolean musicValue=true;
     private AlertDialog mDialog;
     static String accumulator="";
     static String patternInput="";
@@ -89,6 +89,10 @@ public class GameFragment extends Fragment {
     }
     private boolean inDetectedWord(String Str){
         return detectedWord.contains(Str);
+    }
+    public String getDetectedWord(){
+
+        return detectedWord.toString();
     }
     private void clearDetectedWord(){
         detectedWord.clear();
@@ -245,6 +249,7 @@ public class GameFragment extends Fragment {
         mEntireBoard.setView(rootView);
         accumulator="";
         patternInput="";
+        clearDetectedWord();
         Log.d("d","hi1");
         Random random=new Random();
         ArrayList<String> words;
@@ -446,7 +451,7 @@ public class GameFragment extends Fragment {
         secondlevel=true;
         Score=0;
         initGame();
-        this.n=120;
+        this.n=90;
         initViews(getView());
         updateTextView();
         updateAllTiles();
@@ -456,6 +461,7 @@ public class GameFragment extends Fragment {
 
     private void updateTime() {
         TextView txt=(TextView) getActivity().findViewById(R.id.wordTimer);
+        if(secondlevel){
         if(n>-1){
             if(n<10){
                 txt.setTextColor(Color.RED);
@@ -472,8 +478,8 @@ public class GameFragment extends Fragment {
         }
         if(pauseTimer==false)
         n--;
-        if(n==0&&firstLevel)secondLevelInitialze();
-        if(n==0&&firstLevel==false)GameFinished();
+        if(n==-1&&firstLevel)secondLevelInitialze();
+        if(n==-1&&firstLevel==false)GameFinished();}
     }
 public void DialogBox(String Message,int time){
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -620,7 +626,8 @@ public void DialogBox(String Message,int time){
         patternInput="";
        // updateTextView();
         firstLevel=false;
-        if(mAvailable.size()<=0){
+        if(countFinshed()){
+            Log.d("Never executed","Dont Know y");
             GameFinished();
         }
     }
@@ -629,8 +636,10 @@ public void DialogBox(String Message,int time){
         //Log.d("Called","1");
         accumulator="";
         patternInput="";
+        if(musicValue)((GameActivity)getActivity()).startMusic();
+        else ((GameActivity)getActivity()).stopMusic();
         mEntireBoard = new Tile(this);
-        ((GameActivity)getActivity()).MusicSetting();
+        //((GameActivity)(GameActivity)getActivity()).startMusic();
        // getActivity().
         // Create all the tiles
         for (int large = 0; large < 9; large++) {
@@ -750,7 +759,7 @@ public void DialogBox(String Message,int time){
             builder.append(detectedWord.toArray()[j]);
             builder.append(',');
         }
-        builder.append(GameFragment.musicValue);
+        builder.append(musicValue);
         builder.append(',');
         builder.append(n);
         builder.append(',');
@@ -894,7 +903,7 @@ public void DialogBox(String Message,int time){
         for(int j=0;j<k;j++){
             detectedWord.add(fields[index++]);
         }
-        GameFragment.musicValue=Boolean.valueOf(fields[index++]);
+        musicValue=Boolean.valueOf(fields[index++]);
         n=Integer.parseInt(fields[index++]);
         firstLevel=Boolean.parseBoolean(fields[index++]);
         secondlevel=Boolean.parseBoolean(fields[index++]);
