@@ -356,7 +356,7 @@ public class GameFragment extends Fragment {
     */
     private void patternAccumulator(int s){
         patternInput=patternInput+ String.valueOf( s);
-        Log.d(String.valueOf(s),patternInput);
+        //Log.d(String.valueOf(s),patternInput);
         //Log.d(patternInput,":Pattern");
     }
     private void StringAccumulator(String string){
@@ -378,7 +378,7 @@ public class GameFragment extends Fragment {
 
             }
             if(firstLevel==false){
-                Log.d("Inide","second Level");
+              //  Log.d("Inide","second Level");
              //   clearAvailable();
 
             }
@@ -627,7 +627,7 @@ public void DialogBox(String Message,int time){
        // updateTextView();
         firstLevel=false;
         if(countFinshed()){
-            Log.d("Never executed","Dont Know y");
+           // Log.d("Never executed","Dont Know y");
             GameFinished();
         }
     }
@@ -691,14 +691,12 @@ public void DialogBox(String Message,int time){
     public ArrayList<String> randomWord(){
         Random random=new Random();
         int a=DictionaryLoader.words9long.size();
-        String[] wordString=new String[a];
-        wordString=DictionaryLoader.words9long.keySet().toArray(wordString);
 
         ArrayList<Integer> integers=new ArrayList<>(9);
         for (int i=0;i<9;i++) {
 
             while (true) {
-                int j=random.nextInt(a);
+                int j=random.nextInt(a-1);
                 if (integers.contains(j) == false) {
                     integers.add(j);
                     break;
@@ -708,7 +706,7 @@ public void DialogBox(String Message,int time){
         ArrayList<String>word=new ArrayList<>();
         for (int i=0;i<9;i++){
 
-            word.add(wordString[integers.get(i)]);
+            word.add(DictionaryLoader.words9long.get(integers.get(i)));
         }
 
         return word;
@@ -752,7 +750,7 @@ public void DialogBox(String Message,int time){
                 builder.append(',');
             }
         }
-        Log.d("d=",String.valueOf(detectedWord.size()));
+        //Log.d("d=",String.valueOf(detectedWord.size()));
         builder.append(detectedWord.size());
         builder.append(',');
         for(int j=0;j<detectedWord.size();j++){
@@ -899,7 +897,7 @@ public void DialogBox(String Message,int time){
             }
         }
         int k=Integer.parseInt(fields[index++]);
-        Log.d("K=",String.valueOf(k));
+        //Log.d("K=",String.valueOf(k));
         for(int j=0;j<k;j++){
             detectedWord.add(fields[index++]);
         }
@@ -917,8 +915,8 @@ public void DialogBox(String Message,int time){
             accumulator="";
             patternInput="";
         }
-        Log.d(accumulator,"what is in accumulator");
-        Log.d(patternInput,"what is in patter");
+        //Log.d(accumulator,"what is in accumulator");
+       // Log.d(patternInput,"what is in patter");
         setTheGame();
         Flag=true;
         updateTextView();

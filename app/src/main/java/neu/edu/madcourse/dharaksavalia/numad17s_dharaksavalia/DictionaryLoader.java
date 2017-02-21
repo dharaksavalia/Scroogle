@@ -35,7 +35,7 @@ public class DictionaryLoader implements Runnable {
 
     public static HashMap<String,Integer> words13long;
     public static boolean words13longLoaded=false;
-    public static HashMap<String,Integer> words9long;
+    public static  ArrayList<String> words9long;
     public static boolean words9longLoaded=false;
 
     DataInputStream dataInt;
@@ -82,7 +82,7 @@ public class DictionaryLoader implements Runnable {
         longData10=new HashMap<Long, Integer>(55061);
         longData11=new HashMap<Long, Integer>(45675);
         longData12=new HashMap<Long, Integer>(35470);
-        words9long=new HashMap<>(60121);
+        words9long=new ArrayList<>(60121);
         words13long=new HashMap<>(69325);
         Thread t=new Thread(this);
         t.start();
@@ -195,7 +195,7 @@ public class DictionaryLoader implements Runnable {
         for(int i=0;i<60121;i++){
             try {
 
-                words9long.put(br.readLine(),1);
+                words9long.add(br.readLine());
             } catch (IOException e) {
                 e.printStackTrace();
             }

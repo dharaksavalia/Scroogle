@@ -37,7 +37,7 @@ public class TestDictionary {
             return true;
         }
         wordInput=verifyInput;
-Log.d("verifyInput",verifyInput);
+//Log.d("verifyInput",verifyInput);
         if (len>=3&&len<7){
             int result=0;
 
@@ -148,7 +148,7 @@ Log.d("verifyInput",verifyInput);
                         }
                     }
                 }
-                if(DictionaryLoader.words9long.containsKey(verifyInput))return true;
+                if(DictionaryLoader.words9long.contains(verifyInput))return true;
                 else return false;
             case 10:
                 if(DictionaryLoader.longDataLoaded10==false){
@@ -202,6 +202,6 @@ Log.d("verifyInput",verifyInput);
     public void makebeep(){
         ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
         tg.startTone(ToneGenerator.TONE_PROP_BEEP);
-        Log.d("input_verified","YIPEE");
+       // Log.d("input_verified","YIPEE");
     }
 }

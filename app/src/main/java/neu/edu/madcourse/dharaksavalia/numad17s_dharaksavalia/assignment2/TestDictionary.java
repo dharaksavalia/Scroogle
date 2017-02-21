@@ -29,6 +29,7 @@ import static java.lang.Thread.sleep;
  * Created by Dharak on 2/2/2017.
  */
 
+
 public class TestDictionary extends Activity {
     TextView outputText;
     String wordInput;
@@ -206,7 +207,7 @@ public class TestDictionary extends Activity {
                         }
                     }
                 }
-                if(DictionaryLoader.words9long.containsKey(verifyInput))return true;
+                if(DictionaryLoader.words9long.contains(verifyInput))return true;
                 else return false;
             case 10:
                 if(DictionaryLoader.longDataLoaded10==false){

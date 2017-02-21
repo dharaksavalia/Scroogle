@@ -62,12 +62,14 @@ public class GameActivity extends Activity {
                 builder.setCancelable(false);
                 final View view1=findViewById(R.id.wordfragment_game);
                 view1.setVisibility(View.GONE);
+                if(mMediaPlayer.isPlaying())mMediaPlayer.pause();
                 builder.setPositiveButton("Resume",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 mGameFragment.pauseTimer=false;
                                 view1.setVisibility(View.VISIBLE);
+                                if(mGameFragment.musicValue)mMediaPlayer.start();
 
                             }
                         });
