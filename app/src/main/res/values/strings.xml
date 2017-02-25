@@ -21,8 +21,25 @@ In the case of a tie in a small board, that will count as a win for
 both sides in the larger game.
 </string>
     <string name="wordgameabout_text">\
-    Select a letter from green box to create a word and click on done to get points.\n
-        After 90 seconds you go to level two to score more points. Level two has no restriction for letters to be adjacent to each other to make a word. You can not repeat a word.\n
-        For each 9 letter word you create you get a extra 20 points.
+    You have 90 seconds to make nine words in each big tile. Only one word can be formed in each 3x3.\n
+        After 90 second you will move to bonus round. In this level there are no rules. More the words you form in round one more better option you get.
+        You cannot form same words.
+    </string>
+<string name="instruction_1">\
+    Tap on at least three green box\n
+
+    </string>
+    <string name="instruction_3">\
+    click on below image to submit the word
+
+    </string>
+<string name="instruction_2">\
+    Click "Continue" to continue game with tutorial.\n
+    If you want to stop the tutorial click\n
+
+    </string>
+<string name="stoptutorial">Stop Tutorial
+    </string>
+    <string name="continuetutorial">Continue
     </string>
 </resources>

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipChildren="false"
-    tools:context=".assignment5.WordMainActivity">
+    tools:context=".assignment5.WordGame">
 
     <neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment5.ScrollingView
         android:id="@+id/wordmain_background"

@@ -29,7 +29,7 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".assignment5.GameActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".assignment5.WordMainActivity"
+        <activity android:name=".assignment5.WordGame"
             android:screenOrientation="portrait"/>
         <activity android:name=".assignment5.WordAcknowledge" />
         /><!-- ATTENTION: This was auto-generated to add Google Play services to your project for

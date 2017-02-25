@@ -13,9 +13,11 @@ package neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment5;
  ***/
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
@@ -25,6 +27,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -43,6 +46,9 @@ import java.util.concurrent.RunnableFuture;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.DictionaryLoader;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
 
+import static java.lang.Thread.sleep;
+import static neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.DictionaryLoader.words9long;
+
 public class GameFragment extends Fragment {
 
     static private int mLargeIds[] = {R.id.wordlarge1, R.id.wordlarge2, R.id.wordlarge3,
@@ -52,7 +58,11 @@ public class GameFragment extends Fragment {
             R.id.wordsmall4, R.id.wordsmall5, R.id.wordsmall6, R.id.wordsmall7, R.id.wordsmall8,
             R.id.wordsmall9,};
     TestDictionary dr;
+    boolean flagRandom=false;
+    boolean firstMove=true;
+    public boolean tutorial=WordGame.tutorialflag;
     int n=90;
+    boolean secondTutorial=false;
     public boolean musicValue=true;
     private AlertDialog mDialog;
     static String accumulator="";
@@ -82,7 +92,7 @@ public class GameFragment extends Fragment {
     private Set<String>detectedWord=new HashSet<String>();
     int numberCorrectWord=0;
     HashMap<Character,Integer> ScoreMap=new HashMap<>();
-    private String [] pattern={"036784512", "036478512", "401367852", "425103678", "748521036", "037852146", "036785214", "214587630", "254103678",
+    static private String [] pattern={"036784512", "036478512", "401367852", "425103678", "748521036", "037852146", "036785214", "214587630", "254103678",
                 "043678521", "630124785", "031467852"};
     private void addDetectedWord(String Str){
         detectedWord.add(Str);
@@ -119,6 +129,7 @@ public class GameFragment extends Fragment {
     }
 
     private void GameFinished() {
+        Log.d("this","in Game finsihed");
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         handler.removeCallbacks(runnable);
         mAvailable.clear();
@@ -133,6 +144,7 @@ public class GameFragment extends Fragment {
                 });
         mDialog = builder.show();
         secondlevel=false;
+
     }
 
     public void calculateScore(String str){
@@ -185,7 +197,7 @@ public class GameFragment extends Fragment {
         mSoundO = mSoundPool.load(getActivity(), R.raw.sergenious_moveo, 1);
         mSoundMiss = mSoundPool.load(getActivity(), R.raw.erkanozan_miss, 1);
         mSoundRewind = mSoundPool.load(getActivity(), R.raw.joanne_rewind, 1);
-        Button music=(Button)getActivity().findViewById(R.id.stopMusic);
+        ImageButton music=(ImageButton)getActivity().findViewById(R.id.stopMusic);
 
     }
 
@@ -194,7 +206,7 @@ public class GameFragment extends Fragment {
     }
 
     private void addAvailable(Tile tile) {
-        tile.animate();
+       tile.animate();
         mAvailable.add(tile);
     }
 
@@ -216,10 +228,10 @@ public class GameFragment extends Fragment {
 //        ArrayList<String> result=new ArrayList<>();
         char[] result= new char[9];
         for (int i=0;i<9;i++){
-            String str="";
-            String str1=""+pattern.charAt(i);
-           // Log.d("str1",str1);
-            str=""+word.charAt(i);
+           // String str="";
+            //String str1=""+pattern.charAt(i);
+           //Log.d("str1",str1);
+            //str=""+word.charAt(i);
             result[Character.getNumericValue(pattern.charAt(i))]=word.charAt(i);
         }
         //Log.d("result",result.toString());
@@ -261,7 +273,8 @@ public class GameFragment extends Fragment {
             String word=words.get(large);
             mLargeTiles[large].setView(outer);
             int n=random.nextInt(pattern.length);
-            char[] str=arrange(pattern[n],word);
+            char[] str;
+            str=arrange(pattern[n],word);
 
             for (int small = 0; small < 9; small++) {
                 Button inner = (Button) outer.findViewById
@@ -396,6 +409,9 @@ public class GameFragment extends Fragment {
 
         if(firstLevel)
         patternAccumulator(small);
+        if(secondTutorial&&(patternInput.length()==3)){
+            Log.d("inside","the thing");showDialog2();
+            firstMove=false;}
         if(firstLevel)
         for (int big=0;big<9;big++){
             if(mLargeTiles[big]==currentLarge)continue;
@@ -453,8 +469,8 @@ public class GameFragment extends Fragment {
         initGame();
         this.n=90;
         initViews(getView());
-        updateTextView();
         updateAllTiles();
+        updateTextView();
         setAllAvailable();
 
     }
@@ -474,12 +490,68 @@ public class GameFragment extends Fragment {
 
         }
         if(n==10){
-            DialogBox( String.valueOf(n)+" Seconds to GO ",10);
+            DialogBox( String.valueOf(n)+" Seconds to GO ",100);
         }
         if(pauseTimer==false)
         n--;
         if(n==-1&&firstLevel)secondLevelInitialze();
         if(n==-1&&firstLevel==false)GameFinished();}
+        if(n==88) {
+            if (tutorial) {
+                final Dialog dialog = new Dialog(getActivity());
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                dialog.setCancelable(false);
+                dialog.setContentView(R.layout.dialog_box);
+                dialog.show();
+                Button continueTut=(Button)dialog.findViewById(R.id.continuetutorialins1);
+                continueTut.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        secondTutorial=true;
+                        dialog.dismiss();
+                    }
+                });
+                Button stopTut=(Button)dialog.findViewById(R.id.stoptutorialins1);
+                stopTut.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        tutorial=false;
+                        WordGame.tutorialflag=false;
+                        secondTutorial=false;
+                    }
+                });
+            }
+        }
+    }
+
+    public void showDialog2(){
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog_box1);
+        dialog.show();
+        Button continueTut=(Button)dialog.findViewById(R.id.continuetutorialins2);
+        continueTut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                secondTutorial=false;
+
+            }
+        });
+        Button stopTut=(Button)dialog.findViewById(R.id.stoptutorialins2);
+        stopTut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                tutorial=false;
+                secondTutorial=false;
+                WordGame.tutorialflag=false;
+            }
+        });
     }
 public void DialogBox(String Message,int time){
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -496,10 +568,11 @@ public void DialogBox(String Message,int time){
     innerTimer.schedule(new TimerTask() {
         @Override
         public void run() {
+            if(mDialog.isShowing())
             mDialog.dismiss();
             innerTimer.cancel();
         }
-    },1000);
+    },time);
     mDialog = builder.show();
 }
     public void Done(){
@@ -600,7 +673,7 @@ public void DialogBox(String Message,int time){
         }
     }
     public void secondLevelInitialze(){
-        n=60;
+        n=30;
         accumulator="";
         updateTextView();
         DialogBox("LEVEL 2 STARTED ",3000);
@@ -627,7 +700,7 @@ public void DialogBox(String Message,int time){
        // updateTextView();
         firstLevel=false;
         if(countFinshed()){
-           // Log.d("Never executed","Dont Know y");
+            Log.d("Never executed","Dont Know y");
             GameFinished();
         }
     }
@@ -658,6 +731,7 @@ public void DialogBox(String Message,int time){
             }
         };
         handler.postDelayed(runnable,1000);
+
         mEntireBoard.setSubTiles(mLargeTiles);
 
         // If the player moves first, set which spots are available
@@ -667,7 +741,6 @@ public void DialogBox(String Message,int time){
        setAvailableFromLastMove(mLastSmall);
 
     }
-
     private void setAvailableFromLastMove(int large) {
         clearAvailable();
         // Make all the tiles at the destination available
@@ -689,26 +762,36 @@ public void DialogBox(String Message,int time){
         }
     }
     public ArrayList<String> randomWord(){
+        while(flagRandom)
+            try {
+                sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        flagRandom=true;
         Random random=new Random();
-        int a=DictionaryLoader.words9long.size();
+        int a= words9long.size();
 
         ArrayList<Integer> integers=new ArrayList<>(9);
         for (int i=0;i<9;i++) {
 
             while (true) {
-                int j=random.nextInt(a-1);
+                int j;
+                j=random.nextInt(a-1);
+
                 if (integers.contains(j) == false) {
                     integers.add(j);
                     break;
                 }
             }
         }
+//        Log.d("integers=",integers.toString());
         ArrayList<String>word=new ArrayList<>();
         for (int i=0;i<9;i++){
-
+            while(DictionaryLoader.words9long.get(integers.get(i))==null)integers.set(i,random.nextInt(a));
             word.add(DictionaryLoader.words9long.get(integers.get(i)));
         }
-
+        flagRandom=false;
         return word;
 
     }

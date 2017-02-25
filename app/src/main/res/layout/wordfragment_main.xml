@@ -15,7 +15,7 @@
    android:elevation="@dimen/elevation_high"
    android:orientation="vertical"
    android:padding="@dimen/menu_padding"
-   tools:context=".assignment5.WordMainActivity">
+   tools:context=".assignment5.WordGame">
 
    <TextView
       android:layout_width="wrap_content"
@@ -60,6 +60,14 @@
        android:padding="@dimen/menu_button_padding"
        android:elevation="@dimen/elevation_low"
        android:text="Acknowledgments"/>
+   <Button
+       android:id="@+id/tutorial"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_margin="@dimen/menu_button_margin"
+       android:padding="@dimen/menu_button_padding"
+       android:elevation="@dimen/elevation_low"
+       android:text="Tutorial On"/>
     <Button
         android:id="@+id/wordquit"
         android:layout_width="match_parent"

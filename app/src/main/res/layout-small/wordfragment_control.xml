@@ -6,18 +6,19 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     tools:context=".assignment5.GameActivity">
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <Button
+        <ImageButton
             android:id="@+id/wordbutton_done"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:elevation="@dimen/elevation_low"
-            android:textSize="20sp"
-            android:text="Done"/>
+            android:background="@null"
+            android:src="@drawable/done"/>
         <TextView
             android:id="@+id/wordTextView"
             android:layout_width="wrap_content"
@@ -31,34 +32,40 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_weight="1"
         >
-        <Button
+        <ImageButton
             android:id="@+id/wordbutton_restart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:elevation="@dimen/elevation_low"
-            android:text="Restart"
-            ></Button>
-        <Button
+            android:background="@null"
+            android:paddingRight="2dp"
+            android:src="@drawable/restart"></ImageButton>
+        <ImageButton
             android:id="@+id/wordbutton_pause"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:elevation="4dp"
-            android:text="Pause"
-            ></Button>
-        <Button
+            android:background="@null"
+            android:paddingRight="3dp"
+            android:src="@drawable/pause"></ImageButton>
+        <ImageButton
             android:id="@+id/wordbutton_main"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:elevation="@dimen/elevation_low"
-            android:text="Home"
-            ></Button>
-        <Button
-            android:id="@+id/stopMusic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:elevation="@dimen/elevation_low"
-            android:text="Music"/>
+            android:background="@null"
+            android:src="@drawable/home"></ImageButton>
+        <ImageButton
+            android:layout_height="wrap_content"
+            android:src="@drawable/soundoff"
+            android:background="@null"
+            android:id="@+id/stopMusic"
+            android:elevation="@dimen/elevation_low"
+            android:layout_width="wrap_content"></ImageButton>
+
+
 
     </LinearLayout>
 </LinearLayout>

@@ -14,15 +14,8 @@
     android:background="@drawable/menu_background"
     android:elevation="@dimen/elevation_high"
     android:orientation="vertical"
-    tools:context=".assignment5.WordMainActivity">
+    tools:context=".assignment5.WordGame">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/long_word_game"
-        android:gravity="center"
-        android:textAppearance="?android:textAppearanceLarge"
-        android:textSize="35sp"/>
 
     <Button
         android:id="@+id/wordcontinue_button"
@@ -51,8 +44,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:padding="@dimen/menu_button_padding"
         android:text="Acknowledgments"/>
+    <Button
+        android:id="@+id/tutorial"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="@dimen/elevation_low"
+        android:text="Tutorial On"/>
     <Button
         android:id="@+id/wordquit"
         android:layout_width="match_parent"

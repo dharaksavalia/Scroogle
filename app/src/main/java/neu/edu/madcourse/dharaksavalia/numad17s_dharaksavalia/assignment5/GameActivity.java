@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
 
@@ -21,9 +23,13 @@ import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
 public class GameActivity extends Activity {
     public static final String KEY_RESTORE = "key_restore";
     public static final String PREF_RESTORE = "pref_restore";
+   // public static final String TUTORIAL="tutorialrestore";
+   // public boolean tutorial=true;
     private MediaPlayer mMediaPlayer;
     private Handler mHandler = new Handler();
     private GameFragment mGameFragment;
+    private ImageButton mute;
+
 //    private static TimerCountDown Time = new TimerCountDown(45000, 1000);
 
     @Override
@@ -45,14 +51,15 @@ public class GameActivity extends Activity {
             }
         }
         Log.d("UT3", "restore = " + restore);
-        final Button mute=(Button)findViewById(R.id.stopMusic);
+        final ImageButton mute=(ImageButton)findViewById(R.id.stopMusic);
+        this.mute=mute;
         mute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 stopStartMusic();
             }
         });
-        Button resume=(Button) findViewById(R.id.wordbutton_pause);
+        ImageButton resume=(ImageButton) findViewById(R.id.wordbutton_pause);
         resume.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,27 +85,36 @@ public class GameActivity extends Activity {
             }
         });
 
+    if(mGameFragment.musicValue)mute.setImageResource(R.drawable.soundon);
+        else mute.setImageResource(R.drawable.soundoff);
+        mute.getDrawable().setLevel(1);
     }
 
     private void stopStartMusic() {
+       // EditText e = (EditText) findViewById(R.id.text_view_dialogbox);
+
         if(mMediaPlayer.isPlaying()){mMediaPlayer.pause();
+            mute.setImageResource(R.drawable.soundoff);
         mGameFragment.musicValue=false;}
         else {mMediaPlayer.start();
+            mute.setImageResource(R.drawable.soundon);
         mGameFragment.musicValue=true;}
     }
     public void stopMusic(){
         if(mMediaPlayer.isPlaying()
+
                 ){
             mMediaPlayer.pause();
+            mute.setImageResource(R.drawable.soundoff);
             mGameFragment.musicValue=false;
         }
     }
     public void startMusic(){
             if(mMediaPlayer!=null){
                 mMediaPlayer.start();
+                mute.setImageResource(R.drawable.soundon);
                 mGameFragment.musicValue=true;
             }
-
 
     }
 
@@ -173,6 +189,7 @@ public class GameActivity extends Activity {
         getPreferences(MODE_PRIVATE).edit()
                 .putString(PREF_RESTORE, gameData)
                 .commit();
+     //   getPreferences(MODE_APPEND).edit().putString(TUTORIAL,"false").commit();
         Log.d("UT3", "state = " + gameData);
     }
     public void Done(){
