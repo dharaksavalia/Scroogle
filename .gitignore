@@ -9,4 +9,4 @@
 .externalNativeBuild
 .idea/
 *.apk
-google-services.json
+google-services.js
