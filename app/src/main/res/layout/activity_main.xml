@@ -31,7 +31,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Word Game" />
-
+            <Button
+                android:id="@+id/communication"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Communication" />
             <Button
                 android:id="@+id/dictionary"
                 android:layout_width="match_parent"

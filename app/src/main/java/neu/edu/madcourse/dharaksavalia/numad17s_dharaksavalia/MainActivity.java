@@ -7,10 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
+
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -24,6 +21,8 @@ import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.aboutF
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.assignment1MainActivity;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment2.TestDictionary;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment5.WordGame;
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7.Communication;
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7.FCMActivity;
 
 
 public class MainActivity extends Activity {
@@ -32,7 +31,6 @@ public class MainActivity extends Activity {
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
-    private GoogleApiClient client;
     DataInputStream dataInt;
     DataInputStream dataLong7;
     DataInputStream dataLong8;
@@ -155,7 +153,6 @@ public class MainActivity extends Activity {
         */
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     private void variousMenu() {
@@ -165,6 +162,7 @@ public class MainActivity extends Activity {
         Button quit = (Button) findViewById(R.id.quitButton);
         Button dictionary=(Button)findViewById(R.id.dictionary);
         Button wordGame=(Button)findViewById(R.id.wordGame);
+        Button communication=(Button)findViewById(R.id.communication);
         wordGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -198,6 +196,16 @@ public class MainActivity extends Activity {
 
             }
         });
+        communication.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,Communication.class);
+                startActivity(intent);
+
+
+            }
+        });
         generateErrorButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -218,33 +226,5 @@ public class MainActivity extends Activity {
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
-    public Action getIndexApiAction() {
-        Thing object = new Thing.Builder()
-                .setName("Main Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
-                .build();
-        return new Action.Builder(Action.TYPE_VIEW)
-                .setObject(object)
-                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
-                .build();
-    }
-    @Override
-    public void onStart() {
-        super.onStart();
 
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        AppIndex.AppIndexApi.start(client, getIndexApiAction());
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.end(client, getIndexApiAction());
-        client.disconnect();
-    }
 }

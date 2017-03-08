@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "710186390677",
+    "firebase_url": "https://numad17s-dharaksavalia.firebaseio.com",
+    "project_id": "numad17s-dharaksavalia",
+    "storage_bucket": "numad17s-dharaksavalia.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:710186390677:android:4f15017e7fd3c9fa",
+        "android_client_info": {
+          "package_name": "neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "710186390677-tm853hn7v2arl083ac13rmt3h7lchned.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia",
+            "certificate_hash": "891bb647d3c035b1bdb8d3c734a60448774c1d7f"
+          }
+        },
+        {
+          "client_id": "710186390677-7q0g86vq2p7elfh1u34ucf3gcjsg17va.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4htXBDd18-PRU7-4lQ9dngd8jHMqshD0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "710186390677-7q0g86vq2p7elfh1u34ucf3gcjsg17va.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
