@@ -23,7 +23,8 @@ public class DictionaryLoader implements Runnable {
     public static boolean longDataLoaded8=false;
     public static boolean longDataLoaded9=false;
     public static boolean longDataLoaded13=false;
-
+    public static HashMap<String,String>GameRequest=new HashMap<>();
+    public static HashMap<String,String>GameReply=new HashMap<>();
     public static HashMap<Long,Integer>longData10;
     public static boolean longDataLoaded10=false;
     public static HashMap<Long,Integer>longData11;

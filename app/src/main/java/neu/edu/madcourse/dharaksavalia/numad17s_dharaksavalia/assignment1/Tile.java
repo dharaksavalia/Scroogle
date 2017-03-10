@@ -170,7 +170,7 @@ public class Tile {
             if (total == 9) return Owner.BOTH;
         }
 
-        // Neither player has won this tile
+        // Neither player has won this OnlineTile
         return Owner.NEITHER;
     }
 

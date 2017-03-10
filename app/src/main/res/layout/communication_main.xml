@@ -2,6 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <Button
+        android:text="Synchronous"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/SynchronousButton" />
+    <Button
+        android:text="Asysnchronous"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/AsysnchronousButton" />
+    <Button
+        android:text="Change player profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/playerProfile" />
 
     <Button
         android:text="Token"

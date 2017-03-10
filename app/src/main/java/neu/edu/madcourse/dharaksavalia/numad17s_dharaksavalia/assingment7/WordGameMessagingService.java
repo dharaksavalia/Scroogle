@@ -16,6 +16,8 @@ import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.DictionaryLoader;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
 
 
@@ -48,6 +50,9 @@ public class WordGameMessagingService extends FirebaseMessagingService {
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+            String Requesting=remoteMessage.getData().get("Requesting:");
+            String mode=remoteMessage.getData().get("mode");
+            if(mode!=null)if(Requesting!=null) {DictionaryLoader.GameRequest.put(Requesting,mode);}
         }
 
         // Check if message contains a notification payload.

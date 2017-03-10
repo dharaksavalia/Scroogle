@@ -16,9 +16,7 @@ import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
 
 public class Tile {
 
-    public enum Owner {
-        X /* letter O */, NEITHER, BOTH,
-    }
+
     public enum Status{
         selected,notselected,empty,intermediate,correct
     }
@@ -29,14 +27,8 @@ public class Tile {
     private static final int empty=0;
     private static final int intermediate=3;
     private static final int correct=4;
-    private static final int LEVEL_X = 0;
-    private static final int LEVEL_O = 1; // letter O
-    private static final int LEVEL_BLANK = 2;
-    private static final int LEVEL_AVAILABLE = 3;
-    private static final int LEVEL_TIE = 3;
     private Status status=Status.notselected;
     private final GameFragment mGame;
-    private Owner mOwner = Owner.NEITHER;
     private View mView;
     private Tile mSubTiles[];
 
@@ -56,7 +48,7 @@ public class Tile {
     }
     public Tile deepCopy() {
         Tile tile = new Tile(mGame);
-     //   tile.setStatus(setStatus());
+     //   OnlineTile.setStatus(setStatus());
         if (getSubTiles() != null) {
             Tile newTiles[] = new Tile[9];
             Tile oldTiles[] = getSubTiles();
@@ -198,7 +190,7 @@ public class Tile {
             if (total == 9) return Owner.BOTH;
         }
 
-        // Neither player has won this tile
+        // Neither player has won this OnlineTile
         return Owner.NEITHER;
     }
 
@@ -209,8 +201,8 @@ public class Tile {
             case NEITHER:
                 int total = 0;
                 if (getSubTiles() != null) {
-                    for (int tile = 0; tile < 9; tile++) {
-                        total += getSubTiles()[tile].evaluate();
+                    for (int OnlineTile = 0; OnlineTile < 9; OnlineTile++) {
+                        total += getSubTiles()[OnlineTile].evaluate();
                     }
                     int totalX[] = new int[4];
                     int totalO[] = new int[4];

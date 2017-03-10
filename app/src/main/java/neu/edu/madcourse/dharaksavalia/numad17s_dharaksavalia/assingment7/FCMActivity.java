@@ -6,14 +6,21 @@ package neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7;
 
 
         import android.app.Activity;
+        import android.app.AlertDialog;
+        import android.app.Dialog;
+        import android.content.DialogInterface;
         import android.os.Handler;
         import android.os.Looper;
         import android.os.Bundle;
         import android.util.Log;
+        import android.view.LayoutInflater;
         import android.view.View;
         import android.widget.Button;
+        import android.widget.EditText;
         import android.widget.Toast;
 
+        import com.google.firebase.database.DatabaseReference;
+        import com.google.firebase.database.FirebaseDatabase;
         import com.google.firebase.iid.FirebaseInstanceId;
 
         import org.json.JSONException;
@@ -25,20 +32,24 @@ package neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7;
         import java.net.HttpURLConnection;
         import java.net.URL;
         import java.util.Scanner;
+        import java.util.concurrent.RunnableFuture;
 
         import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
+        import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7.user.User;
 
 
 public class FCMActivity extends Activity {
 
     private static final String TAG = FCMActivity.class.getSimpleName();
-
+    EditText user;
+    EditText emailid;
     // Please add the server key from your firebase console in the follwoing format "key=<serverKey>"
     private static final String SERVER_KEY = "key=AAAApVpoVJU:APA91bGjYQDhFe24ljWuSD6tNIIZ9Y_D3UqphyOZNz8Gt8fKelpNKHMS1NAvI98is4KcBt8rvW5kQmaz-KNcbMRHwkh9F-Aj9ZFH_IWdqhT2-91mJJt49Y8ELjLNX9L7HHkCW5lspbvS";
 
     // This is the client registration token
     private static final String CLIENT_REGISTRATION_TOKEN = "flmtUkY07yM:APA91bGQw8i5VdjWiDV3PLwCggUbTaAmAe0ngW4UNunh6JM9oIHqCKcnccgqutzdh0yZiuexNcm1JkwbDswo7hdNcL7F9Kzf6rMLasU6tYMCYaLB5RYVdSB40X3YA6H0ia4DB_dFnhFw";
-
+    Handler handler=new Handler();
+    Runnable runnable;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,14 +61,40 @@ public class FCMActivity extends Activity {
             @Override
             public void onClick(View v) {
                 // Get token
-                String token = FirebaseInstanceId.getInstance().getToken();
+                final String token = FirebaseInstanceId.getInstance().getToken();
 
                 // Log and toast
                 String msg = getString(R.string.msg_token_fmt, token);
                 Log.d(TAG, msg);
                 Toast.makeText(FCMActivity.this, msg, Toast.LENGTH_SHORT).show();
-            }
-        });
+                LayoutInflater linf = LayoutInflater.from(FCMActivity.this);
+                final View inflator = linf.inflate(R.layout.userregisteration, null);
+                AlertDialog.Builder alert = new AlertDialog.Builder(FCMActivity.this);
+                alert.setView(inflator);
+
+                final EditText email = (EditText) inflator.findViewById(R.id.emailiduser);
+                final EditText username = (EditText) inflator.findViewById(R.id.usernameregister);
+
+                alert.setPositiveButton("Set", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton)
+                    {
+
+                      // Log.d(s1,s2);
+                        User mydetails=new User(username.getText().toString(),null,email.getText().toString(),null,null,null);
+                        DatabaseReference dr=FirebaseDatabase.getInstance().getReference("Users");
+                        dr.child(token).setValue(mydetails);
+                    }
+                });
+
+                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.cancel();
+                    }
+                });
+
+                alert.show();}
+            });
+
     }
 
     public void pushNotification(View type) {

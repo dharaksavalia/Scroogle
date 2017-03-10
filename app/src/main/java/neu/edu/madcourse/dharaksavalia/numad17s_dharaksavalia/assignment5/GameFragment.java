@@ -71,7 +71,7 @@ public class GameFragment extends Fragment {
     private Tile mEntireBoard = new Tile(this);
     private Tile mLargeTiles[] = new Tile[9];
     private Tile mSmallTiles[][] = new Tile[9][9];
-    private Tile.Owner mPlayer = Tile.Owner.X;
+   // private OnlineTile.Owner mPlayer = OnlineTile.Owner.X;
     private Tile currentLarge;
     private Set<Tile> mAvailable = new HashSet<Tile>();
     private Set<Tile>mLargeUsed=new HashSet<Tile>();
@@ -314,7 +314,7 @@ public class GameFragment extends Fragment {
             @Override
             public void run() {
                 if (getActivity() == null) return;
-                if (mEntireBoard.getOwner() == Tile.Owner.NEITHER) {
+                if (mEntireBoard.getOwner() == OnlineTile.Owner.NEITHER) {
                     int move[] = new int[2];
                     pickMove(move);
                     if (move[0] != -1 && move[1] != -1) {
@@ -331,17 +331,17 @@ public class GameFragment extends Fragment {
     }*/
 /*
     private void pickMove(int move[]) {
-        Tile.Owner opponent = mPlayer == Tile.Owner.X ? Tile.Owner.O : Tile
+        OnlineTile.Owner opponent = mPlayer == OnlineTile.Owner.X ? OnlineTile.Owner.O : OnlineTile
                 .Owner.X;
         int bestLarge = -1;
         int bestSmall = -1;
         int bestValue = Integer.MAX_VALUE;
         for (int large = 0; large < 9; large++) {
             for (int small = 0; small < 9; small++) {
-                Tile smallTile = mSmallTiles[large][small];
+                OnlineTile smallTile = mSmallTiles[large][small];
                 if (isAvailable(smallTile)) {
                     // Try the move and get the score
-                    Tile newBoard = mEntireBoard.deepCopy();
+                    OnlineTile newBoard = mEntireBoard.deepCopy();
                     newBoard.getSubTiles()[large].getSubTiles()[small]
                             .setOwner(opponent);
                     int value = newBoard.evaluate();
@@ -363,7 +363,7 @@ public class GameFragment extends Fragment {
     }
 
     private void switchTurns() {
-       // mPlayer = mPlayer == Tile.Owner.X ? Tile.Owner.O : Tile
+       // mPlayer = mPlayer == OnlineTile.Owner.X ? OnlineTile.Owner.O : OnlineTile
                 //.Owner.X;
     }
     */
@@ -429,10 +429,10 @@ public class GameFragment extends Fragment {
         //smallTile.setOwner(mPlayer);
         smallTile.setStatus(Tile.Status.selected);
         if(firstLevel)setAvailableFromLastMove(large);
-        //Tile.Owner oldWinner = largeTile.getOwner();
+        //OnlineTile.Owner oldWinner = largeTile.getOwner();
         if(firstLevel==false)setAavailableforsecond();
         largeTile.setStatus(Tile.Status.selected);
-        /*Tile.Owner winner = largeTile.findWinner();
+        /*OnlineTile.Owner winner = largeTile.findWinner();
         if (winner != oldWinner) {
             largeTile.animate();
             largeTile.setOwner(winner);
@@ -442,7 +442,7 @@ public class GameFragment extends Fragment {
         if(firstLevel)
         if(patternInput.length()==9)Done();
         /*
-        if (winner != Tile.Owner.NEITHER) {
+        if (winner != OnlineTile.Owner.NEITHER) {
             ((GameActivity)getActivity()).reportWinner(winner);
         }
         */
@@ -601,6 +601,7 @@ public void DialogBox(String Message,int time){
             for (int large = 0; large < 9; large++) {
                 if (mLargeTiles[large].equals(currentLarge)) {
                    // Log.d("fadas","to reset");
+
                     for (int small = 0; small < 9; small++) {
                         if (mSmallTiles[large][small].getStatus() == Tile.Status.selected)
                             mSmallTiles[large][small].setStatus(Tile.Status.notselected);
@@ -744,8 +745,8 @@ public void DialogBox(String Message,int time){
     private void setAvailableFromLastMove(int large) {
         clearAvailable();
         // Make all the tiles at the destination available
-//        Tile Ltile=mLargeTiles[large];
-  //      Ltile.setStatus(Tile.Status.selected);
+//        OnlineTile Ltile=mLargeTiles[large];
+  //      Ltile.setStatus(OnlineTile.Status.selected);
         if (large != -1) {
             for (int dest = 0; dest < 9; dest++) {
                 Tile tile = mSmallTiles[large][dest];

@@ -23,6 +23,7 @@ import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment2.TestDi
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment5.WordGame;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7.Communication;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7.FCMActivity;
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7.Main;
 
 
 public class MainActivity extends Activity {
@@ -166,7 +167,7 @@ public class MainActivity extends Activity {
         wordGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intenet1=new Intent(MainActivity.this,WordGame.class);
+                Intent intenet1=new Intent(MainActivity.this,Main.class);
                 startActivity(intenet1);
             }
         });
