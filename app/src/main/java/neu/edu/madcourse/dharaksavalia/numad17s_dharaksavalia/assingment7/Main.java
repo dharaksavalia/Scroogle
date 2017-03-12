@@ -37,5 +37,13 @@ public class Main extends Activity {
                 startActivity(intent);
             }
         });
+        Button acknowledgments=(Button)findViewById(R.id.ass7acknowlegments);
+        acknowledgments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent =new Intent (Main.this,assignment7acknowlegements.class);
+                startActivity(intent);
+            }
+        });
     }
 }

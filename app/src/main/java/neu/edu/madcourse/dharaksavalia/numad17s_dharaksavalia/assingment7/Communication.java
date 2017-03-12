@@ -666,6 +666,22 @@ public class Communication extends Activity {
             }
         });
 
+        Button acknowledgments=(Button)findViewById(R.id.ass7acknowlegments);
+        acknowledgments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent =new Intent (Communication.this,assignment7acknowlegements.class);
+                startActivity(intent);
+            }
+        });
+        dataBase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(Communication.this,RealtimeDatabaseActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 }
 
