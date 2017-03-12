@@ -78,7 +78,7 @@ public class Communication extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setTitle("Communication");
 
         Intent startingIntent = getIntent();
         if (startingIntent != null) {

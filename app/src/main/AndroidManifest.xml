@@ -43,6 +43,8 @@
         <activity android:name=".assingment7.FCMActivity"/>
         <activity android:name=".assingment7.RealtimeDatabaseActivity"
             />
+        <activity android:name=".assingment7.assignment7acknowlegements" />
+
         <service android:name=".assingment7.WordGameMessagingService">
         <intent-filter>
 
