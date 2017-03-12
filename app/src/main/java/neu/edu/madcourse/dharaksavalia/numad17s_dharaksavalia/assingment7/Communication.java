@@ -46,6 +46,8 @@ import java.util.TimerTask;
 
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.DictionaryLoader;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment2.DictionaryAcknowledge;
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7.GameBoards.GameBoard;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7.user.User;
 
 /**
@@ -61,14 +63,18 @@ public class Communication extends Activity {
     DatabaseReference reference;
     String requesting;
     String requestedmode;
+    int waitPeriod=20;
     final HashMap<String,User> allPlayers=new HashMap<>();
     final HashMap<String,User> activePlayers=new HashMap<>();
     private AlertDialog dialog;
     User user;
     Runnable runnable;
     Handler handler=new Handler();
+    Handler handler2=new Handler();
+    Runnable runnable2;
     private AlertDialog startDialog;
     Boolean startNewGame=false;
+    int gameBoardwait=15;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,8 +131,16 @@ public class Communication extends Activity {
             public void onClick(DialogInterface dialog, int whichButton) {
                 if(startDialog.isShowing()){
                     startDialog.dismiss();
-                    Toast.makeText(Communication.this,"successfully connected",Toast.LENGTH_SHORT);
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            super.run();
+                            pushNotification3(requesting,"yes");
+                        }
+                    };
 
+                    Toast.makeText(Communication.this,"send suffessfullly",Toast.LENGTH_SHORT).show();
+                    waitforGameBoard();
                 }
                 // Log.d(s1,s2);
 
@@ -135,11 +149,61 @@ public class Communication extends Activity {
         builder.setNegativeButton("Cancel",new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog,int whichB){
                 startDialog.dismiss();
+                new Thread(){
+                    @Override
+                    public void run(){
+                        super.run();
+                        pushNotification3(requesting,"no");
+                    }
+                }.start();
+                DictionaryLoader.GameRequest.clear();
                 listenForGameRequest();
                 setVariables();
             }});
 
            startDialog=builder.show();
+    }
+    public void DialogBox2(String Message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(Message);
+        builder.setCancelable(false);
+        //builder.setTitle("Start Game with ");
+        builder.setCancelable(false);
+        startDialog=builder.show();
+    }
+    public void waitforGameBoard(){
+        //DialogBox("Waiting for game board");
+        gameBoardwait=waitPeriod;
+        runnable2=new Runnable() {
+            @Override
+            public void run() {
+                gameBoardwait--;
+                handler2.postDelayed(this,1000);
+                DatabaseReference ref =FirebaseDatabase.getInstance().getReference("GameBoard").child(requesting);
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    GameBoard gameBoard=dataSnapshot.getValue(GameBoard.class);
+                        if(gameBoard!=null){
+                            if(startDialog.isShowing()) startDialog.dismiss();
+                            Toast.makeText(Communication.this,"Yipee game connected",Toast.LENGTH_LONG).show();
+                            setVariables();
+                            handler2.removeCallbacks(runnable2);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                if(gameBoardwait<0){handler2.removeCallbacks(this);
+                if(startDialog.isShowing())startDialog.dismiss();
+                Toast.makeText(Communication.this,"Cannot find Game Board in "+ String.valueOf(waitPeriod)+" seconds!!!!!",Toast.LENGTH_LONG).show();
+                }
+            }
+        };
+          handler2.postDelayed(runnable2,1000);
     }
     private void listOfPlayers(){
         DatabaseReference ref=FirebaseDatabase.getInstance().getReference("Users");
@@ -250,9 +314,12 @@ public class Communication extends Activity {
                 if (user2 != null) {
                     DialogBox("Want to Play with "+user2.username+"?");
 
+
                 } else {
+                    DictionaryLoader.GameRequest.clear();
                     listenForGameRequest();
                     setVariables();
+
                     listenForGameRequest();
                     Toast.makeText(Communication.this, "Failed to find a player", Toast.LENGTH_SHORT).show();
                 }
@@ -354,6 +421,46 @@ public class Communication extends Activity {
                 }
             }
         }).start();
+        waitingforreply(keyValue);
+    }
+    private void waitingforreply(final String keyValue){
+        gameBoardwait=waitPeriod;
+        runnable2=new Runnable() {
+            @Override
+            public void run() {
+                gameBoardwait--;
+                if(DictionaryLoader.GameReply.get(keyValue)!=null) {
+                    if (DictionaryLoader.GameReply.get(keyValue).equalsIgnoreCase("yes")) {
+                        GameBoard board = new GameBoard("myturn");
+
+                        Toast.makeText(Communication.this, "YIPEE opposide party said yess", Toast.LENGTH_LONG).show();
+                        handler2.removeCallbacks(runnable2);
+                        DictionaryLoader.GameReply.clear();
+                        DictionaryLoader.GameRequest.clear();
+                        setVariables();
+
+                    }else{
+                        Toast.makeText(Communication.this, "opposide party told no", Toast.LENGTH_LONG).show();
+                        handler2.removeCallbacks(runnable2);
+                        setVariables();
+                        DictionaryLoader.GameReply.clear();
+                        DictionaryLoader.GameRequest.clear();
+                    }
+                    if(gameBoardwait<1){
+                        Toast.makeText(Communication.this, "Connection not made", Toast.LENGTH_LONG).show();
+                        handler2.removeCallbacks(runnable2);
+                        DictionaryLoader.GameReply.clear();
+                        DictionaryLoader.GameRequest.clear();
+                        setVariables();
+                    }
+                }
+
+                handler2.postDelayed(this,1000);
+
+
+            }
+        };
+        handler2.postDelayed(runnable2,1000);
     }
     private void pushNotification(String key,String mode) {
         JSONObject jPayload = new JSONObject();
@@ -411,17 +518,63 @@ public class Communication extends Activity {
         }
 
     }
+    private void pushNotification3(String key,String agree) {
+        JSONObject jPayload = new JSONObject();
+        JSONObject jNotification = new JSONObject();
+        JSONObject jData=new JSONObject();
+        try {
+            // If sending to a single client
+            jPayload.put("to",requesting );
+            jData.put("Requesting:",token);
+            jData.put("agree",agree);
+
+            /*
+            // If sending to multiple clients (must be more than 1 and less than 1000)
+            JSONArray ja = new JSONArray();
+            ja.put(CLIENT_REGISTRATION_TOKEN);
+            // Add Other client tokens
+            ja.put(FirebaseInstanceId.getInstance().getToken());
+            jPayload.put("registration_ids", ja);
+            */
+
+            jPayload.put("data",jData);
+            jPayload.put("priority", "high");
+            //jPayload.put("notification", jNotification);
+
+            URL url = new URL("https://fcm.googleapis.com/fcm/send");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Authorization", SERVER_KEY);
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setDoOutput(true);
+
+            // Send FCM message content.
+            OutputStream outputStream = conn.getOutputStream();
+            outputStream.write(jPayload.toString().getBytes());
+            outputStream.close();
+
+            // Read FCM response.
+            InputStream inputStream = conn.getInputStream();
+            final String resp = convertStreamToString(inputStream);
+            Log.d("Sending notifcation3=",requesting);
+            Handler h = new Handler(Looper.getMainLooper());
+            h.post(new Runnable() {
+                @Override
+                public void run() {
+                    Log.e("notifcationf3", "run: " + resp);
+                    Toast.makeText(Communication.this,resp,Toast.LENGTH_LONG);
+                }
+            });
+        } catch (JSONException | IOException e) {
+            e.printStackTrace();
+        }
+
+    }
     private void pushNotification2(String key,String mode) {
         JSONObject jPayload = new JSONObject();
         JSONObject jNotification = new JSONObject();
         JSONObject jData=new JSONObject();
         try {
-            jNotification.put("title", "Game Play invite from "+user.getUsername());
-            jNotification.put("body", "Lets Start Playing ");
-            jNotification.put("sound", "default");
-            jNotification.put("badge", "1");
-            jNotification.put("click_action", "COMMUNICATION");
-
             // If sending to a single client
             jPayload.put("to",key );
             jData.put("Requesting:",token);

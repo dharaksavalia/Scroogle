@@ -52,6 +52,9 @@ public class WordGameMessagingService extends FirebaseMessagingService {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
             String Requesting=remoteMessage.getData().get("Requesting:");
             String mode=remoteMessage.getData().get("mode");
+            String agree=remoteMessage.getData().get("agree");
+            if(agree!=null)if(Requesting!=null) {
+                DictionaryLoader.GameReply.put(Requesting,agree);}
             if(mode!=null)if(Requesting!=null) {DictionaryLoader.GameRequest.put(Requesting,mode);}
         }
 

@@ -53,7 +53,7 @@ both sides in the larger game.
     <string name="score">Score</string>
     <string name="add5">ADD Five</string>
     <string name="onlinegame">Play Multiplayer</string>
-    <string name="offlinegame">Play Multiplayer</string>
+    <string name="offlinegame">Play Single Player</string>
     <string name="userregisterationtitle">Enter your details</string>
     <string name="usernameregisteration">Enter your online name</string>
     <string name="emailidhint">Email id for friends</string>

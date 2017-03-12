@@ -19,6 +19,12 @@ public class GameBoard {
         mSmallTiles[large][small].setStatus(status);
 
     }
+    public GameBoard(){
+
+    }
+    public GameBoard(String turns){
+        this.turns=turns;
+    }
     public void setCharacter(int large,int small,Character c){
         mSmallTiles[large][small].setStr(Character.toString(c));
     }
