@@ -738,7 +738,8 @@ public class Communication extends Activity {
         playerProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(internetConnectivity)DialogBox2("Internet Not available");
+                if(!internetConnectivity){DialogBox2("Internet Not available");
+                return;}
                 inituser();
             }
         });
