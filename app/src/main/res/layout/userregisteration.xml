@@ -32,4 +32,9 @@
         android:layout_marginBottom="16dp"
         android:fontFamily="sans-serif"
         android:hint="@string/emailidhint"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/setuser"
+        android:text="@string/Set"/>
 </LinearLayout>

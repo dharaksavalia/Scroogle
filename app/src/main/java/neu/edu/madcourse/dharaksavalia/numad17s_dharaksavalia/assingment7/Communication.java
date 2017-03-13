@@ -4,10 +4,14 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,9 +76,12 @@ public class Communication extends Activity {
     Handler handler=new Handler();
     Handler handler2=new Handler();
     Runnable runnable2;
+    Handler handler3=new Handler();
+    Runnable runnable3;
     private AlertDialog startDialog;
     Boolean startNewGame=false;
     int gameBoardwait=15;
+    Boolean internetConnectivity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,6 +107,8 @@ public class Communication extends Activity {
         //listOfActivePlayer();
         //reference
     listOfPlayers();
+        internetAvailable();
+
     //    inituser();
     }
 
@@ -107,7 +116,8 @@ public class Communication extends Activity {
     protected void onPause() {
         super.onPause();
         user.setActive("notActive");
-        reference.setValue(user);
+
+        if(internetConnectivity)reference.setValue(user);
         handler.removeCallbacks(runnable);
 
     }
@@ -119,6 +129,30 @@ public class Communication extends Activity {
     }
     public User findingaPlayer(String keyRequesting){
         return allPlayers.get(keyRequesting);
+
+    }
+    public void internetAvailable(){
+        DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+        connectedRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                boolean connected = snapshot.getValue(Boolean.class);
+                if (connected) {
+                    internetConnectivity=true;
+                    DialogBox2("Connected to Internet working properly");
+                } else {
+                    internetConnectivity=false;
+                    DialogBox2("Disconnected to Internet ......... ");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                internetConnectivity=false;
+                DialogBox2("Listener was cancelled");
+            }
+        });
+
 
     }
     public void DialogBox(String Message){
@@ -164,11 +198,18 @@ public class Communication extends Activity {
            startDialog=builder.show();
     }
     public void DialogBox2(String Message){
+        if(startDialog!=null)
+        if(startDialog.isShowing())startDialog.dismiss();
+        startDialog=null;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(Message);
-        builder.setCancelable(false);
         //builder.setTitle("Start Game with ");
-        builder.setCancelable(false);
+        builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startDialog.dismiss();
+            }
+        });
         startDialog=builder.show();
     }
     public void waitforGameBoard(){
@@ -194,7 +235,7 @@ public class Communication extends Activity {
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
+                    DialogBox2("Internet not available");
                     }
                 });
                 if(gameBoardwait<0){handler2.removeCallbacks(this);
@@ -207,6 +248,7 @@ public class Communication extends Activity {
     }
     private void listOfPlayers(){
         DatabaseReference ref=FirebaseDatabase.getInstance().getReference("Users");
+
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -231,7 +273,7 @@ public class Communication extends Activity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+            DialogBox2("Internet Not Available");
             }
         });
         Log.d("allPlayers=",allPlayers.toString());
@@ -262,7 +304,7 @@ public class Communication extends Activity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+            DialogBox2("Internet Not Available");
             }
 
             //Log.d("dr",dr.toString());
@@ -327,7 +369,7 @@ public class Communication extends Activity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+            DialogBox2("Internet not Available");
             }
 
         });
@@ -353,17 +395,62 @@ public class Communication extends Activity {
         final EditText email = (EditText) inflator.findViewById(R.id.emailiduser);
         final EditText username = (EditText) inflator.findViewById(R.id.usernameregister);
         alert.setCancelable(false);
-        alert.setPositiveButton("Set", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-
-                // Log.d(s1,s2);
+        email.setVisibility(View.INVISIBLE);
+        final Button setbutton=(Button)inflator.findViewById(R.id.setuser);
+        setbutton.setVisibility(View.INVISIBLE);
+        setbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 User mydetails = new User(username.getText().toString(), null, email.getText().toString(),null,token,"Active");
                 DatabaseReference dr = FirebaseDatabase.getInstance().getReference("Users");
                 dr.child(token).setValue(mydetails);
                 user=mydetails;
-
             }
         });
+        username.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(s.toString().length()>3)email.setVisibility(View.VISIBLE);
+                        else{
+                    email.setVisibility(View.INVISIBLE);
+                    setbutton.setVisibility(View.INVISIBLE);
+                };
+            }
+        });
+        email.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Log.d("Inside the matcher","yippe");
+            if(Patterns.EMAIL_ADDRESS.matcher(s).matches()){
+                Log.d("Inside the matcher","it matching trying to set ");
+               setbutton.setVisibility(View.VISIBLE);
+            }
+                else{
+                setbutton.setVisibility(View.INVISIBLE);
+            }
+            }
+        });
+
 
 
 
@@ -373,6 +460,12 @@ public class Communication extends Activity {
     }
     private void findPlayers(String mode){
         Log.d("Inside find Players","yipee");
+        Log.d("internet Connectivity:",String.valueOf(internetConnectivity));
+        if(!internetConnectivity) {
+            DialogBox2("Internet Not Available");
+            return;
+        }
+        Log.d("Internet Not available","Yipee");
         LayoutInflater linf = LayoutInflater.from(Communication.this);
         final View inflator = linf.inflate(R.layout.listtype, null);
         final AlertDialog.Builder alert = new AlertDialog.Builder(Communication.this);
@@ -635,6 +728,7 @@ public class Communication extends Activity {
         playerProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(internetConnectivity)DialogBox2("Internet Not available");
                 inituser();
             }
         });
