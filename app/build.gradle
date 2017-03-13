@@ -7,8 +7,8 @@ android {
         applicationId "neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia"
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 21
-        versionName "3.2Coomunication"
+        versionCode 22
+        versionName "3.3Coomunication"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

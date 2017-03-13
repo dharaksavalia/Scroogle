@@ -2,6 +2,7 @@ package neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -65,6 +66,7 @@ public class Communication extends Activity {
     //private static final String CLIENT_REGISTRATION_TOKEN = "flmtUkY07yM:APA91bGQw8i5VdjWiDV3PLwCggUbTaAmAe0ngW4UNunh6JM9oIHqCKcnccgqutzdh0yZiuexNcm1JkwbDswo7hdNcL7F9Kzf6rMLasU6tYMCYaLB5RYVdSB40X3YA6H0ia4DB_dFnhFw";
     String token;
     DatabaseReference reference;
+    Dialog userDialog;
     String requesting;
     String requestedmode;
     int waitPeriod=20;
@@ -405,6 +407,9 @@ public class Communication extends Activity {
                 DatabaseReference dr = FirebaseDatabase.getInstance().getReference("Users");
                 dr.child(token).setValue(mydetails);
                 user=mydetails;
+                if(userDialog.isShowing())
+                userDialog.dismiss();
+
             }
         });
         username.addTextChangedListener(new TextWatcher() {
@@ -420,8 +425,11 @@ public class Communication extends Activity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(s.toString().length()>3)email.setVisibility(View.VISIBLE);
+                if(s.toString().length()>3){email.setVisibility(View.VISIBLE);
+                username.setBackgroundColor(Color.GREEN);
+                if(Patterns.EMAIL_ADDRESS.matcher(email.getText().toString()).matches())setbutton.setVisibility(View.VISIBLE);}
                         else{
+                    username.setBackgroundColor(Color.RED);
                     email.setVisibility(View.INVISIBLE);
                     setbutton.setVisibility(View.INVISIBLE);
                 };
@@ -443,9 +451,11 @@ public class Communication extends Activity {
                 Log.d("Inside the matcher","yippe");
             if(Patterns.EMAIL_ADDRESS.matcher(s).matches()){
                 Log.d("Inside the matcher","it matching trying to set ");
+                email.setBackgroundColor(Color.GREEN);
                setbutton.setVisibility(View.VISIBLE);
             }
                 else{
+                email.setBackgroundColor(Color.RED);
                 setbutton.setVisibility(View.INVISIBLE);
             }
             }
@@ -454,7 +464,7 @@ public class Communication extends Activity {
 
 
 
-        alert.show();}
+        userDialog=alert.show();}
     private  void seachActiveplayer(){
 
     }
