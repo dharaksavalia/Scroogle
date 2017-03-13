@@ -770,7 +770,8 @@ public class Communication extends Activity {
                 startActivity(intent);
             }
         });
-
+        dataBase.setVisibility(View.INVISIBLE);
+        token.setVisibility(View.INVISIBLE);
         Button acknowledgments=(Button)findViewById(R.id.ass7acknowlegments);
         acknowledgments.setOnClickListener(new View.OnClickListener() {
             @Override
