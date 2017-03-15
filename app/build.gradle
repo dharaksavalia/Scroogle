@@ -7,8 +7,8 @@ android {
         applicationId "neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia"
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 26
-        versionName "3.4Coomunication"
+        versionCode 28
+        versionName "3.6Coomunication"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -25,6 +25,8 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.google.firebase:firebase-core:10.2.0'
+    compile 'com.google.firebase:firebase-auth:10.2.0'
+
     compile 'com.google.firebase:firebase-messaging:10.2.0'
     compile 'com.google.firebase:firebase-database:10.2.0'
     testCompile 'junit:junit:4.12'

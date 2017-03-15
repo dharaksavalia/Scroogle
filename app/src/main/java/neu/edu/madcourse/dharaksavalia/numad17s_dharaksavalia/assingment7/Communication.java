@@ -65,7 +65,12 @@ public class Communication extends Activity {
     // This is the client registration token
     //private static final String CLIENT_REGISTRATION_TOKEN = "flmtUkY07yM:APA91bGQw8i5VdjWiDV3PLwCggUbTaAmAe0ngW4UNunh6JM9oIHqCKcnccgqutzdh0yZiuexNcm1JkwbDswo7hdNcL7F9Kzf6rMLasU6tYMCYaLB5RYVdSB40X3YA6H0ia4DB_dFnhFw";
     String token;
+    DatabaseReference connectedRef;
+    ValueEventListener connectedRefValue;
     DatabaseReference reference;
+    ValueEventListener referenceValue;
+    DatabaseReference playerRef;
+    ValueEventListener playerRefValue;
     Dialog userDialog;
     String requesting;
     String requestedmode;
@@ -83,7 +88,7 @@ public class Communication extends Activity {
     private AlertDialog startDialog;
     Boolean startNewGame=false;
     int gameBoardwait=15;
-    Boolean internetConnectivity;
+    Boolean internetConnectivity=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,14 +107,14 @@ public class Communication extends Activity {
         setContentView(R.layout.communication_main);
 
         variousOption();
-        token = FirebaseInstanceId.getInstance().getToken();
+
         String refString;
         refString = "Users/" + token;
-        reference = FirebaseDatabase.getInstance().getReference("Users").child(token);
+
         //listOfActivePlayer();
         //reference
-    listOfPlayers();
-        internetAvailable();
+    //listOfPlayers();
+        //internetAvailable();
 
     //    inituser();
     }
@@ -117,10 +122,26 @@ public class Communication extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+        if(user!=null)
         user.setActive("notActive");
-
+        //if(reference!=null)reference.r
         if(internetConnectivity)reference.setValue(user);
         handler.removeCallbacks(runnable);
+        if(reference!=null) {
+
+            reference.removeEventListener(referenceValue);
+            reference=null;
+        }
+        if(connectedRef!=null) {
+            connectedRef.removeEventListener(connectedRefValue);
+            connectedRef=null;
+        }
+        if(playerRef!=null) {
+            playerRef.removeEventListener(playerRefValue);
+            playerRef=null;
+        }
+        if(allPlayers.size()!=0)
+        allPlayers.clear();
 
     }
 
@@ -134,27 +155,67 @@ public class Communication extends Activity {
 
     }
     public void internetAvailable(){
-        DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
-        connectedRef.addValueEventListener(new ValueEventListener() {
+        Log.d("internet connectivity","inide interenet avaialable");
+        token = FirebaseInstanceId.getInstance().getToken();
+        //Log.d("Inside intee")
+        connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+//        token = FirebaseInstanceId.getInstance().getToken();
+        connectedRefValue= new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 boolean connected = snapshot.getValue(Boolean.class);
                 if (connected) {
+                    Log.d("Connected to internet","Yipee");
                     internetConnectivity=true;
+                    token = FirebaseInstanceId.getInstance().getToken();
+
                     DialogBox2("Connected to Internet working properly");
+
+                    if(allPlayers.size()==0)
+                    listOfPlayers();
+                    if(reference==null){
+                    reference = FirebaseDatabase.getInstance().getReference("Users").child(token);
+                    //reference
+                    referenceValue=new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            user=dataSnapshot.getValue(User.class);
+                            if(user!=null){
+                                Log.d(user.toString(),"fdas");
+                                user.setActive("Active");
+                                reference.setValue(user);
+                                //inituser();
+                                //listOfActivePlayer();
+                            }else{
+                                inituser();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            DialogBox2("Internet Not Available");
+                        }
+
+                        //Log.d("dr",dr.toString());
+
+                    };
+                        reference.addValueEventListener(referenceValue);
+                    }
                 } else {
                     internetConnectivity=false;
-                    DialogBox2("Disconnected to Internet ......... ");
+                        DialogBox2("Disconnected to Internet ......... ");
+                        if (dialog != null) if (dialog.isShowing()) dialog.dismiss();
+                    }
                 }
-            }
+
 
             @Override
             public void onCancelled(DatabaseError error) {
                 internetConnectivity=false;
                 DialogBox2("Listener was cancelled");
             }
-        });
-
+        };
+        connectedRef.addValueEventListener(connectedRefValue);
 
     }
     public void DialogBox(String Message){
@@ -249,9 +310,9 @@ public class Communication extends Activity {
           handler2.postDelayed(runnable2,1000);
     }
     private void listOfPlayers(){
-        DatabaseReference ref=FirebaseDatabase.getInstance().getReference("Users");
+        playerRef=FirebaseDatabase.getInstance().getReference("Users");
 
-        ref.addValueEventListener(new ValueEventListener() {
+        playerRefValue=new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //allPlayers.clear();
@@ -277,7 +338,8 @@ public class Communication extends Activity {
             public void onCancelled(DatabaseError databaseError) {
             DialogBox2("Internet Not Available");
             }
-        });
+        };
+        playerRef.addValueEventListener(playerRefValue);
         Log.d("allPlayers=",allPlayers.toString());
         //Log.d()
        // return allPlayers;
@@ -285,33 +347,11 @@ public class Communication extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        internetAvailable();
      //  user.setActive("Active");
       //  reference.setValue(user);
-        reference = FirebaseDatabase.getInstance().getReference("Users").child(token);
-        //reference
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                user=dataSnapshot.getValue(User.class);
-                if(user!=null){
-                    Log.d(user.toString(),"fdas");
-                    user.setActive("Active");
-                    reference.setValue(user);
-                    //inituser();
-                    //listOfActivePlayer();
-                }else{
-                    inituser();
-                }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            DialogBox2("Internet Not Available");
-            }
 
-            //Log.d("dr",dr.toString());
-
-        });
 
         if(startNewGame){
          startNewGame();
@@ -383,13 +423,17 @@ public class Communication extends Activity {
     }
 
     private void inituser(){
-
+        //if()
         // Log and toast
         String msg = getString(R.string.msg_token_fmt, token);
         //Log.d(TAG, msg);
-        Toast.makeText(Communication.this, msg, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(Communication.this, msg, Toast.LENGTH_SHORT).show();
         LayoutInflater linf = LayoutInflater.from(Communication.this);
-
+        if(internetConnectivity==null)return;
+        if(!internetConnectivity){
+            DialogBox2("Internet not available");
+            return;
+        }
         final View inflator = linf.inflate(R.layout.userregisteration, null);
         final AlertDialog.Builder alert = new AlertDialog.Builder(Communication.this);
         alert.setView(inflator);
@@ -485,13 +529,17 @@ public class Communication extends Activity {
         ListView listView=(ListView)inflator.findViewById(R.id.samplelist);
         //alert.setCancelable(false);
         alert.setTitle("Select Player with whom you want to Play");
-        String []listofPlayer=new String[allPlayers.size()];
+        String []listofPlayer=new String[allPlayers.size()-1];
         int i=0;
         final String GameMode=mode;
-        Log.d("sizeOfplayers=",allPlayers.toString());
+       // Log.d("");
+        //Log.d("sizeOfpla
+        //
+        // yers=",allPlayers.toString());
         for(String key:allPlayers.keySet()){
-            Log.d("Inside list of players","Yipee");
+            //Log.d("Inside list of players",user.toString());
             User us=allPlayers.get(key);
+            if(key.equals(token.toString()))continue;
             keyValue.add(us.getKey());
             status.add(us.getActive());
             listofPlayer[i++]="UserName="+us.getUsername()+",EmailID="+us.emailID+",Status="+us.getActive();
@@ -739,7 +787,9 @@ public class Communication extends Activity {
             @Override
             public void onClick(View v) {
                 if(!internetConnectivity){DialogBox2("Internet Not available");
-                return;}
+
+                return;
+                }
                 inituser();
             }
         });

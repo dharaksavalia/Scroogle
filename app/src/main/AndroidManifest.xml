@@ -24,7 +24,9 @@
             android:screenOrientation="portrait"
             />
         <activity android:name=".assignment2.Encoder" />
-        <activity android:name=".assingment7.Communication">
+        <activity android:name=".assingment7.Communication"
+            android:screenOrientation="portrait">
+
 
         <intent-filter>
 
