@@ -45,6 +45,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -53,7 +54,11 @@ import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.DictionaryLoader;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment2.DictionaryAcknowledge;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7.GameBoards.GameBoard;
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7.GameBoards.GameBoardTest1;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7.user.User;
+
+import static java.lang.Thread.sleep;
+import static neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.DictionaryLoader.words9long;
 
 /**
  * Created by Dharak on 3/8/2017.
@@ -89,6 +94,9 @@ public class Communication extends Activity {
     Boolean startNewGame=false;
     int gameBoardwait=15;
     Boolean internetConnectivity=false;
+    Boolean flagRandom=false;
+    static private String [] pattern={"036784512", "036478512", "401367852", "425103678", "748521036", "037852146", "036785214", "214587630", "254103678",
+            "043678521", "630124785", "031467852"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,7 +126,72 @@ public class Communication extends Activity {
 
     //    inituser();
     }
+    public ArrayList<String> randomWord(){
+        while(flagRandom)
+            try {
+                sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        flagRandom=true;
+        Random random=new Random();
+        int a= words9long.size();
 
+        ArrayList<Integer> integers=new ArrayList<>(9);
+        for (int i=0;i<9;i++) {
+
+            while (true) {
+                int j;
+                j=random.nextInt(a-1);
+
+                if (integers.contains(j) == false) {
+                    integers.add(j);
+                    break;
+                }
+            }
+        }
+//        Log.d("integers=",integers.toString());
+        ArrayList<String>word=new ArrayList<>();
+        for (int i=0;i<9;i++){
+            while(DictionaryLoader.words9long.get(integers.get(i))==null)integers.set(i,random.nextInt(a));
+            word.add(DictionaryLoader.words9long.get(integers.get(i)));
+        }
+        ArrayList <String>patternWord=new ArrayList(9);
+        for(int i=0;i<9;i++){
+            String patternw=word.get(i);
+            int n=random.nextInt(pattern.length);
+            char [] patternchar=arrange(pattern[n],patternw);
+            patternw="";
+            for(char c:patternchar){
+                Log.d("Char c=",Character.toString(c));
+
+                patternw+=Character.toString(c);}
+            patternWord.add(patternw);
+        }
+        for(String pattern:patternWord){
+            Log.d(pattern,"YIpee");
+        }
+        Log.d("Communication.random()=",patternWord.toString());
+        flagRandom=false;
+
+        return patternWord;
+
+    }
+    private char[] arrange(String pattern, String word){
+//        ArrayList<String> result=new ArrayList<>();
+        char[] result= new char[9];
+        Log.d(pattern,word);
+        for (int i=0;i<9;i++){
+            // String str="";
+            //String str1=""+pattern.charAt(i);
+            //Log.d("str1",str1);
+            //str=""+word.charAt(i);
+            result[Character.getNumericValue(pattern.charAt(i))]=word.charAt(i);
+          //  Log.d(String.valueOf(word.charAt(i)),"yoho");
+        }
+
+        return result;
+    }
     @Override
     protected void onPause() {
         super.onPause();
@@ -226,7 +299,8 @@ public class Communication extends Activity {
         builder.setCancelable(false);
         builder.setPositiveButton("Start", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                if(startDialog.isShowing()){
+                Log.d("inside accept","Yipee");
+                if(startDialog!=null)if(startDialog.isShowing())
                     startDialog.dismiss();
                     new Thread(){
                         @Override
@@ -234,23 +308,26 @@ public class Communication extends Activity {
                             super.run();
                             pushNotification3(requesting,"yes");
                         }
-                    };
+                    }.start();
 
                     Toast.makeText(Communication.this,"send suffessfullly",Toast.LENGTH_SHORT).show();
                     waitforGameBoard();
                 }
+
                 // Log.d(s1,s2);
 
+
             }
-        });
+        );
         builder.setNegativeButton("Cancel",new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog,int whichB){
-                startDialog.dismiss();
+               // startDialog.dismiss();
+                final String opposideToken=requesting;
                 new Thread(){
                     @Override
                     public void run(){
                         super.run();
-                        pushNotification3(requesting,"no");
+                        pushNotification3(opposideToken,"no");
                     }
                 }.start();
                 DictionaryLoader.GameRequest.clear();
@@ -278,35 +355,40 @@ public class Communication extends Activity {
     public void waitforGameBoard(){
         //DialogBox("Waiting for game board");
         gameBoardwait=waitPeriod;
+        final DatabaseReference ref =FirebaseDatabase.getInstance().getReference("GameBoard").child(requesting);
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                GameBoardTest1 gameBoard=dataSnapshot.getValue(GameBoardTest1.class);
+                if(gameBoard!=null){
+                    if(startDialog.isShowing()) startDialog.dismiss();
+                    Toast.makeText(Communication.this,"Yipee game connected",Toast.LENGTH_LONG).show();
+                    setVariables();
+                    Log.d("Game Board found","Yipee");
+                    handler2.removeCallbacks(runnable2);
+                    ref.removeEventListener(this);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                DialogBox2("Internet not available");
+            }
+        });
         runnable2=new Runnable() {
             @Override
             public void run() {
                 gameBoardwait--;
                 handler2.postDelayed(this,1000);
-                DatabaseReference ref =FirebaseDatabase.getInstance().getReference("GameBoard").child(requesting);
-                ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                    GameBoard gameBoard=dataSnapshot.getValue(GameBoard.class);
-                        if(gameBoard!=null){
-                            if(startDialog.isShowing()) startDialog.dismiss();
-                            Toast.makeText(Communication.this,"Yipee game connected",Toast.LENGTH_LONG).show();
-                            setVariables();
-                            handler2.removeCallbacks(runnable2);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    DialogBox2("Internet not available");
-                    }
-                });
+                Log.d("Times=",String.valueOf(gameBoardwait));
                 if(gameBoardwait<0){handler2.removeCallbacks(this);
                 if(startDialog.isShowing())startDialog.dismiss();
                 Toast.makeText(Communication.this,"Cannot find Game Board in "+ String.valueOf(waitPeriod)+" seconds!!!!!",Toast.LENGTH_LONG).show();
                 }
             }
         };
+
           handler2.postDelayed(runnable2,1000);
     }
     private void listOfPlayers(){
@@ -367,6 +449,7 @@ public class Communication extends Activity {
         requestedmode=DictionaryLoader.GameRequest.get(key);
         handler.removeCallbacks(runnable);
         startNewGame();
+        DictionaryLoader.GameRequest.remove(key);
     }
     }
     public void listenForGameRequest(){
@@ -397,6 +480,8 @@ public class Communication extends Activity {
                 User user2 = dataSnapshot.getValue(User.class);
                 if (user2 != null) {
                     DialogBox("Want to Play with "+user2.username+"?");
+                    requesting=user2.getKey();
+
 
 
                 } else {
@@ -519,7 +604,8 @@ public class Communication extends Activity {
             DialogBox2("Internet Not Available");
             return;
         }
-        Log.d("Internet Not available","Yipee");
+        //
+        // Log.d("Internet Not available","Yipee");
         LayoutInflater linf = LayoutInflater.from(Communication.this);
         final View inflator = linf.inflate(R.layout.listtype, null);
         final AlertDialog.Builder alert = new AlertDialog.Builder(Communication.this);
@@ -572,20 +658,33 @@ public class Communication extends Activity {
                 }
             }
         }).start();
-        waitingforreply(keyValue);
+        waitingforreply(keyValue,mode);
     }
-    private void waitingforreply(final String keyValue){
+    private void waitingforreply(final String keyValue,final String mode){
         gameBoardwait=waitPeriod;
         runnable2=new Runnable() {
             @Override
             public void run() {
                 gameBoardwait--;
+                Log.d("Times=",String.valueOf(gameBoardwait));
+                Boolean stop=false;
                 if(DictionaryLoader.GameReply.get(keyValue)!=null) {
                     if (DictionaryLoader.GameReply.get(keyValue).equalsIgnoreCase("yes")) {
                         GameBoard board = new GameBoard("myturn");
+                        final DatabaseReference refgame=FirebaseDatabase.getInstance().getReference("GameBoard").child(token);
+                        new Thread() {
+                            public void run() {
+                                refgame.setValue(new
 
+                                        GameBoardTest1(randomWord(),token,keyValue,mode
+
+                                ));
+                            }
+                        }.start();
                         Toast.makeText(Communication.this, "YIPEE opposide party said yess", Toast.LENGTH_LONG).show();
                         handler2.removeCallbacks(runnable2);
+                        //Log.d("StringsWord=",randomWord().toString());
+                        stop=true;
                         DictionaryLoader.GameReply.clear();
                         DictionaryLoader.GameRequest.clear();
                         setVariables();
@@ -594,20 +693,30 @@ public class Communication extends Activity {
                         Toast.makeText(Communication.this, "opposide party told no", Toast.LENGTH_LONG).show();
                         handler2.removeCallbacks(runnable2);
                         setVariables();
+                        stop=true;
                         DictionaryLoader.GameReply.clear();
                         DictionaryLoader.GameRequest.clear();
+                        listenForGameRequest();
+
                     }
-                    if(gameBoardwait<1){
-                        Toast.makeText(Communication.this, "Connection not made", Toast.LENGTH_LONG).show();
-                        handler2.removeCallbacks(runnable2);
-                        DictionaryLoader.GameReply.clear();
-                        DictionaryLoader.GameRequest.clear();
-                        setVariables();
-                    }
+
+
                 }
-
-                handler2.postDelayed(this,1000);
-
+                if(gameBoardwait<1){
+                    Log.d("Killing ","handler");
+                    Toast.makeText(Communication.this, "Connection not made", Toast.LENGTH_LONG).show();
+                    handler2.removeCallbacks(runnable2);
+                    handler2.removeCallbacks(runnable2);
+                    DictionaryLoader.GameReply.clear();
+                    stop=true;
+                    DictionaryLoader.GameRequest.clear();
+                    setVariables();
+                    listenForGameRequest();
+                }
+                if(!stop) {
+                    handler2.postDelayed(this, 1000);
+                }
+                if(stop)handler2.removeCallbacks(this);
 
             }
         };
@@ -675,9 +784,10 @@ public class Communication extends Activity {
         JSONObject jData=new JSONObject();
         try {
             // If sending to a single client
-            jPayload.put("to",requesting );
-            jData.put("Requesting:",token);
+            jPayload.put("to",key );
+            jData.put("Reply:",token);
             jData.put("agree",agree);
+           // Log.d("Inside the ","");
 
             /*
             // If sending to multiple clients (must be more than 1 and less than 1000)
@@ -707,7 +817,7 @@ public class Communication extends Activity {
             // Read FCM response.
             InputStream inputStream = conn.getInputStream();
             final String resp = convertStreamToString(inputStream);
-            Log.d("Sending notifcation3=",requesting);
+            //Log.d("Sending notifcation3=",requesting);
             Handler h = new Handler(Looper.getMainLooper());
             h.post(new Runnable() {
                 @Override

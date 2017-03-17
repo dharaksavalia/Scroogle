@@ -8,11 +8,18 @@ import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment5.Tile;
 
 public class OnlineTile {
     public static enum Status{
-        selected,notselected,empty,intermediate,correct,oppositeplayer
+        selected,notselected,empty,correct,oppositeplayer
     }
-    String str;
+    public OnlineTile(){
 
-    public Status status= Status.notselected;
+    }
+    public OnlineTile(Status status,String str){
+        this.str=str;
+        this.status=status;
+    }
+    private String str;
+
+    private Status status;
     public void setStr(String str){
         this.str=str.toUpperCase();
     }

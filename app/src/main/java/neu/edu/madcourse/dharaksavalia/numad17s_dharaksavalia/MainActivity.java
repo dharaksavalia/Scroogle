@@ -1,7 +1,6 @@
 package neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia;
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,10 +19,9 @@ import java.util.Scanner;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.aboutFunction;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment1.assignment1MainActivity;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment2.TestDictionary;
-import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment5.WordGame;
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment8.GameActivity;
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment8.TwoPlayerWordGame;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7.Communication;
-import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7.FCMActivity;
-import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7.Main;
 
 
 public class MainActivity extends Activity {
@@ -164,10 +162,18 @@ public class MainActivity extends Activity {
         Button dictionary=(Button)findViewById(R.id.dictionary);
         Button wordGame=(Button)findViewById(R.id.wordGame);
         Button communication=(Button)findViewById(R.id.communication);
+        Button TwoPlayerWordGame=(Button)findViewById(R.id.twowordGame);
+        TwoPlayerWordGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(MainActivity.this, GameActivity.class);
+                startActivity(intent);
+            }
+        });
         wordGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intenet1=new Intent(MainActivity.this,Main.class);
+                Intent intenet1=new Intent(MainActivity.this,TwoPlayerWordGame.class);
                 startActivity(intenet1);
             }
         });

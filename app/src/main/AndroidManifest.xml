@@ -16,7 +16,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".assignment1.aboutFunction" />
-<activity android:name=".assingment7.Main"/>
         <activity android:name=".assignment1.assignment1MainActivity" />
 
         <activity android:name=".assignment1.GameActivity" />
@@ -46,6 +45,8 @@
         <activity android:name=".assingment7.RealtimeDatabaseActivity"
             />
         <activity android:name=".assingment7.assignment7acknowlegements" />
+        <activity android:name=".assignment8.TwoPlayerWordGame" />
+        <activity android:name=".assignment8.GameActivity"/>
 
         <service android:name=".assingment7.WordGameMessagingService">
         <intent-filter>

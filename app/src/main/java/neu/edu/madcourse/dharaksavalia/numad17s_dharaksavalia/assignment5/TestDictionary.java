@@ -26,7 +26,7 @@ public class TestDictionary {
         for(int i=0;i<aphabet.length();i++){
             encoder.put(aphabet.charAt(i),i+1);
         }}
-    TestDictionary(){
+    public TestDictionary(){
         detectedWord=new ArrayList<String>(30);
         Encoder();
     }
