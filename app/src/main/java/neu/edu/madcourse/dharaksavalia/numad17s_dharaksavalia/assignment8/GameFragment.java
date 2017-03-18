@@ -71,6 +71,7 @@ public class GameFragment extends Fragment {
     private enum Player{
         player1,player2
     }
+    Boolean GameRunning=true;
     Player player;
     DatabaseReference reference;
     boolean flagRandom=false;
@@ -96,8 +97,12 @@ public class GameFragment extends Fragment {
     private float mVolume = 1f;
     private int mLastLarge;
     private int mLastSmall;
+    String player1;
+    String player2;
     TextView txt;
-    private int Score=0;
+    private int Score1=0;
+    private int Score2=0;
+
     private boolean firstLevel=true;
     private boolean secondlevel=false;
     TextView ScoreView;
@@ -132,7 +137,13 @@ public class GameFragment extends Fragment {
         txt.setText(accumulator.toUpperCase());
         ScoreView=(TextView)getActivity().findViewById(R.id.wordScore);
 
-        ScoreView.setText("Score  "+String.valueOf(Score));
+        ScoreView.setText("Score  "+String.valueOf(Score1));
+        if(player==Player.player1)reference.child("scores").child(player1).setValue(Score1);
+        else
+        {
+            reference.child("scores").child(player2).setValue(Score1);
+        }
+
     }
     public void  setSoundPool(){
         if(mSoundPool==null)
@@ -150,9 +161,21 @@ public class GameFragment extends Fragment {
     private void GameFinished() {
         Log.d("this","in Game finsihed");
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        handler.removeCallbacks(runnable);
         mAvailable.clear();
-        builder.setMessage("Game Finished \nYour Score is: "+String.valueOf(Score));
+        GameRunning=false;
+        //handler.removeCallbacks(runnable);
+        String Str="";
+        if(Score1>Score2){
+            Str="\n  You Won";
+
+        }else if(Score1<Score2){
+            Str="\n You Lost";
+        }else{
+            Str="\nIT WAS A TIE";
+        }
+
+
+        builder.setMessage("Game Finished \nYour Score is: "+String.valueOf(Score1)+"\nOther Player Score is: "+String.valueOf(Score2)+"Str");
         builder.setCancelable(false);
         builder.setPositiveButton(R.string.ok_label,
                 new DialogInterface.OnClickListener() {
@@ -163,14 +186,15 @@ public class GameFragment extends Fragment {
                 });
         mDialog = builder.show();
         secondlevel=false;
-
+        handler.removeCallbacks(runnable);
+        return;
     }
 
     public void calculateScore(String str){
         if(str.length()==9)
-            Score+=20;
+            Score1+=20;
         for (int i=0;i<str.length();i++){
-            Score+=ScoreMap.get(str.charAt(i));
+            Score1+=ScoreMap.get(str.charAt(i));
         }
 
 
@@ -523,7 +547,7 @@ public class GameFragment extends Fragment {
         // ...
         firstLevel=true;
         secondlevel=true;
-        Score=0;
+        Score1=0;
         initGame();
         this.n=90;
         initViews(getView());
@@ -552,6 +576,7 @@ public class GameFragment extends Fragment {
         }
         if(pauseTimer==false)
        // n--;
+        if(n==0)GameFinished();
         if(n==88) {
             if (tutorial) {
                 final Dialog dialog = new Dialog(getActivity());
@@ -658,7 +683,7 @@ public void DialogBox(String Message,int time){
             if(inDetectedWord(accumulator)){
                 message =accumulator.toUpperCase()+" this word already was used.";
             }else {
-                Score -= 3;
+                Score1 -= 3;
                 message="WRONG WORD " + "\n THREE Point Substracted from Total";
             }
             DialogBox(message,3000);
@@ -742,11 +767,20 @@ public void DialogBox(String Message,int time){
 
             @Override
             public void run() {
-                Toast.makeText(getActivity(),"Timer"+String.valueOf(n),Toast.LENGTH_SHORT);
+                Toast.makeText(getActivity(),"Timer"+String.valueOf(n),Toast.LENGTH_SHORT).show();
                 if(player!=null)if(player.equals(Player.player1))
                 if(timer!=null){
-                    timer.setValue(n--);
+                    if(n>-1)
+                    timer.setValue(--n);
+                    else
+
+                    if(n==-1)GameFinished();
+
+                }else{
+                    handler.removeCallbacks(runnable);
+                    return;
                 }
+                if(n!=0)
                 handler.postDelayed(this,1000);
             }
         };
@@ -839,7 +873,10 @@ public void DialogBox(String Message,int time){
 
     /** Create a string containing the state of the game. */
     public String getState() {
+        if(reference!=null)if(referenceValue!=null)
         reference.removeEventListener(referenceValue);
+        if(timer!=null)if(referenceValue!=null)
+        timer.removeEventListener(timerValue);
         StringBuilder builder = new StringBuilder();
 
         builder.append(mLastLarge);
@@ -870,7 +907,7 @@ public void DialogBox(String Message,int time){
         builder.append(',');
         builder.append(secondlevel);
         builder.append(',');
-        builder.append(Score);
+        builder.append(Score1);
         builder.append(',');
         builder.append(accumulator);
         builder.append(',');
@@ -924,6 +961,7 @@ public void DialogBox(String Message,int time){
             }
         setAvailableFromLastMove1(currentInt);
             updateAllTiles();
+        if(!GameRunning)mAvailable.clear();
         }
         public void setAvailableFromLastMove1(int large){
             if (large != -1) {
@@ -1049,7 +1087,10 @@ public void DialogBox(String Message,int time){
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             //n=dataSnapshot.getValue();
-                            if(player==Player.player2)n=dataSnapshot.getValue(Integer.class);
+                            if(player==Player.player2){n=dataSnapshot.getValue(Integer.class);
+                                if(n==1)n=0;
+                            }
+
                             updateTime();
                         }
 
@@ -1072,11 +1113,18 @@ public void DialogBox(String Message,int time){
         String token = FirebaseInstanceId.getInstance().getToken();
         if(gameBoardTest1.getPlayer1().equalsIgnoreCase(token))player=Player.player1;
         else player=Player.player2;
+        player1=gameBoardTest1.getPlayer1();
+        player2=gameBoardTest1.getPlayer2();
+        if(player==Player.player1)
+            Score1=gameBoardTest1.getScores().get(player1);
+        else
+            Score1=gameBoardTest1.getScores().get(player2);
         Toast.makeText(getActivity(),player.toString(),Toast.LENGTH_LONG).show();
 // final DatabaseReference reference= FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1()).child("tiles1");
         //setTheGame();
         tiles();
     }
+
     public void tiles() {
 
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -1098,7 +1146,14 @@ public void DialogBox(String Message,int time){
                         onlineStae(gameBoardTest2.getTiles8(), 7);
                         onlineStae(gameBoardTest2.getTiles9(), 8);
                         setTheGame();
+                        if(player==Player.player1){
+                            Score2=gameBoardTest2.getScores().get(player2);
+                            //updateAllTiles();
+                        }else{
+                            Score2=gameBoardTest2.getScores().get(player1);
+                        }
                         updateAllTiles();
+                        updateTextView();
                     }
 
                     @Override
@@ -1160,7 +1215,7 @@ public void DialogBox(String Message,int time){
         n=Integer.parseInt(fields[index++]);
         firstLevel=Boolean.parseBoolean(fields[index++]);
         secondlevel=Boolean.parseBoolean(fields[index++]);
-        Score=Integer.parseInt(fields[index++]);
+        Score1=Integer.parseInt(fields[index++]);
 
         try {
             accumulator = fields[index++];
