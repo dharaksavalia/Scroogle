@@ -108,7 +108,8 @@ public class GameFragment extends Fragment {
     private Set<String>detectedWord=new HashSet<String>();
     int numberCorrectWord=0;
     ValueEventListener referenceValue;
-
+    DatabaseReference timer;
+    ValueEventListener timerValue;
     HashMap<Character,Integer> ScoreMap=new HashMap<>();
     static private String [] pattern={"036784512", "036478512", "401367852", "425103678", "748521036", "037852146", "036785214", "214587630", "254103678",
                 "043678521", "630124785", "031467852"};
@@ -533,9 +534,9 @@ public class GameFragment extends Fragment {
     }
 
     private void updateTime() {
-        TextView txt=(TextView) getActivity().findViewById(R.id.wordTimer);
-        if(secondlevel){
-        if(n>-1){
+        TextView txt=(TextView) getActivity().findViewById(R.id.twowordTimer);
+        if(txt!=null)
+            if(n>-1){
             if(n<10){
                 txt.setTextColor(Color.RED);
 
@@ -544,15 +545,13 @@ public class GameFragment extends Fragment {
             }
 
             txt.setText(String.valueOf(n));
-
+            txt.setVisibility(View.VISIBLE);
         }
         if(n==10){
-            DialogBox( String.valueOf(n)+" Seconds to GO ",100);
+            DialogBox( String.valueOf(n)+" Seconds to GO ",1000);
         }
         if(pauseTimer==false)
-        n--;
-        if(n==-1&&firstLevel)secondLevelInitialze();
-        if(n==-1&&firstLevel==false)GameFinished();}
+       // n--;
         if(n==88) {
             if (tutorial) {
                 final Dialog dialog = new Dialog(getActivity());
@@ -743,7 +742,11 @@ public void DialogBox(String Message,int time){
 
             @Override
             public void run() {
-                updateTime();
+                Toast.makeText(getActivity(),"Timer"+String.valueOf(n),Toast.LENGTH_SHORT);
+                if(player!=null)if(player.equals(Player.player1))
+                if(timer!=null){
+                    timer.setValue(n--);
+                }
                 handler.postDelayed(this,1000);
             }
         };
@@ -1034,6 +1037,38 @@ public void DialogBox(String Message,int time){
      */
     public void putOnlineData(final GameBoardTest1 gameBoardTest1){
         reference=FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1());
+        timer=FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1()).child("timer");
+        timer.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Integer time=dataSnapshot.getValue(Integer.class);
+                if(time!=null){
+                    Toast.makeText(getActivity(),"inside timer",Toast.LENGTH_LONG);
+                    n=time;
+                    timerValue=new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            //n=dataSnapshot.getValue();
+                            if(player==Player.player2)n=dataSnapshot.getValue(Integer.class);
+                            updateTime();
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    };
+                    timer.addValueEventListener(timerValue);
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         String token = FirebaseInstanceId.getInstance().getToken();
         if(gameBoardTest1.getPlayer1().equalsIgnoreCase(token))player=Player.player1;
         else player=Player.player2;
@@ -1050,8 +1085,8 @@ public void DialogBox(String Message,int time){
                 referenceValue=new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        Toast.makeText(getActivity(),"inside value event listner",Toast.LENGTH_LONG).show();
-                        Toast.makeText(getActivity(),"after value event listner",Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getActivity(),"inside value event listner",Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getActivity(),"after value event listner",Toast.LENGTH_LONG).show();
                         GameBoardTest1 gameBoardTest2 = dataSnapshot.getValue(GameBoardTest1.class);
                         onlineStae(gameBoardTest2.getTiles1(), 0);
                         onlineStae(gameBoardTest2.getTiles2(), 1);

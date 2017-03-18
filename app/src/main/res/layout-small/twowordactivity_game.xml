@@ -34,12 +34,12 @@
                 android:paddingLeft="20dp"
                 />
             <TextView
-                android:id="@+id/wordTimer"
+                android:id="@+id/twowordTimer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:elevation="@dimen/elevation_low"
                 android:layout_alignParentRight="true"
-                android:text=""
+                android:text="--"
                 android:paddingRight="23dp"
                 android:textSize="25sp"/>
 
