@@ -30,12 +30,14 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,6 +68,10 @@ public class GameFragment extends Fragment {
             R.id.wordsmall4, R.id.wordsmall5, R.id.wordsmall6, R.id.wordsmall7, R.id.wordsmall8,
             R.id.wordsmall9,};
     TestDictionary dr;
+    private enum Player{
+        player1,player2
+    }
+    Player player;
     DatabaseReference reference;
     boolean flagRandom=false;
     boolean firstMove=true;
@@ -92,7 +98,7 @@ public class GameFragment extends Fragment {
     TextView txt;
     private int Score=0;
     private boolean firstLevel=true;
-    private boolean secondlevel=true;
+    private boolean secondlevel=false;
     TextView ScoreView;
     boolean pauseTimer=false;
      boolean Flag=false;
@@ -100,6 +106,7 @@ public class GameFragment extends Fragment {
     private Runnable runnable;
     private Set<String>detectedWord=new HashSet<String>();
     int numberCorrectWord=0;
+
     HashMap<Character,Integer> ScoreMap=new HashMap<>();
     static private String [] pattern={"036784512", "036478512", "401367852", "425103678", "748521036", "037852146", "036785214", "214587630", "254103678",
                 "043678521", "630124785", "031467852"};
@@ -458,7 +465,7 @@ public class GameFragment extends Fragment {
         */
     }
     public void updateAParticularTile(int large,int small,OnlineTile.Status status){
-
+    if(player==Player.player2)if(status.equals(OnlineTile.Status.selected))status=OnlineTile.Status.oppositePlayer;
     switch (large){
         case 0:
             DatabaseReference ref1=reference.child("tiles1");
@@ -624,7 +631,7 @@ public void DialogBox(String Message,int time){
     mDialog = builder.show();
 }
     public void Done(){
-        if(secondlevel==false)return;
+        //if(secondlevel==false)return;
         if(accumulator.length()<3){
             String message="Select atleast THREE letter";
             DialogBox(message,1000);
@@ -653,12 +660,14 @@ public void DialogBox(String Message,int time){
                     for (int small = 0; small < 9; small++) {
                         if (mSmallTiles[large][small].getStatus() == Tile.Status.selected)
                             mSmallTiles[large][small].setStatus(Tile.Status.notselected);
+                            updateAParticularTile(large,small, OnlineTile.Status.notselected);
                             addAvailable(mSmallTiles[large][small]);
                     }}
                     else{
                     if (mLargeUsed.contains(mLargeTiles[large])) continue;
                     for (int small = 0; small < 9; small++) {
                         mSmallTiles[large][small].setStatus(Tile.Status.notselected);
+                        //updateAParticularTile(large,small,OnlineTile.Status.notselected);
                         mAvailable.add(mSmallTiles[large][small]);
                     }
                 }
@@ -673,6 +682,7 @@ public void DialogBox(String Message,int time){
                         Tile.Status st=mSmallTiles[large][small].getStatus();
                                 if(st==Tile.Status.notselected||st==Tile.Status.selected){
                                     mSmallTiles[large][small].setStatus(Tile.Status.notselected);
+                                   // updateAParticularTile(large,small, OnlineTile.Status.notselected);
                                     mAvailable.add(mSmallTiles[large][small]);
                                 }
                     }
@@ -692,13 +702,19 @@ public void DialogBox(String Message,int time){
             if (mLargeTiles[large] == currentLarge) {
                 for (int small = 0; small < 9; small++) {
                     if (mSmallTiles[large][small].getStatus() == Tile.Status.notselected)
-                        mSmallTiles[large][small].setStatus(Tile.Status.empty);
-                    else mSmallTiles[large][small].setStatus(Tile.Status.correct);
+                    {mSmallTiles[large][small].setStatus(Tile.Status.empty);
+                    updateAParticularTile(large,small, OnlineTile.Status.empty);
+                        }
+                    else {mSmallTiles[large][small].setStatus(Tile.Status.correct);
+                        updateAParticularTile(large,small, OnlineTile.Status.correct);
+                    }
                 }
-            } else {
+            }
+            else {
                 if (mLargeUsed.contains(mLargeTiles[large])) continue;
                 for (int small = 0; small < 9; small++) {
                     mSmallTiles[large][small].setStatus(Tile.Status.notselected);
+                    updateAParticularTile(large,small, OnlineTile.Status.notselected);
                     mAvailable.add(mSmallTiles[large][small]);
                 }
             }
@@ -720,6 +736,9 @@ public void DialogBox(String Message,int time){
             else if(secondlevel)GameFinished();
 
         }
+    }
+    public void updateEntireBlock(int i){
+
     }
     public void secondLevelInitialze(){
         n=30;
@@ -908,7 +927,7 @@ public void DialogBox(String Message,int time){
 
     private void setTheGame() {
         updateAllTiles();
-
+        currentLarge=null;
         mAvailable.clear();
         for(int i=0;i<9;i++){
             for(int j=0;j<9;j++){
@@ -928,6 +947,9 @@ public void DialogBox(String Message,int time){
                         if(mLargeUsed.contains(mLargeTiles[i])==false)
                         mLargeUsed.add(mLargeTiles[i]);
                         break;
+                    case oppositePlayer:
+                        remove(i);
+                            break;
                     case correct:
                         if(mLargeUsed.contains(mLargeTiles[i])==false)
                             mLargeUsed.add(mLargeTiles[i]);
@@ -937,10 +959,34 @@ public void DialogBox(String Message,int time){
                 }
 
             }
+            if(currentLarge!=null)
+            for (int big=0;big<9;big++){
+                if(mLargeTiles[big]==currentLarge)continue;
+                if(mLargeUsed.contains(mLargeTiles[big]))continue;
+                for (int small=0;i<9;i++){
+                    if(mSmallTiles[big][small].getStatus().equals(Tile.Status.notselected))
+                    {
+                        mSmallTiles[big][small].setStatus(Tile.Status.intermediate);
+                        if(mAvailable.contains(mSmallTiles[big][small]))mAvailable.remove(mSmallTiles[big][small]);
+                    }
+
+                }
+            }
             updateAllTiles();
         }
 
     }
+    public void remove(int i){
+        if(mLargeUsed.contains(mLargeTiles[i])==false)
+            mLargeUsed.add(mLargeTiles[i]);
+        for(int j=0;j<9;j++){
+            if(mAvailable.contains(mSmallTiles))
+                mAvailable.remove(mSmallTiles[i][j]);
+            if(mSmallTiles[i][j].getStatus().equals(Tile.Status.notselected))mSmallTiles[i][j].setStatus(Tile.Status.intermediate);
+        }
+
+    }
+
 
     public ArrayList<Integer> computeint(){
         ArrayList<Integer> intArray=new ArrayList<>(9);
@@ -1017,6 +1063,10 @@ public void DialogBox(String Message,int time){
      */
     public void putOnlineData(final GameBoardTest1 gameBoardTest1){
         reference=FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1());
+        String token = FirebaseInstanceId.getInstance().getToken();
+        if(gameBoardTest1.getPlayer1().equalsIgnoreCase(token))player=Player.player1;
+        else player=Player.player2;
+        Toast.makeText(getActivity(),player.toString(),Toast.LENGTH_LONG);
         final DatabaseReference reference1= FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1()).child("tiles1");
         reference1.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -1138,7 +1188,13 @@ public void DialogBox(String Message,int time){
     public void tiles(DatabaseReference ref,ArrayList<OnlineTile> tile,final int large){
         Log.d("INSIDE the tiles ","YIpee");
         for(int i=0;i<9;i++){
-            mSmallTiles[large][i].setStatus(Tile.Status.valueOf(tile.get(i).getStatus().toString()));
+            OnlineTile.Status status=tile.get(i).getStatus();
+            if(player.equals(Player.player2)){
+                if(status.equals(OnlineTile.Status.selected))status= OnlineTile.Status.oppositePlayer;
+                else if(status.equals(OnlineTile.Status.oppositePlayer))status= OnlineTile.Status.selected;
+            }
+
+            mSmallTiles[large][i].setStatus(Tile.Status.valueOf(status.toString()));
             mSmallTiles[large][i].setStr(tile.get(i).getStr());
         }
         ref.addValueEventListener(new ValueEventListener() {
@@ -1152,11 +1208,16 @@ public void DialogBox(String Message,int time){
                     Log.d("Insdie ","online tile updatae");
                     if(onlineTile.getStatus()==OnlineTile.Status.selected)
                     Log.d("inside selected","selected");
-                    mSmallTiles[large][i].setStatus(Tile.Status.valueOf(onlineTile.getStatus().toString()));
+                    OnlineTile.Status status=onlineTile.getStatus();
+                    if(player.equals(Player.player2)){
+                        if(status.equals(OnlineTile.Status.selected))status= OnlineTile.Status.oppositePlayer;
+                        else if(status.equals(OnlineTile.Status.oppositePlayer))status= OnlineTile.Status.selected;
+                    }
+                    mSmallTiles[large][i].setStatus(Tile.Status.valueOf(status.toString()));
                     mSmallTiles[large][i++].updateDrawableState();
                 }
             }
-                updateAllTiles();
+            setTheGame();
             }
 
             @Override

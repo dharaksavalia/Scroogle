@@ -19,7 +19,7 @@ public class Tile {
 
 
     public enum Status{
-        selected,notselected,empty,intermediate,correct
+        selected,notselected,empty,intermediate,correct,oppositePlayer
     }
     String str;
     // These levels are defined in the drawable definitions
@@ -28,6 +28,7 @@ public class Tile {
     private static final int empty=0;
     private static final int intermediate=3;
     private static final int correct=4;
+    private static final int oppositePlayer=5;
     private Status status= Status.notselected;
     private final GameFragment mGame;
     private View mView;
@@ -121,6 +122,10 @@ public class Tile {
                 break;
             case correct:
                 level=correct;
+                break;
+            case oppositePlayer:
+                level=oppositePlayer;
+                break;
         }
         return level;
     }

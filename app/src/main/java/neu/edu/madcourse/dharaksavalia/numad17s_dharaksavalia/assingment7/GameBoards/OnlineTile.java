@@ -8,7 +8,7 @@ import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment5.Tile;
 
 public class OnlineTile {
     public static enum Status{
-        selected,notselected,empty,correct,oppositeplayer
+        selected,notselected,empty,correct,oppositePlayer
     }
     public OnlineTile(){
 
