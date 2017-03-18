@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -67,6 +68,7 @@ public class GameActivity extends Activity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     GameBoardTest1 test1=dataSnapshot.getValue(GameBoardTest1.class);
                     if(test1!=null){
+                        Toast.makeText(getApplicationContext(),"YIPEE",Toast.LENGTH_SHORT).show();
                         mGameFragment.putOnlineData(test1);
                     }
 

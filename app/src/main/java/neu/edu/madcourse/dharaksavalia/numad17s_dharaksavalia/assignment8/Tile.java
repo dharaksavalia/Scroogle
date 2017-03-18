@@ -222,11 +222,11 @@ public class Tile {
     }
 */
     public void animate() {
-        Animator anim = AnimatorInflater.loadAnimator(mGame.getActivity(),
+/*        Animator anim = AnimatorInflater.loadAnimator(mGame.getActivity(),
                 R.animator.tictactoe);
         if (getView() != null) {
             anim.setTarget(getView());
             anim.start();
         }
-    }
+    */}
 }

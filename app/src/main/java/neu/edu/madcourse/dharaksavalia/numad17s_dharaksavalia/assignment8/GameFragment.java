@@ -86,6 +86,7 @@ public class GameFragment extends Fragment {
     private Tile mEntireBoard = new Tile(this);
     private Tile mLargeTiles[] = new Tile[9];
     private Tile mSmallTiles[][] = new Tile[9][9];
+    private int ToastCount=0;
    // private OnlineTile.Owner mPlayer = OnlineTile.Owner.X;
     private Tile currentLarge;
     private Set<Tile> mAvailable = new HashSet<Tile>();
@@ -106,6 +107,7 @@ public class GameFragment extends Fragment {
     private Runnable runnable;
     private Set<String>detectedWord=new HashSet<String>();
     int numberCorrectWord=0;
+    ValueEventListener referenceValue;
 
     HashMap<Character,Integer> ScoreMap=new HashMap<>();
     static private String [] pattern={"036784512", "036478512", "401367852", "425103678", "748521036", "037852146", "036785214", "214587630", "254103678",
@@ -417,9 +419,9 @@ public class GameFragment extends Fragment {
         mLastSmall = small;
         Flag=false;
         Tile smallTile = mSmallTiles[large][small];
-        smallTile.setStatus(Tile.Status.selected);
+        //smallTile.setStatus(Tile.Status.selected);
         updateAParticularTile(large,small,OnlineTile.Status.selected);
-        if(mAvailable.contains(smallTile)==false)return;
+        //if(mAvailable.contains(smallTile)==false)return;
         currentLarge=mLargeTiles[large];
        // Log.d("pattern:",String.valueOf(small));
        // if(first)
@@ -642,7 +644,16 @@ public void DialogBox(String Message,int time){
             String message="CORRECT!!!\n Click OK ";
             DialogBox(message,2000);
             calculateScore(accumulator);
-        }
+            for(int large=0;large<9;large++)
+            for (int small = 0; small < 9; small++) {
+                if (mSmallTiles[large][small].getStatus() == Tile.Status.selected) {
+                   // mSmallTiles[large][small].setStatus(Tile.Status.correct);
+                    updateAParticularTile(large, small, OnlineTile.Status.correct);
+                }else if(mSmallTiles[large][small].getStatus() == Tile.Status.notselected){
+                    updateAParticularTile(large, small, OnlineTile.Status.empty);
+
+                }
+        }}
         else{
             String message;
             if(inDetectedWord(accumulator)){
@@ -652,91 +663,29 @@ public void DialogBox(String Message,int time){
                 message="WRONG WORD " + "\n THREE Point Substracted from Total";
             }
             DialogBox(message,3000);
-            if(firstLevel)
             for (int large = 0; large < 9; large++) {
                 if (mLargeTiles[large].equals(currentLarge)) {
                    // Log.d("fadas","to reset");
 
                     for (int small = 0; small < 9; small++) {
                         if (mSmallTiles[large][small].getStatus() == Tile.Status.selected)
-                            mSmallTiles[large][small].setStatus(Tile.Status.notselected);
+                     //       mSmallTiles[large][small].setStatus(Tile.Status.notselected);
                             updateAParticularTile(large,small, OnlineTile.Status.notselected);
-                            addAvailable(mSmallTiles[large][small]);
+                           // addAvailable(mSmallTiles[large][small]);
                     }}
-                    else{
-                    if (mLargeUsed.contains(mLargeTiles[large])) continue;
-                    for (int small = 0; small < 9; small++) {
-                        mSmallTiles[large][small].setStatus(Tile.Status.notselected);
-                        //updateAParticularTile(large,small,OnlineTile.Status.notselected);
-                        mAvailable.add(mSmallTiles[large][small]);
-                    }
+
                 }
 
 
             }
             accumulator="";
             patternInput="";
-            if(firstLevel==false){
-                for(int large=0;large<9;large++){
-                    for(int small=0;small<9;small++){
-                        Tile.Status st=mSmallTiles[large][small].getStatus();
-                                if(st==Tile.Status.notselected||st==Tile.Status.selected){
-                                    mSmallTiles[large][small].setStatus(Tile.Status.notselected);
-                                   // updateAParticularTile(large,small, OnlineTile.Status.notselected);
-                                    mAvailable.add(mSmallTiles[large][small]);
-                                }
-                    }
-                }
-            }
+
             updateTextView();
             updateAllTiles();
             return;
         }
-        accumulator="";
-        patternInput="";
-        clearAvailable();
-       // mLargeUsed.add(currentLarge);
-        if(firstLevel)
-        for (int large
-             = 0; large < 9; large++) {
-            if (mLargeTiles[large] == currentLarge) {
-                for (int small = 0; small < 9; small++) {
-                    if (mSmallTiles[large][small].getStatus() == Tile.Status.notselected)
-                    {mSmallTiles[large][small].setStatus(Tile.Status.empty);
-                    updateAParticularTile(large,small, OnlineTile.Status.empty);
-                        }
-                    else {mSmallTiles[large][small].setStatus(Tile.Status.correct);
-                        updateAParticularTile(large,small, OnlineTile.Status.correct);
-                    }
-                }
-            }
-            else {
-                if (mLargeUsed.contains(mLargeTiles[large])) continue;
-                for (int small = 0; small < 9; small++) {
-                    mSmallTiles[large][small].setStatus(Tile.Status.notselected);
-                    updateAParticularTile(large,small, OnlineTile.Status.notselected);
-                    mAvailable.add(mSmallTiles[large][small]);
-                }
-            }
-        }
-        if(firstLevel==false)
-            for (int large = 0; large < 9; large++) {
-                for (int small = 0; small < 9; small++) {
-                    if (mSmallTiles[large][small].getStatus() == Tile.Status.notselected)
-                        addAvailable(mSmallTiles[large][small]);
-                    else if(mSmallTiles[large][small].getStatus()==Tile.Status.selected)
-                        mSmallTiles[large][small].setStatus(Tile.Status.correct);
-                }
-            }
-        mLargeUsed.add(currentLarge);
-        updateAllTiles();
-        updateTextView();
-        if(countFinshed()) {
-            if(firstLevel)TimeFinished();
-            else if(secondlevel)GameFinished();
 
-        }
-    }
     public void updateEntireBlock(int i){
 
     }
@@ -887,7 +836,9 @@ public void DialogBox(String Message,int time){
 
     /** Create a string containing the state of the game. */
     public String getState() {
+        reference.removeEventListener(referenceValue);
         StringBuilder builder = new StringBuilder();
+
         builder.append(mLastLarge);
         builder.append(',');
         builder.append(mLastSmall);
@@ -926,9 +877,14 @@ public void DialogBox(String Message,int time){
     }
 
     private void setTheGame() {
-        updateAllTiles();
+       // updateAllTiles();
+        Log.d("inside the set the Game","YIpee");
         currentLarge=null;
+        mLargeUsed.clear();
+        Toast.makeText(getActivity(),"Yipee="+String.valueOf(ToastCount++),Toast.LENGTH_SHORT).show();
+        int currentInt=-1;
         mAvailable.clear();
+
         for(int i=0;i<9;i++){
             for(int j=0;j<9;j++){
                 Tile.Status str=mSmallTiles[i][j].getStatus();
@@ -936,10 +892,12 @@ public void DialogBox(String Message,int time){
                 switch(str){
                     case selected :
                         currentLarge=mLargeTiles[i];
+                        currentInt=i;
+                        //setAvailableFromLastMove1(i);
                         break;
                     case notselected:
-                        mAvailable.add(mSmallTiles[i][j]);
-                        currentLarge=mLargeTiles[i];
+                        //mAvailable.add(mSmallTiles[i][j]);
+                        //currentLarge=mLargeTiles[i];
                         break;
                     case intermediate:
                         break;
@@ -959,23 +917,36 @@ public void DialogBox(String Message,int time){
                 }
 
             }
-            if(currentLarge!=null)
-            for (int big=0;big<9;big++){
-                if(mLargeTiles[big]==currentLarge)continue;
-                if(mLargeUsed.contains(mLargeTiles[big]))continue;
-                for (int small=0;i<9;i++){
-                    if(mSmallTiles[big][small].getStatus().equals(Tile.Status.notselected))
-                    {
-                        mSmallTiles[big][small].setStatus(Tile.Status.intermediate);
-                        if(mAvailable.contains(mSmallTiles[big][small]))mAvailable.remove(mSmallTiles[big][small]);
+
+            }
+        setAvailableFromLastMove1(currentInt);
+            updateAllTiles();
+        }
+        public void setAvailableFromLastMove1(int large){
+            if (large != -1) {
+                for (int dest = 0; dest < 9; dest++) {
+                    Tile tile = mSmallTiles[large][dest];
+                    if (tile.getStatus() == Tile.Status.notselected)
+                        addAvailable(tile);
+                }
+                for (int big=0;big<9;big++){
+                    if(big==large)continue;
+                    if(mLargeUsed.contains(mLargeTiles[big]))continue;
+                    for (int i=0;i<9;i++){
+                        mSmallTiles[big][i].setStatus(Tile.Status.intermediate);
                     }
 
                 }
             }
-            updateAllTiles();
-        }
-
+            else{
+                for(int big=0;big<9;big++)
+                    for(int i=0;i<9;i++){
+                        if(mSmallTiles[big][i].getStatus().equals(Tile.Status.notselected))
+                            if(!mAvailable.contains(mSmallTiles[big][i]))mAvailable.add(mSmallTiles[big][i]);
+                    }
+            }
     }
+
     public void remove(int i){
         if(mLargeUsed.contains(mLargeTiles[i])==false)
             mLargeUsed.add(mLargeTiles[i]);
@@ -1066,127 +1037,57 @@ public void DialogBox(String Message,int time){
         String token = FirebaseInstanceId.getInstance().getToken();
         if(gameBoardTest1.getPlayer1().equalsIgnoreCase(token))player=Player.player1;
         else player=Player.player2;
-        Toast.makeText(getActivity(),player.toString(),Toast.LENGTH_LONG);
-        final DatabaseReference reference1= FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1()).child("tiles1");
-        reference1.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                tiles(reference1,gameBoardTest1.getTiles1(),0);
-                Log.d("inside ref1","setting tiles1");
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        final DatabaseReference reference2= FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1()).child("tiles2");
-        reference2.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                tiles(reference2,gameBoardTest1.getTiles2(),1);
-                Log.d("inside ref2","setting tiles1");
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        final DatabaseReference reference3= FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1()).child("tiles3");
-        reference3.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                tiles(reference3,gameBoardTest1.getTiles3(),2);
-                Log.d("inside ref3","setting tiles1");
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        }); final DatabaseReference reference4= FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1()).child("tiles4");
-        reference4.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                tiles(reference4,gameBoardTest1.getTiles4(),3);
-                Log.d("inside ref5","setting tiles1");
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        }); final DatabaseReference reference5= FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1()).child("tiles5");
-        reference5.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                tiles(reference5,gameBoardTest1.getTiles5(),4);
-                Log.d("inside ref6","setting tiles1");
-
-            }
-
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        }); final DatabaseReference reference6= FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1()).child("tiles6");
-        reference6.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                tiles(reference6,gameBoardTest1.getTiles6(),5);
-                Log.d("inside ref7","setting tiles1");
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        }); final DatabaseReference reference7= FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1()).child("tiles7");
-        reference7.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                tiles(reference7,gameBoardTest1.getTiles7(),6);
-                Log.d("inside ref1","setting tiles1");
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        }); final DatabaseReference reference8= FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1()).child("tiles8");
-        reference8.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                tiles(reference8,gameBoardTest1.getTiles8(),7);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        }); final DatabaseReference reference9= FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1()).child("tiles9");
-        reference9.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                tiles(reference9,gameBoardTest1.getTiles9(),8);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });// final DatabaseReference reference= FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1()).child("tiles1");
-
+        Toast.makeText(getActivity(),player.toString(),Toast.LENGTH_LONG).show();
+// final DatabaseReference reference= FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1()).child("tiles1");
+        //setTheGame();
+        tiles();
     }
-    public void tiles(DatabaseReference ref,ArrayList<OnlineTile> tile,final int large){
-        Log.d("INSIDE the tiles ","YIpee");
+    public void tiles() {
+
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                referenceValue=new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Toast.makeText(getActivity(),"inside value event listner",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(),"after value event listner",Toast.LENGTH_LONG).show();
+                        GameBoardTest1 gameBoardTest2 = dataSnapshot.getValue(GameBoardTest1.class);
+                        onlineStae(gameBoardTest2.getTiles1(), 0);
+                        onlineStae(gameBoardTest2.getTiles2(), 1);
+                        onlineStae(gameBoardTest2.getTiles3(), 2);
+                        onlineStae(gameBoardTest2.getTiles4(), 3);
+                        onlineStae(gameBoardTest2.getTiles5(), 4);
+                        onlineStae(gameBoardTest2.getTiles6(), 5);
+                        onlineStae(gameBoardTest2.getTiles7(), 6);
+                        onlineStae(gameBoardTest2.getTiles8(), 7);
+                        onlineStae(gameBoardTest2.getTiles9(), 8);
+                        setTheGame();
+                        updateAllTiles();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                };
+                reference.addValueEventListener(referenceValue);
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+
+
+
+
+    private void onlineStae(ArrayList<OnlineTile> tile,final int large){
         for(int i=0;i<9;i++){
             OnlineTile.Status status=tile.get(i).getStatus();
             if(player.equals(Player.player2)){
@@ -1196,36 +1097,8 @@ public void DialogBox(String Message,int time){
 
             mSmallTiles[large][i].setStatus(Tile.Status.valueOf(status.toString()));
             mSmallTiles[large][i].setStr(tile.get(i).getStr());
+            mSmallTiles[large][i].updateDrawableState();
         }
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                int i=0;
-            for(DataSnapshot child:dataSnapshot.getChildren()){
-                //Log.d("onlineTile Updataed","Yipee");
-                OnlineTile onlineTile=child.getValue(OnlineTile.class);
-                if(onlineTile!=null){
-                    Log.d("Insdie ","online tile updatae");
-                    if(onlineTile.getStatus()==OnlineTile.Status.selected)
-                    Log.d("inside selected","selected");
-                    OnlineTile.Status status=onlineTile.getStatus();
-                    if(player.equals(Player.player2)){
-                        if(status.equals(OnlineTile.Status.selected))status= OnlineTile.Status.oppositePlayer;
-                        else if(status.equals(OnlineTile.Status.oppositePlayer))status= OnlineTile.Status.selected;
-                    }
-                    mSmallTiles[large][i].setStatus(Tile.Status.valueOf(status.toString()));
-                    mSmallTiles[large][i++].updateDrawableState();
-                }
-            }
-            setTheGame();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        updateAllTiles();
     }
 
     /** Restore the state of the game from the given string. */
