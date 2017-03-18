@@ -175,7 +175,7 @@ public class GameFragment extends Fragment {
         }
 
 
-        builder.setMessage("Game Finished \nYour Score is: "+String.valueOf(Score1)+"\nOther Player Score is: "+String.valueOf(Score2)+"Str");
+        builder.setMessage("Game Finished \nYour Score is: "+String.valueOf(Score1)+"\nOther Player Score is: "+String.valueOf(Score2)+Str);
         builder.setCancelable(false);
         builder.setPositiveButton(R.string.ok_label,
                 new DialogInterface.OnClickListener() {
@@ -414,11 +414,21 @@ public class GameFragment extends Fragment {
         patternInput=patternInput+ String.valueOf( s);
         //Log.d(String.valueOf(s),patternInput);
         //Log.d(patternInput,":Pattern");
+        if(player.equals(Player.player1))
+        reference.child("selected1").setValue(patternInput);
+        else{
+            reference.child("selected2").setValue(patternInput);
+        }
     }
     private void StringAccumulator(String string){
     accumulator+=string;
         dr.verifyInput(accumulator);
         updateTextView();
+        if(player.equals(Player.player1))
+            reference.child("word1").setValue(accumulator);
+        else{
+            reference.child("word2").setValue(accumulator);
+        }
     }
 
     private void makeMove(int large, int small) {
@@ -451,8 +461,9 @@ public class GameFragment extends Fragment {
        // Log.d("pattern:",String.valueOf(small));
        // if(first)
 
-        if(firstLevel)
-        patternAccumulator(small);
+        if(firstLevel) {
+            patternAccumulator(small);
+        }
         if(secondTutorial&&(patternInput.length()==3)){
             Log.d("inside","the thing");showDialog2();
             firstMove=false;}
@@ -703,7 +714,17 @@ public void DialogBox(String Message,int time){
 
             }
             accumulator="";
+        if(player.equals(Player.player1))
+            reference.child("selected1").setValue(accumulator);
+        else{
+            reference.child("selected2").setValue(accumulator);
+        }
             patternInput="";
+        if(player.equals(Player.player1))
+            reference.child("word1").setValue(patternInput);
+        else{
+            reference.child("word2").setValue(patternInput);
+        }
 
             updateTextView();
             updateAllTiles();
@@ -738,6 +759,18 @@ public void DialogBox(String Message,int time){
         updateAllTiles();
 
         patternInput="";
+        accumulator="";
+        if(player.equals(Player.player1))
+            reference.child("selected1").setValue(accumulator);
+        else{
+            reference.child("selected2").setValue(accumulator);
+        }
+        patternInput="";
+        if(player.equals(Player.player1))
+            reference.child("word1").setValue(patternInput);
+        else{
+            reference.child("word2").setValue(patternInput);
+        }
        // updateTextView();
         firstLevel=false;
         if(countFinshed()){
@@ -750,6 +783,8 @@ public void DialogBox(String Message,int time){
         //Log.d("Called","1");
         accumulator="";
         patternInput="";
+        accumulator="";
+
         if(musicValue)((GameActivity)getActivity()).startMusic();
         else ((GameActivity)getActivity()).stopMusic();
         mEntireBoard = new Tile(this);
@@ -1110,15 +1145,23 @@ public void DialogBox(String Message,int time){
 
             }
         });
+
         String token = FirebaseInstanceId.getInstance().getToken();
         if(gameBoardTest1.getPlayer1().equalsIgnoreCase(token))player=Player.player1;
         else player=Player.player2;
         player1=gameBoardTest1.getPlayer1();
         player2=gameBoardTest1.getPlayer2();
-        if(player==Player.player1)
-            Score1=gameBoardTest1.getScores().get(player1);
-        else
-            Score1=gameBoardTest1.getScores().get(player2);
+        if(player==Player.player1) {
+            Score1 = gameBoardTest1.getScores().get(player1);
+            patternInput=gameBoardTest1.getSelected1();
+            accumulator=gameBoardTest1.getWord1();
+        }
+
+        else {
+            Score1 = gameBoardTest1.getScores().get(player2);
+            patternInput=gameBoardTest1.getSelected2();
+            accumulator=gameBoardTest1.getWord2();
+        }
         Toast.makeText(getActivity(),player.toString(),Toast.LENGTH_LONG).show();
 // final DatabaseReference reference= FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1()).child("tiles1");
         //setTheGame();
