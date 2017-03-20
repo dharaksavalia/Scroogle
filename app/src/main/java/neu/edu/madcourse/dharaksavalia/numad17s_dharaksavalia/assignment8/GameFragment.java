@@ -40,6 +40,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
+import java.util.EventListener;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
@@ -78,6 +79,7 @@ public class GameFragment extends Fragment {
     boolean firstMove=true;
     public boolean tutorial=WordGame.tutorialflag;
     int n=90;
+    private boolean myinternet=true;
     boolean secondTutorial=false;
     public boolean musicValue=true;
     private AlertDialog mDialog;
@@ -100,6 +102,17 @@ public class GameFragment extends Fragment {
     String player1;
     String player2;
     TextView txt;
+    DatabaseReference connected;
+    ValueEventListener connectedValue;
+    private  boolean internetConnectivity;
+    private DatabaseReference internetConnectivityReference;
+    private ValueEventListener interenetConnectivityValue;
+    private boolean otherplayer;
+    Handler internetHandler=new Handler();
+    Thread internetThread;
+    AlertDialog InternetDilaog;
+    Integer oppositenumber,count,selfnumber,oldnumber;
+    AlertDialog Internet;
     private int Score1=0;
     private int Score2=0;
 
@@ -138,6 +151,7 @@ public class GameFragment extends Fragment {
         ScoreView=(TextView)getActivity().findViewById(R.id.wordScore);
 
         ScoreView.setText("Score  "+String.valueOf(Score1));
+        if(internetConnectivity)
         if(player==Player.player1)reference.child("scores").child(player1).setValue(Score1);
         else
         {
@@ -306,18 +320,18 @@ public class GameFragment extends Fragment {
         patternInput="";
         clearDetectedWord();
         Log.d("d","hi1");
-        Random random=new Random();
+        //Random random=new Random();
         ArrayList<String> words;
-        words=randomWord();
+        //words=randomWord();
 
-        Log.d("words",words.toString());
+        //Log.d("words",words.toString());
         for (int large = 0; large < 9; large++) {
             View outer = rootView.findViewById(mLargeIds[large]);
-            String word=words.get(large);
+            //String word=words.get(large);
             mLargeTiles[large].setView(outer);
-            int n=random.nextInt(pattern.length);
+            //int n=random.nextInt(pattern.length);
             char[] str;
-            str=arrange(pattern[n],word);
+            //str=arrange(pattern[n],word);
 
             for (int small = 0; small < 9; small++) {
                 Button inner = (Button) outer.findViewById
@@ -326,7 +340,7 @@ public class GameFragment extends Fragment {
                 final int fSmall = small;
                 final Tile smallTile = mSmallTiles[large][small];
                 smallTile.setView(inner);
-                smallTile.setStr(Character.toString(str[small]));
+              //  smallTile.setStr(Character.toString(str[small]));
                 //smallTile.setStr(randomWord());
                 // ...
                 inner.setOnClickListener(new View.OnClickListener() {
@@ -340,7 +354,24 @@ public class GameFragment extends Fragment {
                         if (isAvailable(smallTile)) {
                             //((GameActivity)getActivity()).startThinking();
                             mSoundPool.play(mSoundX, mVolume, mVolume, 1, 0, 1f);
+                            if(!internetConnectivity) {
+                                //AlertDialog builder=new AlertDialog();
+                                if (InternetDilaog != null)
+                                    if (InternetDilaog.isShowing()) InternetDilaog.dismiss();
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                builder.setMessage("Internet not available");
+                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                });
+                                InternetDilaog = builder.show();
+                                return;
+                            }
                             makeMove(fLarge, fSmall);
+
+
                             //think();
                         } else {
                             mSoundPool.play(mSoundMiss, mVolume, mVolume, 1, 0, 1f);
@@ -414,6 +445,7 @@ public class GameFragment extends Fragment {
         patternInput=patternInput+ String.valueOf( s);
         //Log.d(String.valueOf(s),patternInput);
         //Log.d(patternInput,":Pattern");
+        if(internetConnectivity)
         if(player.equals(Player.player1))
         reference.child("selected1").setValue(patternInput);
         else{
@@ -424,6 +456,7 @@ public class GameFragment extends Fragment {
     accumulator+=string;
         dr.verifyInput(accumulator);
         updateTextView();
+        if(internetConnectivity)
         if(player.equals(Player.player1))
             reference.child("word1").setValue(accumulator);
         else{
@@ -669,6 +702,21 @@ public void DialogBox(String Message,int time){
 }
     public void Done(){
         //if(secondlevel==false)return;
+        if(!internetConnectivity) {
+            //AlertDialog builder=new AlertDialog();
+            if (InternetDilaog != null)
+                if (InternetDilaog.isShowing()) InternetDilaog.dismiss();
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("Internet not available");
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            InternetDilaog = builder.show();
+            return;
+        }
         if(accumulator.length()<3){
             String message="Select atleast THREE letter";
             DialogBox(message,1000);
@@ -912,6 +960,11 @@ public void DialogBox(String Message,int time){
         reference.removeEventListener(referenceValue);
         if(timer!=null)if(referenceValue!=null)
         timer.removeEventListener(timerValue);
+        if(interenetConnectivityValue!=null){
+            internetConnectivityReference.removeEventListener(interenetConnectivityValue);
+        }
+        internetHandler.removeCallbacks(internetThread);
+        if(connectedValue!=null)connected.removeEventListener(connectedValue);
         StringBuilder builder = new StringBuilder();
 
         builder.append(mLastLarge);
@@ -1111,6 +1164,10 @@ public void DialogBox(String Message,int time){
     public void putOnlineData(final GameBoardTest1 gameBoardTest1){
         reference=FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1());
         timer=FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1()).child("timer");
+        String token = FirebaseInstanceId.getInstance().getToken();
+        if(gameBoardTest1.getPlayer1().equalsIgnoreCase(token))player=Player.player1;
+        else player=Player.player2;
+        //DatabaseReference reference=FirebaseDatabase.getInstance().getReference();
         timer.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -1146,26 +1203,120 @@ public void DialogBox(String Message,int time){
             }
         });
 
-        String token = FirebaseInstanceId.getInstance().getToken();
-        if(gameBoardTest1.getPlayer1().equalsIgnoreCase(token))player=Player.player1;
-        else player=Player.player2;
+        connected=FirebaseDatabase.getInstance().getReference(".info/connected");
+        connectedValue=new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                internetConnectivity = dataSnapshot.getValue(Boolean.class);
+                if (internetConnectivity) {
+                    if (InternetDilaog != null)
+                        if (InternetDilaog.isShowing()) InternetDilaog.dismiss();
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage("Connection to internet failed");
+                    if (InternetDilaog != null) if (InternetDilaog.isShowing()) {
+                        InternetDilaog.dismiss();
+
+                    }
+                    InternetDilaog = builder.show();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        connected.addValueEventListener(connectedValue);
         player1=gameBoardTest1.getPlayer1();
         player2=gameBoardTest1.getPlayer2();
         if(player==Player.player1) {
             Score1 = gameBoardTest1.getScores().get(player1);
             patternInput=gameBoardTest1.getSelected1();
             accumulator=gameBoardTest1.getWord1();
+            oppositenumber=gameBoardTest1.getActive2();
+            count=0;
+            selfnumber=gameBoardTest1.getActive1();
+
         }
 
         else {
             Score1 = gameBoardTest1.getScores().get(player2);
             patternInput=gameBoardTest1.getSelected2();
             accumulator=gameBoardTest1.getWord2();
+            oppositenumber=gameBoardTest1.getActive1();
+            count=0;
+            selfnumber=gameBoardTest1.getActive2();
         }
+        if(player.equals(Player.player1)){
+            internetConnectivityReference=reference.child("active2");
+        }
+        else{
+            internetConnectivityReference=reference.child("active1");
+        }
+        interenetConnectivityValue=new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+             oppositenumber=dataSnapshot.getValue(Integer.class);
+                if(oppositenumber!=null){
+                    //count++;
+                    count=0;
+                    otherplayer=true;
+                    if(InternetDilaog!=null)if(InternetDilaog.isShowing()){
+                      InternetDilaog.dismiss();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        internetThread=new Thread(){
+            @Override
+            public void run() {
+                super.run();
+                if(player.equals(Player.player1)){
+                    if(internetConnectivity)
+                    reference.child("active1").setValue(selfnumber++);
+                }
+                else{
+                    if(internetConnectivity)
+                    reference.child("active2").setValue(selfnumber++);
+                }
+                count++;
+                if(internetConnectivity)
+                if(count>=2){
+                    if(InternetDilaog==null){
+                        AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
+                        builder.setMessage("Opposite Player offline");
+                        InternetDilaog=builder.show();
+                        otherplayer=false;
+                    }
+                    else{
+                        if(!InternetDilaog.isShowing()){
+                            AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
+                            builder.setMessage("Opposite Player offline");
+                            InternetDilaog=builder.show();
+                            otherplayer=false;
+                        }
+                    }
+
+
+                }
+                internetHandler.postDelayed(this,1000);
+            }
+
+        };
+        internetHandler.postDelayed(internetThread,1000);
+        internetConnectivityReference.addValueEventListener(interenetConnectivityValue);
         Toast.makeText(getActivity(),player.toString(),Toast.LENGTH_LONG).show();
 // final DatabaseReference reference= FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1()).child("tiles1");
         //setTheGame();
         tiles();
+
+
     }
 
     public void tiles() {

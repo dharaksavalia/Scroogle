@@ -63,8 +63,24 @@ public class GameBoardTest1  {
     //baseReference //word2;
    // ValueEventListener Listenerword2;
     private int timer;
+    private int active1;
+    private int active2;
 
+    public int getActive1() {
+        return active1;
+    }
 
+    public void setActive1(int active1) {
+        this.active1 = active1;
+    }
+
+    public int getActive2() {
+        return active2;
+    }
+
+    public void setActive2(int active2) {
+        this.active2 = active2;
+    }
 
     public static enum Turn{
         player1,player2,no_one
@@ -74,7 +90,7 @@ public class GameBoardTest1  {
         return words;
     }
 
-    public GameBoardTest1(int timer, ArrayList<String> words, String player1, String player2, HashMap<String, Integer> scores, Turn turn, ArrayList<OnlineTile> tiles1, ArrayList<OnlineTile> tiles2, ArrayList<OnlineTile> tiles3, ArrayList<OnlineTile> tiles4, ArrayList<OnlineTile> tiles5, ArrayList<OnlineTile> tiles6, ArrayList<OnlineTile> tiles7, ArrayList<OnlineTile> tiles8, ArrayList<OnlineTile> tiles9) {
+    public GameBoardTest1(int timer, ArrayList<String> words, String player1, String player2, HashMap<String, Integer> scores, Turn turn, ArrayList<OnlineTile> tiles1, ArrayList<OnlineTile> tiles2, ArrayList<OnlineTile> tiles3, ArrayList<OnlineTile> tiles4, ArrayList<OnlineTile> tiles5, ArrayList<OnlineTile> tiles6, ArrayList<OnlineTile> tiles7, ArrayList<OnlineTile> tiles8, ArrayList<OnlineTile> tiles9,int active1,int active2) {
         this.timer = timer;
         this.words = words;
         this.player1 = player1;
@@ -90,7 +106,8 @@ public class GameBoardTest1  {
         Tiles7 = tiles7;
         Tiles8 = tiles8;
         Tiles9 = tiles9;
-
+        active1=0;
+        active2=0;
     }
     private void setEventListiner(){
 
@@ -299,16 +316,21 @@ public class GameBoardTest1  {
         scores.put(player1,0);
         scores.put(player2,0);
         TileInitize();
-        if(mode.equalsIgnoreCase("Asynchronous"))
-        turn=Turn.player1;
+        if(mode.equalsIgnoreCase("Asynchronous")) {
+            turn = Turn.player1;
+            timer=10;
+        }
         else{
             turn=Turn.no_one;
+            timer=90;
         }
         selected1="";
         selected2="";
         word1="";
         word2="";
-        timer=90;
+        //timer=90;
+        active1=0;
+        active2=0;
 
     }
 }
