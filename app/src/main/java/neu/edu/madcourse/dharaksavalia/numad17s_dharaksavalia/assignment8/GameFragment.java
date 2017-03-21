@@ -22,6 +22,7 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,11 +40,20 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.EventListener;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -54,8 +64,11 @@ import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment5.TestDictionary;
 //import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment5.Tile;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment5.WordGame;
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7.GameBoards.GameBoard;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7.GameBoards.GameBoardTest1;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7.GameBoards.OnlineTile;
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7.GameBoards.Tiles;
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7.user.User;
 
 import static java.lang.Thread.sleep;
 import static neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.DictionaryLoader.words9long;
@@ -69,9 +82,11 @@ public class GameFragment extends Fragment {
             R.id.wordsmall4, R.id.wordsmall5, R.id.wordsmall6, R.id.wordsmall7, R.id.wordsmall8,
             R.id.wordsmall9,};
     TestDictionary dr;
+    User user;
     private enum Player{
         player1,player2
     }
+    private static final String SERVER_KEY = "key=AAAApVpoVJU:APA91bGjYQDhFe24ljWuSD6tNIIZ9Y_D3UqphyOZNz8Gt8fKelpNKHMS1NAvI98is4KcBt8rvW5kQmaz-KNcbMRHwkh9F-Aj9ZFH_IWdqhT2-91mJJt49Y8ELjLNX9L7HHkCW5lspbvS";
     Boolean GameRunning=true;
     Player player;
     DatabaseReference reference;
@@ -101,13 +116,23 @@ public class GameFragment extends Fragment {
     private int mLastSmall;
     String player1;
     String player2;
+    Tiles tiles;
+     private enum TurnValue{
+        my_Turn,Other_Player
+    }
+    TurnValue turnValue=TurnValue.my_Turn;
+    DatabaseReference tilesReference;
+    ValueEventListener tilesReferenceValue;
+    GameBoardTest1.Turn turn;
     TextView txt;
     DatabaseReference connected;
     ValueEventListener connectedValue;
     private  boolean internetConnectivity;
+    DatabaseReference referenceScore;
+    ValueEventListener referenceScoreValue;
     private DatabaseReference internetConnectivityReference;
     private ValueEventListener interenetConnectivityValue;
-    private boolean otherplayer;
+    private boolean otherplayer=true;
     Handler internetHandler=new Handler();
     Thread internetThread;
     AlertDialog InternetDilaog;
@@ -128,6 +153,9 @@ public class GameFragment extends Fragment {
     ValueEventListener referenceValue;
     DatabaseReference timer;
     ValueEventListener timerValue;
+    DatabaseReference playerTurn;
+    ValueEventListener playerTurnValue;
+
     HashMap<Character,Integer> ScoreMap=new HashMap<>();
     static private String [] pattern={"036784512", "036478512", "401367852", "425103678", "748521036", "037852146", "036785214", "214587630", "254103678",
                 "043678521", "630124785", "031467852"};
@@ -180,10 +208,10 @@ public class GameFragment extends Fragment {
         //handler.removeCallbacks(runnable);
         String Str="";
         if(Score1>Score2){
-            Str="\n  You Won";
+            Str="\n  YOU LOST";
 
         }else if(Score1<Score2){
-            Str="\n You Lost";
+            Str="\n YOU WON";
         }else{
             Str="\nIT WAS A TIE";
         }
@@ -314,6 +342,70 @@ public class GameFragment extends Fragment {
         }
         return true;
     }
+    private void pushNotification() {
+        JSONObject jPayload = new JSONObject();
+        JSONObject jNotification = new JSONObject();
+        JSONObject jData=new JSONObject();
+        try {
+            jNotification.put("title", "Game Play invite from "+user.getUsername());
+            jNotification.put("body", "Come fast, I am waiting!! ");
+            jNotification.put("sound", "default");
+            jNotification.put("badge", "1");
+            jNotification.put("click_action", "Two Player");
+
+            // If sending to a single client
+            String key;
+            if(player.equals(Player.player1))
+                key=player2;
+            else key=player1;
+
+            jPayload.put("to",key );
+            jData.put("Token",player1);
+            /*
+            // If sending to multiple clients (must be more than 1 and less than 1000)
+            JSONArray ja = new JSONArray();
+            ja.put(CLIENT_REGISTRATION_TOKEN);
+            // Add Other client tokens
+            ja.put(FirebaseInstanceId.getInstance().getToken());
+            jPayload.put("registration_ids", ja);
+            */
+            jPayload.put("data",jData);
+            jPayload.put("priority", "high");
+            jPayload.put("notification", jNotification);
+
+            URL url = new URL("https://fcm.googleapis.com/fcm/send");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Authorization", SERVER_KEY);
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setDoOutput(true);
+
+            // Send FCM message content.
+            OutputStream outputStream = conn.getOutputStream();
+            outputStream.write(jPayload.toString().getBytes());
+            outputStream.close();
+
+            // Read FCM response.
+            InputStream inputStream = conn.getInputStream();
+            final String resp = convertStreamToString(inputStream);
+
+            Handler h = new Handler(Looper.getMainLooper());
+            h.post(new Runnable() {
+                @Override
+                public void run() {
+                    Log.e("Hello", "run: " + resp);
+                    Toast.makeText(getActivity(),resp,Toast.LENGTH_LONG).show();
+                }
+            });
+        } catch (JSONException | IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+    private String convertStreamToString(InputStream is) {
+        Scanner s = new Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next().replace(",", ",\n") : "";
+    }
     private void initViews(View rootView) {
         mEntireBoard.setView(rootView);
         accumulator="";
@@ -367,6 +459,10 @@ public class GameFragment extends Fragment {
                                     }
                                 });
                                 InternetDilaog = builder.show();
+                                return;
+                            }
+                            if(turnValue!=TurnValue.my_Turn){
+                                DialogBox("Not Your turn",1000);
                                 return;
                             }
                             makeMove(fLarge, fSmall);
@@ -435,12 +531,22 @@ public class GameFragment extends Fragment {
         move[1] = bestSmall;
         Log.d("UT3", "Best move is " + bestLarge + ", " + bestSmall);
     }
+    */
 
     private void switchTurns() {
-       // mPlayer = mPlayer == OnlineTile.Owner.X ? OnlineTile.Owner.O : OnlineTile
-                //.Owner.X;
+        //turn = turn == GameBoardTest1.Turn.player1 ? GameBoardTest1.Turn.player2 : GameBoardTest1.Turn.player2;
+        if (turn == GameBoardTest1.Turn.player1)
+            if (player.equals(Player.player1)) {
+                reference.child("timer").setValue(15);
+                reference.child("turn").setValue(turn == GameBoardTest1.Turn.player1 ? GameBoardTest1.Turn.player2 : GameBoardTest1.Turn.player1);
+
+            }
+        if(turn== GameBoardTest1.Turn.player2)
+            if(player.equals(Player.player2)){
+                reference.child("timer").setValue(15);
+                reference.child("turn").setValue(turn == GameBoardTest1.Turn.player1 ? GameBoardTest1.Turn.player2 : GameBoardTest1.Turn.player1);
+            }
     }
-    */
     private void patternAccumulator(int s){
         patternInput=patternInput+ String.valueOf( s);
         //Log.d(String.valueOf(s),patternInput);
@@ -539,33 +645,33 @@ public class GameFragment extends Fragment {
     if(player==Player.player2)if(status.equals(OnlineTile.Status.selected))status=OnlineTile.Status.oppositePlayer;
     switch (large){
         case 0:
-            DatabaseReference ref1=reference.child("tiles1");
+            DatabaseReference ref1=reference.child("tiles").child("tiles1");
             ref1.child(String.valueOf(small)).child("status").setValue(status);
             break;
         case 1:
-            DatabaseReference ref2=reference.child("tiles2");
+            DatabaseReference ref2=reference.child("tiles").child("tiles2");
             ref2.child(String.valueOf(small)).child("status").setValue(status);
             break;
-        case 2:DatabaseReference ref3=reference.child("tiles3");
+        case 2:DatabaseReference ref3=reference.child("tiles").child("tiles3");
             ref3.child(String.valueOf(small)).child("status").setValue(status);
             break;
         case 3:
-        DatabaseReference ref4=reference.child("tiles4");
+        DatabaseReference ref4=reference.child("tiles").child("tiles4");
         ref4.child(String.valueOf(small)).child("status").setValue(status);
         break;
-        case 4:DatabaseReference ref5=reference.child("tiles5");
+        case 4:DatabaseReference ref5=reference.child("tiles").child("tiles5");
             ref5.child(String.valueOf(small)).child("status").setValue(status);
             break;
-        case 5:DatabaseReference ref6=reference.child("tiles6");
+        case 5:DatabaseReference ref6=reference.child("tiles").child("tiles6");
             ref6.child(String.valueOf(small)).child("status").setValue(status);
             break;
-        case 6:DatabaseReference ref7=reference.child("tiles7");
+        case 6:DatabaseReference ref7=reference.child("tiles").child("tiles7");
             ref7.child(String.valueOf(small)).child("status").setValue(status);
             break;
-        case 7:DatabaseReference ref8=reference.child("tiles8");
+        case 7:DatabaseReference ref8=reference.child("tiles").child("tiles8");
             ref8.child(String.valueOf(small)).child("status").setValue(status);
             break;
-        case 8:DatabaseReference ref9=reference.child("tiles9");
+        case 8:DatabaseReference ref9=reference.child("tiles").child("tiles9");
             ref9.child(String.valueOf(small)).child("status").setValue(status);
             break;
 
@@ -620,7 +726,12 @@ public class GameFragment extends Fragment {
         }
         if(pauseTimer==false)
        // n--;
-        if(n==0)GameFinished();
+        if(turn== GameBoardTest1.Turn.no_one) {
+            if (n == 0) GameFinished();
+        }
+        else{
+
+        }
         if(n==88) {
             if (tutorial) {
                 final Dialog dialog = new Dialog(getActivity());
@@ -628,6 +739,10 @@ public class GameFragment extends Fragment {
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.setCancelable(false);
                 dialog.setContentView(R.layout.dialog_box);
+                boolean value=true;
+                if(InternetDilaog!=null)if(InternetDilaog.isShowing())
+                    value=false;
+                if(value)
                 dialog.show();
                 Button continueTut=(Button)dialog.findViewById(R.id.continuetutorialins1);
                 continueTut.setOnClickListener(new View.OnClickListener() {
@@ -679,6 +794,7 @@ public class GameFragment extends Fragment {
         });
     }
 public void DialogBox(String Message,int time){
+    if(getActivity()==null)return;
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
     builder.setMessage(Message);
     builder.setCancelable(false);
@@ -715,6 +831,10 @@ public void DialogBox(String Message,int time){
                 }
             });
             InternetDilaog = builder.show();
+            return;
+        }
+        if(turnValue!=TurnValue.my_Turn) {
+            DialogBox("Not Your Trun", 1000);
             return;
         }
         if(accumulator.length()<3){
@@ -773,7 +893,7 @@ public void DialogBox(String Message,int time){
         else{
             reference.child("word2").setValue(patternInput);
         }
-
+            switchTurns();
             updateTextView();
             updateAllTiles();
             return;
@@ -822,7 +942,7 @@ public void DialogBox(String Message,int time){
        // updateTextView();
         firstLevel=false;
         if(countFinshed()){
-            Log.d("Never executed","Dont Know y");
+           // Log.d("Never executed","Dont Know y");
             GameFinished();
         }
     }
@@ -846,25 +966,43 @@ public void DialogBox(String Message,int time){
             }
             mLargeTiles[large].setSubTiles(mSmallTiles[large]);
         }
+
         runnable=new Runnable(){
 
             @Override
             public void run() {
-                Toast.makeText(getActivity(),"Timer"+String.valueOf(n),Toast.LENGTH_SHORT).show();
-                if(player!=null)if(player.equals(Player.player1))
-                if(timer!=null){
-                    if(n>-1)
-                    timer.setValue(--n);
-                    else
+                //Toast.makeText(getActivity(),"Timer"+String.valueOf(n),Toast.LENGTH_SHORT).show();
+                if(turn== GameBoardTest1.Turn.no_one) {
+                    if (player != null) if (player.equals(Player.player1))
+                        if (timer != null) {
+                            if (n > -1)
+                                if (internetConnectivity) if (otherplayer)
+                                    timer.setValue(--n);
 
-                    if(n==-1)GameFinished();
 
+                        } else {
+                            handler.removeCallbacks(runnable);
+                            return;
+                        }
+                    if(n!=0)
+                        handler.postDelayed(this,1000);
                 }else{
-                    handler.removeCallbacks(runnable);
-                    return;
+                    if (turn == GameBoardTest1.Turn.player1)
+                        if (player.equals(Player.player1)) {
+                            if (internetConnectivity)
+                                timer.setValue(--n);
+                            if(n<0)switchTurns();
+                        }
+                    if(turn== GameBoardTest1.Turn.player2)
+                        if(player.equals(Player.player2)){
+                            if (internetConnectivity)
+                                timer.setValue(--n);
+                            if(n<0)switchTurns();
+                        }
+                       // updateTime();
+                    handler.postDelayed(this,1000);
                 }
-                if(n!=0)
-                handler.postDelayed(this,1000);
+
             }
         };
         handler.postDelayed(runnable,1000);
@@ -958,8 +1096,10 @@ public void DialogBox(String Message,int time){
     public String getState() {
         if(reference!=null)if(referenceValue!=null)
         reference.removeEventListener(referenceValue);
-        if(timer!=null)if(referenceValue!=null)
+        if(timer!=null)if(timerValue!=null)
         timer.removeEventListener(timerValue);
+        if(tilesReferenceValue!=null)tilesReference.removeEventListener(tilesReferenceValue);
+        if(referenceScoreValue!=null)referenceScore.removeEventListener(referenceScoreValue);
         if(interenetConnectivityValue!=null){
             internetConnectivityReference.removeEventListener(interenetConnectivityValue);
         }
@@ -1006,10 +1146,10 @@ public void DialogBox(String Message,int time){
 
     private void setTheGame() {
        // updateAllTiles();
-        Log.d("inside the set the Game","YIpee");
+       // Log.d("inside the set the Game","YIpee");
         currentLarge=null;
         mLargeUsed.clear();
-        Toast.makeText(getActivity(),"Yipee="+String.valueOf(ToastCount++),Toast.LENGTH_SHORT).show();
+       // Toast.makeText(getActivity(),"Yipee="+String.valueOf(ToastCount++),Toast.LENGTH_SHORT).show();
         int currentInt=-1;
         mAvailable.clear();
 
@@ -1168,23 +1308,96 @@ public void DialogBox(String Message,int time){
         if(gameBoardTest1.getPlayer1().equalsIgnoreCase(token))player=Player.player1;
         else player=Player.player2;
         //DatabaseReference reference=FirebaseDatabase.getInstance().getReference();
+        turn=gameBoardTest1.getTurn();
+        //if()
+        if(turn!= GameBoardTest1.Turn.no_one)
+        {
+            if(player.equals(Player.player1))
+                if(turn.equals(GameBoardTest1.Turn.player1))
+                    turnValue=TurnValue.my_Turn;
+                else turnValue=TurnValue.Other_Player;
+
+            else
+                if(player.equals(Player.player2))
+                    if(turn.equals(GameBoardTest1.Turn.player2))turnValue=TurnValue.my_Turn;
+                            else
+                                turnValue=TurnValue.Other_Player;
+
+
+        }
+
+        playerTurn=reference.child("turn");
+        playerTurnValue=new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                turn=dataSnapshot.getValue(GameBoardTest1.Turn.class);
+                if(turn!= GameBoardTest1.Turn.no_one)
+                if(player.equals(Player.player1))
+                    if(turn.equals(GameBoardTest1.Turn.player1)){
+                        turnValue=TurnValue.my_Turn;}
+                    else
+                        turnValue=TurnValue.Other_Player;
+                else
+                if(player.equals(Player.player2))
+                    if(turn.equals(GameBoardTest1.Turn.player2))turnValue=TurnValue.my_Turn;
+                    else
+                        turnValue=TurnValue.Other_Player;
+                if(turnValue==TurnValue.my_Turn){
+                    DialogBox("Your Turn",1000);
+
+                }
+                else{
+                    DialogBox("Opposite Player Turn",1000);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        playerTurn.addValueEventListener(playerTurnValue);
         timer.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Integer time=dataSnapshot.getValue(Integer.class);
                 if(time!=null){
-                    Toast.makeText(getActivity(),"inside timer",Toast.LENGTH_LONG);
+                   // Toast.makeText(getActivity(),"inside timer",Toast.LENGTH_LONG);
                     n=time;
                     timerValue=new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            //n=dataSnapshot.getValue();
-                            if(player==Player.player2){n=dataSnapshot.getValue(Integer.class);
-                                if(n==1)n=0;
+                            int n1=dataSnapshot.getValue(Integer.class);
+                            if(turn== GameBoardTest1.Turn.no_one){
+                            if(player==Player.player2) {
+                                n = n1;
+                                updateTime();
+                            }
+                            else updateTime();}
+                                else if (turn== GameBoardTest1.Turn.player1)
+                                {
+                                    if(player==Player.player2) {
+                                        n = n1;
+                                        updateTime();
+                                    }
+                                    else{
+                                        updateTime();
+                                    }
+
+                                }
+                                else {
+                                    if(player==Player.player1){
+                                        n=n1;
+                                        updateTime();
+                                    }
+                                    else{
+                                        updateTime();
+                                    }
+
+                                }
                             }
 
-                            updateTime();
-                        }
+
 
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
@@ -1202,6 +1415,9 @@ public void DialogBox(String Message,int time){
 
             }
         });
+
+
+
 
         connected=FirebaseDatabase.getInstance().getReference(".info/connected");
         connectedValue=new ValueEventListener() {
@@ -1237,6 +1453,7 @@ public void DialogBox(String Message,int time){
             oppositenumber=gameBoardTest1.getActive2();
             count=0;
             selfnumber=gameBoardTest1.getActive1();
+            referenceScore=reference.child("scores").child(player2);
 
         }
 
@@ -1247,7 +1464,20 @@ public void DialogBox(String Message,int time){
             oppositenumber=gameBoardTest1.getActive1();
             count=0;
             selfnumber=gameBoardTest1.getActive2();
+            referenceScore=reference.child("scores").child(player1);
         }
+        referenceScoreValue=new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+            Score2=dataSnapshot.getValue(Integer.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        referenceScore.addValueEventListener(referenceScoreValue);
         if(player.equals(Player.player1)){
             internetConnectivityReference=reference.child("active2");
         }
@@ -1273,6 +1503,27 @@ public void DialogBox(String Message,int time){
 
             }
         };
+
+        String playerUser;
+        if(player.equals(Player.player1)){
+            playerUser=player1;
+        }
+        else{
+            playerUser=player2;
+        }
+        DatabaseReference userReference=FirebaseDatabase.getInstance().getReference("Users").child(playerUser);
+        userReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                user=dataSnapshot.getValue(User.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         internetThread=new Thread(){
             @Override
             public void run() {
@@ -1287,17 +1538,56 @@ public void DialogBox(String Message,int time){
                 }
                 count++;
                 if(internetConnectivity)
-                if(count>=2){
+                if(count>2){
+                    new Thread(){
+                        public void run(){
+                            pushNotification();
+                        }
+                    }.start();
+                    if(turn== GameBoardTest1.Turn.no_one||turnValue!=TurnValue.my_Turn)
                     if(InternetDilaog==null){
                         AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
                         builder.setMessage("Opposite Player offline");
+                        builder.setPositiveButton("Send notification to opposide player", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                new Thread(){
+                                  public void run(){
+                                      pushNotification();
+                                  }
+                                }.start();
+                            }
+                        });
+                        builder.setNegativeButton("Go to Home",new DialogInterface.OnClickListener(){
+                            @Override
+                            public void onClick(DialogInterface dialog,int which){
+                                getActivity().finish();
+                            }
+                        });
                         InternetDilaog=builder.show();
                         otherplayer=false;
                     }
                     else{
+                        if(turn== GameBoardTest1.Turn.no_one||turnValue!=TurnValue.my_Turn)
                         if(!InternetDilaog.isShowing()){
                             AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
                             builder.setMessage("Opposite Player offline");
+                            builder.setPositiveButton("Send notification to other player", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    new Thread(){
+                                        public void run(){
+                                            pushNotification();
+                                        }
+                                    }.start();
+                                }
+                            });
+                            builder.setNegativeButton("Go to Home",new DialogInterface.OnClickListener(){
+                                @Override
+                                public void onClick(DialogInterface dialog,int which){
+                                    getActivity().finish();
+                                }
+                            });
                             InternetDilaog=builder.show();
                             otherplayer=false;
                         }
@@ -1311,7 +1601,7 @@ public void DialogBox(String Message,int time){
         };
         internetHandler.postDelayed(internetThread,1000);
         internetConnectivityReference.addValueEventListener(interenetConnectivityValue);
-        Toast.makeText(getActivity(),player.toString(),Toast.LENGTH_LONG).show();
+       // Toast.makeText(getActivity(),player.toString(),Toast.LENGTH_LONG).show();
 // final DatabaseReference reference= FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1()).child("tiles1");
         //setTheGame();
         tiles();
@@ -1321,31 +1611,43 @@ public void DialogBox(String Message,int time){
 
     public void tiles() {
 
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+        tilesReference=reference.child("tiles");
+        tilesReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                referenceValue=new ValueEventListener() {
+                Tiles tiles2 = dataSnapshot.getValue(Tiles.class);
+                tiles=tiles2;
+                onlineStae(tiles2.getTiles1(), 0);
+                onlineStae(tiles2.getTiles2(), 1);
+                onlineStae(tiles2.getTiles3(), 2);
+                onlineStae(tiles2.getTiles4(), 3);
+                onlineStae(tiles2.getTiles5(), 4);
+                onlineStae(tiles2.getTiles6(), 5);
+                onlineStae(tiles2.getTiles7(), 6);
+                onlineStae(tiles2.getTiles8(), 7);
+                onlineStae(tiles2.getTiles9(), 8);
+                setTheGame();
+
+                updateAllTiles();
+                updateTextView();
+                tilesReferenceValue=new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         //Toast.makeText(getActivity(),"inside value event listner",Toast.LENGTH_LONG).show();
                         //Toast.makeText(getActivity(),"after value event listner",Toast.LENGTH_LONG).show();
-                        GameBoardTest1 gameBoardTest2 = dataSnapshot.getValue(GameBoardTest1.class);
-                        onlineStae(gameBoardTest2.getTiles1(), 0);
-                        onlineStae(gameBoardTest2.getTiles2(), 1);
-                        onlineStae(gameBoardTest2.getTiles3(), 2);
-                        onlineStae(gameBoardTest2.getTiles4(), 3);
-                        onlineStae(gameBoardTest2.getTiles5(), 4);
-                        onlineStae(gameBoardTest2.getTiles6(), 5);
-                        onlineStae(gameBoardTest2.getTiles7(), 6);
-                        onlineStae(gameBoardTest2.getTiles8(), 7);
-                        onlineStae(gameBoardTest2.getTiles9(), 8);
+                        Tiles tiles2 = dataSnapshot.getValue(Tiles.class);
+                        tiles=tiles2;
+                        onlineStae(tiles2.getTiles1(), 0);
+                        onlineStae(tiles2.getTiles2(), 1);
+                        onlineStae(tiles2.getTiles3(), 2);
+                        onlineStae(tiles2.getTiles4(), 3);
+                        onlineStae(tiles2.getTiles5(), 4);
+                        onlineStae(tiles2.getTiles6(), 5);
+                        onlineStae(tiles2.getTiles7(), 6);
+                        onlineStae(tiles2.getTiles8(), 7);
+                        onlineStae(tiles2.getTiles9(), 8);
                         setTheGame();
-                        if(player==Player.player1){
-                            Score2=gameBoardTest2.getScores().get(player2);
-                            //updateAllTiles();
-                        }else{
-                            Score2=gameBoardTest2.getScores().get(player1);
-                        }
+
                         updateAllTiles();
                         updateTextView();
                     }
@@ -1355,7 +1657,7 @@ public void DialogBox(String Message,int time){
 
                     }
                 };
-                reference.addValueEventListener(referenceValue);
+                tilesReference.addValueEventListener(tilesReferenceValue);
             }
 
 
@@ -1389,7 +1691,6 @@ public void DialogBox(String Message,int time){
     public void putState(String gameData) {
         String[] fields = gameData.split(",");
        // handler.removeCallbacks(runnable);
-
         int index = 0;
         mLastLarge = Integer.parseInt(fields[index++]);
         mLastSmall = Integer.parseInt(fields[index++]);

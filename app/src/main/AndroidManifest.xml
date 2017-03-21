@@ -46,7 +46,13 @@
             />
         <activity android:name=".assingment7.assignment7acknowlegements" />
         <activity android:name=".assignment8.TwoPlayerWordGame" />
-        <activity android:name=".assignment8.GameActivity"/>
+        <activity android:name=".assignment8.GameActivity">
+            <intent-filter>
+
+                <action android:name="TwoPlayer"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter></activity>
+            />
 
         <service android:name=".assingment7.WordGameMessagingService">
         <intent-filter>

@@ -19,7 +19,7 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.DictionaryLoader;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
-
+import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment8.GameActivity;
 
 
 public class WordGameMessagingService extends FirebaseMessagingService {
@@ -46,14 +46,16 @@ public class WordGameMessagingService extends FirebaseMessagingService {
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: " + remoteMessage.getFrom());
-
+        String token=null;
         // Check if message contains a data payload.
+
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
             String Requesting=remoteMessage.getData().get("Requesting:");
             String mode=remoteMessage.getData().get("mode");
             String agree=remoteMessage.getData().get("agree");
             String reply=remoteMessage.getData().get("Reply:");
+            token=remoteMessage.getData().get("Token");
             if(agree!=null)if(reply!=null) {
                 Log.d(TAG,"=inside the agree");
                 DictionaryLoader.GameReply.put(reply,agree);}
@@ -63,8 +65,11 @@ public class WordGameMessagingService extends FirebaseMessagingService {
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
-            sendNotification(remoteMessage.getNotification().getBody());
+            //sendNotification(remoteMessage.getNotification().getBody());
+            if(token!=null)
+            sendNotification(remoteMessage.getNotification().getBody(),token);
         }
+
 
 
 
@@ -80,6 +85,27 @@ public class WordGameMessagingService extends FirebaseMessagingService {
      */
     private void sendNotification(String messageBody) {
         Intent intent = new Intent(this, FCMActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+                PendingIntent.FLAG_ONE_SHOT);
+
+        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("Game Request")
+                .setContentText(messageBody)
+                .setAutoCancel(true)
+                .setSound(defaultSoundUri)
+                .setContentIntent(pendingIntent);
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+    }
+    private void sendNotification(String messageBody,String token) {
+        Intent intent = new Intent(this, GameActivity.class);
+        intent.putExtra("Token",token);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
