@@ -48,13 +48,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.EventListener;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -229,6 +233,13 @@ public class GameFragment extends Fragment {
         mDialog = builder.show();
         secondlevel=false;
         handler.removeCallbacks(runnable);
+        Locale.getDefault().getCountry();
+        DateFormat df = DateFormat.getTimeInstance();
+        df.setTimeZone(TimeZone.getTimeZone("gmt"));
+        String gmtTime = df.format(new Date());
+        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Leaderboard");
+            Scores scores = new Scores(user.getUsername(), Locale.getDefault().getCountry(), gmtTime,Score1);
+            reference1.push().setValue(scores);
         return;
     }
 
@@ -347,7 +358,7 @@ public class GameFragment extends Fragment {
         JSONObject jNotification = new JSONObject();
         JSONObject jData=new JSONObject();
         try {
-            jNotification.put("title", "Game Play invite from "+user.getUsername());
+            jNotification.put("title", "Game Play invite from "+user.getUsername().toString());
             jNotification.put("body", "Come fast, I am waiting!! ");
             jNotification.put("sound", "default");
             jNotification.put("badge", "1");
@@ -1103,6 +1114,7 @@ public void DialogBox(String Message,int time){
         if(interenetConnectivityValue!=null){
             internetConnectivityReference.removeEventListener(interenetConnectivityValue);
         }
+        if(playerTurn!=null)playerTurn.removeEventListener(playerTurnValue);
         internetHandler.removeCallbacks(internetThread);
         if(connectedValue!=null)connected.removeEventListener(connectedValue);
         StringBuilder builder = new StringBuilder();
@@ -1152,7 +1164,7 @@ public void DialogBox(String Message,int time){
        // Toast.makeText(getActivity(),"Yipee="+String.valueOf(ToastCount++),Toast.LENGTH_SHORT).show();
         int currentInt=-1;
         mAvailable.clear();
-
+        int gameCount=0;
         for(int i=0;i<9;i++){
             for(int j=0;j<9;j++){
                 Tile.Status str=mSmallTiles[i][j].getStatus();
@@ -1161,9 +1173,11 @@ public void DialogBox(String Message,int time){
                     case selected :
                         currentLarge=mLargeTiles[i];
                         currentInt=i;
+                        gameCount++;
                         //setAvailableFromLastMove1(i);
                         break;
                     case notselected:
+                        gameCount++;
                         //mAvailable.add(mSmallTiles[i][j]);
                         //currentLarge=mLargeTiles[i];
                         break;
@@ -1175,6 +1189,7 @@ public void DialogBox(String Message,int time){
                         break;
                     case oppositePlayer:
                         remove(i);
+                        gameCount++;
                             break;
                     case correct:
                         if(mLargeUsed.contains(mLargeTiles[i])==false)
@@ -1185,10 +1200,10 @@ public void DialogBox(String Message,int time){
                 }
 
             }
-
             }
         setAvailableFromLastMove1(currentInt);
             updateAllTiles();
+        if(gameCount==0)GameFinished();
         if(!GameRunning)mAvailable.clear();
         }
         public void setAvailableFromLastMove1(int large){
@@ -1539,11 +1554,6 @@ public void DialogBox(String Message,int time){
                 count++;
                 if(internetConnectivity)
                 if(count>2){
-                    new Thread(){
-                        public void run(){
-                            pushNotification();
-                        }
-                    }.start();
                     if(turn== GameBoardTest1.Turn.no_one||turnValue!=TurnValue.my_Turn)
                     if(InternetDilaog==null){
                         AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
@@ -1564,6 +1574,11 @@ public void DialogBox(String Message,int time){
                                 getActivity().finish();
                             }
                         });
+                        new Thread(){
+                            public void run(){
+                                pushNotification();
+                            }
+                        }.start();
                         InternetDilaog=builder.show();
                         otherplayer=false;
                     }
@@ -1588,6 +1603,11 @@ public void DialogBox(String Message,int time){
                                     getActivity().finish();
                                 }
                             });
+                            new Thread(){
+                                public void run(){
+                                    pushNotification();
+                                }
+                            }.start();
                             InternetDilaog=builder.show();
                             otherplayer=false;
                         }

@@ -45,14 +45,18 @@
         <activity android:name=".assingment7.RealtimeDatabaseActivity"
             />
         <activity android:name=".assingment7.assignment7acknowlegements" />
-        <activity android:name=".assignment8.TwoPlayerWordGame" />
-        <activity android:name=".assignment8.GameActivity">
+        <activity android:name=".assignment8.TwoPlayerWordGame"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".assignment8.GameActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
 
                 <action android:name="TwoPlayer"/>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter></activity>
-            />
+        <activity android:name=".assignment8.Leaderboard"
+            android:screenOrientation="portrait"/>
+        />
 
         <service android:name=".assingment7.WordGameMessagingService">
         <intent-filter>

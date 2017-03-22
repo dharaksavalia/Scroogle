@@ -59,7 +59,6 @@ public class GameActivity extends Activity {
         }
         */
         String str=getIntent().getStringExtra("Token");
-        str="dnM1zYme9LQ:APA91bHGY7RHDT9UxYQJqIMS2SjJOTuZNffvEGScl7ErrA46qHKWveJokObbSrmItHpSIR59AaOw7bnWoeDnTPahVxEzRbS4RphH5KQPFaSLGzCJE-RDFMmm_q0ilh78pNCj2zro1o1W";
         if(str!=null){
             Log.d("inside the game data","Yipee");
             DatabaseReference ref= FirebaseDatabase.getInstance().getReference("GameBoard").child(str);

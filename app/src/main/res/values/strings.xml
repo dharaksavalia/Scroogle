@@ -10,7 +10,9 @@
     <string name="new_game_label">New Game</string>
     <string name="about_title">About Ultimate Tic Tac Toe</string>
     <string name="about_label">About</string>
+    <string name="changeNameLabel">Change Player Username</string>
     <string name="ok_label">OK</string>
+    <string name="learderboard">Leaderboard</string>
     <string name="Set">Set</string>
     <string name="about_text">\
 This game is played just like

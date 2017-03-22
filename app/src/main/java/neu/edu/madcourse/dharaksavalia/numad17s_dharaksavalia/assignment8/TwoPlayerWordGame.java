@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import java.util.Random;
+
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment5.WordGame;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7.Communication;
@@ -47,6 +49,25 @@ public class TwoPlayerWordGame extends Activity {
             public void onClick(View v) {
                 Intent intent =new Intent (TwoPlayerWordGame.this,assignment7acknowlegements.class);
                 startActivity(intent);
+            }
+        });
+        Button LeaderBoard=(Button)findViewById(R.id.leaderBoard);
+        LeaderBoard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(TwoPlayerWordGame.this,Leaderboard.class);
+                //intent.putExtra("UserName","Airbender");
+               // intent.putExtra("Score",new Random().nextInt(9));
+                startActivity(intent);
+            }
+        });
+        Button quit=(Button)findViewById(R.id.quitButton);
+        quit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //intent.putExtra("UserName","Airbender");
+                // intent.putExtra("Score",new Random().nextInt(9));
+                finish();
             }
         });
     }

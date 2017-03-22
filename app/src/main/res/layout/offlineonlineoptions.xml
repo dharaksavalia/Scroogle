@@ -13,8 +13,18 @@
         android:layout_height="wrap_content"
         android:text="@string/onlinegame"/>
     <Button
+        android:id="@+id/leaderBoard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/learderboard"/>
+    <Button
         android:id="@+id/ass7acknowlegments"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Acknowlegements"/>
+    <Button
+        android:id="@+id/quitButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Quit"/>
 </LinearLayout>

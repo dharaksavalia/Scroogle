@@ -23,7 +23,10 @@ public class assignment7acknowlegements extends Activity {
                 str+="\n\nCode Help"+'\n'+"1. https://developer.android.com/reference/android/";
                 str+="\n"+'\n'+"2. Code from Anirudh Kapila ";
                 str+="\n"+'\n'+"3. https://firebase.google.com/docs/";
-                textView.setText(str);
+        str+="\n"+'\n'+"4. http://stackoverflow.com/questions";
+        str+="\n"+'\n'+"5. https://www.raywenderlich.com/124438/android-listview-tutorial";
+        str+="\n"+'\n'+"6. Hello Android Book";
+        textView.setText(str);
                 textView.setMovementMethod(new ScrollingMovementMethod());
             }
         }
