@@ -7,9 +7,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -27,7 +33,7 @@ import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7.GameBo
 //import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assignment5.GameFragment;
 
 
-public class GameActivity extends Activity {
+public class GameActivity extends Activity implements SensorEventListener {
     public static final String KEY_RESTORE = "key_restore";
     public static final String PREF_RESTORE = "pref_restore";
    // public static final String TUTORIAL="tutorialrestore";
@@ -36,6 +42,28 @@ public class GameActivity extends Activity {
     private Handler mHandler = new Handler();
     private GameFragment mGameFragment;
     private ImageButton mute;
+    private SensorManager mSensorManger;
+    private Sensor msensor;
+    private Boolean internetConnectivity=false;
+    DatabaseReference internetConnectivityReference;
+    ValueEventListener internetConnectivityValue;
+    DatabaseReference message;
+    DatabaseReference messageListen;
+    ValueEventListener messageValue;
+    private String oppositePlayerMessage;
+    String Token;
+    Long LastShake;
+    Long CurrentShake;
+    Long CurrentTime;
+    Long PreviousTime;
+    private static final int shakeThreshold = 800;
+    float accelerometer_X=-0.1f;
+    float accelerometer_Y=-0.1f;
+    float accelerometer_Z=-0.1f;
+    float accelerometerLast_X=-0.1f;
+    float accelerometerLast_Y=-0.1f;
+    float accelerometerLast_Z=-0.1f;
+    int count=0;
 
 //    private static TimerCountDown Time = new TimerCountDown(45000, 1000);
 
@@ -59,6 +87,7 @@ public class GameActivity extends Activity {
         }
         */
         String str=getIntent().getStringExtra("Token");
+        Token=str;
         if(str!=null){
             Log.d("inside the game data","Yipee");
             DatabaseReference ref= FirebaseDatabase.getInstance().getReference("GameBoard").child(str);
@@ -118,6 +147,69 @@ public class GameActivity extends Activity {
         else mute.setImageResource(R.drawable.soundoff);
         mute.getDrawable().setLevel(1);
     }
+    private void internetConnectivityCheck(){
+        internetConnectivityReference=FirebaseDatabase.getInstance().getReference(".info/connected");
+        internetConnectivityValue=new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Boolean connected=dataSnapshot.getValue(Boolean.class);
+                if(connected){
+                    internetConnectivity=true;
+                    if(messageValue!=null){
+                    SetDataReference();
+
+                    }
+
+                }
+                else{
+                    internetConnectivity=false;
+                }
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        internetConnectivityReference.addValueEventListener(internetConnectivityValue);
+    }
+    private void removeInternetConnectivityListner(){
+
+    }
+    private void SetDataReference(){
+        if(Token!=null)
+            if(mGameFragment.getPlayer()!=null) {
+                if (mGameFragment.getPlayer() == GameFragment.Player.player1) {
+                    message = FirebaseDatabase.getInstance().getReference("GameBoard").child(Token).child("myMessage").child("player1");
+                    messageListen = FirebaseDatabase.getInstance().getReference("GameBoard").child(Token).child("myMessage").child("player2");
+
+                } else {
+                    message = FirebaseDatabase.getInstance().getReference("GameBoard").child(Token).child("myMessage").child("player2");
+                    messageListen = FirebaseDatabase.getInstance().getReference("GameBoard").child(Token).child("myMessage").child("player1");
+
+                }
+                messageValue = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(dataSnapshot!=null){
+                        oppositePlayerMessage=dataSnapshot.getValue(String.class);
+
+                        Toast.makeText(getBaseContext(),oppositePlayerMessage,Toast.LENGTH_SHORT).show();
+                        Vibrator v = (Vibrator)getSystemService(VIBRATOR_SERVICE);
+                        // Vibrate for 500 milliseconds
+                        v.vibrate(500);
+                    }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                };
+                messageListen.addValueEventListener(messageValue);
+            }
+    }
 
     private void stopStartMusic() {
        // EditText e = (EditText) findViewById(R.id.text_view_dialogbox);
@@ -167,16 +259,31 @@ public class GameActivity extends Activity {
     protected void onResume() {
         super.onResume();
         mMediaPlayer = MediaPlayer.create(this, R.raw.bensound_littleidea);
+        PreviousTime = System.currentTimeMillis();
+        LastShake = System.currentTimeMillis();
 
         mMediaPlayer.setLooping(true);
         mMediaPlayer.start();
         if(mGameFragment.musicValue==false)mMediaPlayer.pause();
+        mSensorManger=(SensorManager)getSystemService(this.SENSOR_SERVICE);
+        msensor=mSensorManger.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        if(msensor!=null){
+            mSensorManger.registerListener(this,msensor,SensorManager.SENSOR_DELAY_GAME);
+        }else{
+            Toast.makeText(this,"No sensor available",Toast.LENGTH_SHORT).show();
+        }
+        internetConnectivityCheck();
+
+
     }
 
 
     @Override
     protected void onPause() {
         super.onPause();
+        if(msensor!=null){
+
+        }
         mHandler.removeCallbacks(null);
         mMediaPlayer.stop();
         mMediaPlayer.reset();
@@ -187,10 +294,47 @@ public class GameActivity extends Activity {
                 .commit();
      //   getPreferences(MODE_APPEND).edit().putString(TUTORIAL,"false").commit();
         Log.d("UT3", "state = " + gameData);
+        if(msensor!=null)
+        mSensorManger.unregisterListener(this);
+        if(internetConnectivityValue!=null)
+            internetConnectivityReference.removeEventListener(internetConnectivityValue);
+        if(messageValue!=null)message.removeEventListener(messageValue);
     }
     public void Done(){
         mGameFragment.Done();
     }
 
 
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+           // event.equals(ACCELE)
+            CurrentShake = System.currentTimeMillis();
+            // only allow one update every 100ms.
+            if ((CurrentShake - PreviousTime) > 100) {
+                accelerometer_X=event.values[0];
+                accelerometer_Y=event.values[1];
+                accelerometer_Z=event.values[2];
+                long diffTime = (CurrentShake - PreviousTime);
+                float Speed=(Math.abs(accelerometer_X+accelerometer_Y+accelerometer_Z -accelerometerLast_X - accelerometerLast_Y - accelerometerLast_Z) / diffTime * 10000);
+                //Toast.makeText(this,String.valueOf(Speed),Toast.LENGTH_SHORT).show();
+
+                if ((Math.abs(accelerometer_X+accelerometer_Y+accelerometer_Z -accelerometerLast_X - accelerometerLast_Y - accelerometerLast_Z) / diffTime * 10000) > 100) {
+                    if(LastShake-CurrentShake>4000){
+                        LastShake=CurrentShake;
+                        Toast.makeText(this,String.valueOf(Speed),Toast.LENGTH_SHORT).show();
+                        if(message!=null)
+                        message.setValue("Play fast ",String.valueOf(count++));
+                }
+                accelerometerLast_X = accelerometer_X;
+                accelerometerLast_Y = accelerometer_Y;
+                accelerometerLast_Z = accelerometer_Z;
+                    PreviousTime=CurrentShake;
+            }
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
 }

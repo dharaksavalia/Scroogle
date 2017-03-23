@@ -15,6 +15,7 @@ public class GameBoardTest1  {
     private String player1;
     private String player2;
     private HashMap<String,Integer> scores=new HashMap<>();
+    private MyMessage myMessage;
     //DatabaseReference ValueScore1;
     //ValueEventListener listenerScore1;
     //DatabaseReference ValueScore2;
@@ -32,6 +33,15 @@ public class GameBoardTest1  {
     //baseReference valueselected2;
     //ValueEventListener Listenerselected2;
     private String word1;
+
+    public MyMessage getMyMessage() {
+        return myMessage;
+    }
+
+    public void setMyMessage(MyMessage myMessage) {
+        this.myMessage = myMessage;
+    }
+
     //baseReference valueword1;
     //ValueEventListener Listenerword1;
     private String word2;
@@ -41,6 +51,7 @@ public class GameBoardTest1  {
     private int active1;
     private int active2;
     private Tiles tiles;
+
     public int getActive1() {
         return active1;
     }
@@ -73,7 +84,7 @@ public class GameBoardTest1  {
         return words;
     }
 
-    public GameBoardTest1(ArrayList<String> words, String player1, String player2, HashMap<String, Integer> scores, Turn turn, String selected1, String selected2, String word1, String word2, int timer, int active1, int active2, Tiles tiles) {
+    public GameBoardTest1(ArrayList<String> words, String player1, String player2, HashMap<String, Integer> scores, Turn turn, String selected1, String selected2, String word1, String word2, int timer, int active1, int active2, Tiles tiles,MyMessage myMessage) {
         this.words = words;
         this.player1 = player1;
         this.player2 = player2;
@@ -87,6 +98,7 @@ public class GameBoardTest1  {
         this.active1 = active1;
         this.active2 = active2;
         this.tiles = tiles;
+        this.myMessage=myMessage;
     }
 
     private void setEventListiner(){
@@ -198,6 +210,7 @@ public class GameBoardTest1  {
         active1=0;
         active2=0;
         tiles=new Tiles(words);
+        this.myMessage=new MyMessage();
 
     }
 }

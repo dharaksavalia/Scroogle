@@ -18,6 +18,10 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
@@ -77,7 +81,7 @@ import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7.user.U
 import static java.lang.Thread.sleep;
 import static neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.DictionaryLoader.words9long;
 
-public class GameFragment extends Fragment {
+public class GameFragment extends Fragment implements SensorEventListener {
 
     static private int mLargeIds[] = {R.id.wordlarge1, R.id.wordlarge2, R.id.wordlarge3,
             R.id.wordlarge4, R.id.wordlarge5, R.id.wordlarge6, R.id.wordlarge7, R.id.wordlarge8,
@@ -87,9 +91,23 @@ public class GameFragment extends Fragment {
             R.id.wordsmall9,};
     TestDictionary dr;
     User user;
-    private enum Player{
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
+    public enum Player{
         player1,player2
     }
+    SensorManager msensorManager;
+    Sensor msensor;
+
     private static final String SERVER_KEY = "key=AAAApVpoVJU:APA91bGjYQDhFe24ljWuSD6tNIIZ9Y_D3UqphyOZNz8Gt8fKelpNKHMS1NAvI98is4KcBt8rvW5kQmaz-KNcbMRHwkh9F-Aj9ZFH_IWdqhT2-91mJJt49Y8ELjLNX9L7HHkCW5lspbvS";
     Boolean GameRunning=true;
     Player player;
@@ -195,6 +213,7 @@ public class GameFragment extends Fragment {
         if(mSoundPool==null)
             mSoundPool=null;
     }
+
     public void TimeFinished(){
         mAvailable.clear();
         //if(firstLevel)
@@ -1313,9 +1332,26 @@ public void DialogBox(String Message,int time){
         }
         return false;
     }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     /*
-    put the online data into game
-     */
+        put the online data into game
+         */
     public void putOnlineData(final GameBoardTest1 gameBoardTest1){
         reference=FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1());
         timer=FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1()).child("timer");
