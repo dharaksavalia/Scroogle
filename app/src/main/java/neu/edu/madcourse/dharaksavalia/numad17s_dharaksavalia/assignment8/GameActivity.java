@@ -27,6 +27,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+
+import java.util.Random;
 
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.assingment7.GameBoards.GameBoardTest1;
@@ -98,6 +101,9 @@ public class GameActivity extends Activity implements SensorEventListener {
                     if(test1!=null){
                         Toast.makeText(getApplicationContext(),"YIPEE",Toast.LENGTH_SHORT).show();
                         mGameFragment.putOnlineData(test1);
+                        //internetConnectivityCheck();
+                        SetDataReference();
+
                     }
 
                 }
@@ -148,14 +154,15 @@ public class GameActivity extends Activity implements SensorEventListener {
         mute.getDrawable().setLevel(1);
     }
     private void internetConnectivityCheck(){
-        internetConnectivityReference=FirebaseDatabase.getInstance().getReference(".info/connected");
+        String localtoken = FirebaseInstanceId.getInstance().getToken();
+        internetConnectivityReference=FirebaseDatabase.getInstance().getReference(".info/connected");;
         internetConnectivityValue=new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Boolean connected=dataSnapshot.getValue(Boolean.class);
                 if(connected){
                     internetConnectivity=true;
-                    if(messageValue!=null){
+                    if(messageValue==null){
                     SetDataReference();
 
                     }
@@ -298,7 +305,7 @@ public class GameActivity extends Activity implements SensorEventListener {
         mSensorManger.unregisterListener(this);
         if(internetConnectivityValue!=null)
             internetConnectivityReference.removeEventListener(internetConnectivityValue);
-        if(messageValue!=null)message.removeEventListener(messageValue);
+        if(messageValue!=null)messageListen.removeEventListener(messageValue);
     }
     public void Done(){
         mGameFragment.Done();
@@ -310,7 +317,7 @@ public class GameActivity extends Activity implements SensorEventListener {
            // event.equals(ACCELE)
             CurrentShake = System.currentTimeMillis();
             // only allow one update every 100ms.
-            if ((CurrentShake - PreviousTime) > 100) {
+            if ((CurrentShake - PreviousTime) > 200) {
                 accelerometer_X=event.values[0];
                 accelerometer_Y=event.values[1];
                 accelerometer_Z=event.values[2];
@@ -318,12 +325,12 @@ public class GameActivity extends Activity implements SensorEventListener {
                 float Speed=(Math.abs(accelerometer_X+accelerometer_Y+accelerometer_Z -accelerometerLast_X - accelerometerLast_Y - accelerometerLast_Z) / diffTime * 10000);
                 //Toast.makeText(this,String.valueOf(Speed),Toast.LENGTH_SHORT).show();
 
-                if ((Math.abs(accelerometer_X+accelerometer_Y+accelerometer_Z -accelerometerLast_X - accelerometerLast_Y - accelerometerLast_Z) / diffTime * 10000) > 100) {
-                    if(LastShake-CurrentShake>4000){
+                if ((Math.abs(accelerometer_X+accelerometer_Y+accelerometer_Z -accelerometerLast_X - accelerometerLast_Y - accelerometerLast_Z) / diffTime * 10000) > 10) {
+                    {
                         LastShake=CurrentShake;
                         Toast.makeText(this,String.valueOf(Speed),Toast.LENGTH_SHORT).show();
                         if(message!=null)
-                        message.setValue("Play fast ",String.valueOf(count++));
+                        message.setValue("Play fast "+String.valueOf(new Random().nextInt(9)));
                 }
                 accelerometerLast_X = accelerometer_X;
                 accelerometerLast_Y = accelerometer_Y;
