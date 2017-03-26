@@ -205,7 +205,7 @@ public class GameActivity extends Activity implements SensorEventListener {
                         Toast.makeText(getBaseContext(),oppositePlayerMessage,Toast.LENGTH_SHORT).show();
                         Vibrator v = (Vibrator)getSystemService(VIBRATOR_SERVICE);
                         // Vibrate for 500 milliseconds
-                        v.vibrate(500);
+                        v.vibrate(1000);
                     }
                     }
 
@@ -322,15 +322,17 @@ public class GameActivity extends Activity implements SensorEventListener {
                 accelerometer_Y=event.values[1];
                 accelerometer_Z=event.values[2];
                 long diffTime = (CurrentShake - PreviousTime);
-                float Speed=(Math.abs(accelerometer_X+accelerometer_Y+accelerometer_Z -accelerometerLast_X - accelerometerLast_Y - accelerometerLast_Z) / diffTime * 10000);
+                float speed=(accelerometer_X+accelerometer_Y+accelerometer_Z -accelerometerLast_X - accelerometerLast_Y - accelerometerLast_Z) / diffTime * 10000;
                 //Toast.makeText(this,String.valueOf(Speed),Toast.LENGTH_SHORT).show();
 
-                if ((Math.abs(accelerometer_X+accelerometer_Y+accelerometer_Z -accelerometerLast_X - accelerometerLast_Y - accelerometerLast_Z) / diffTime * 10000) > 10) {
-                    {
-                        LastShake=CurrentShake;
-                        Toast.makeText(this,String.valueOf(Speed),Toast.LENGTH_SHORT).show();
-                        if(message!=null)
-                        message.setValue("Play fast "+String.valueOf(new Random().nextInt(9)));
+                if ((Math.abs(speed)) >500) {
+                       if(CurrentShake-LastShake>500)
+                           if(message!=null) {
+                               message.setValue(mGameFragment.getUser().getUsername().toUpperCase()+"Play fast " + String.valueOf(new Random().nextInt(9)));
+                               LastShake = CurrentShake;
+
+                           }
+                    Toast.makeText(this,String.valueOf(speed),Toast.LENGTH_SHORT).show();
                 }
                 accelerometerLast_X = accelerometer_X;
                 accelerometerLast_Y = accelerometer_Y;
@@ -338,7 +340,7 @@ public class GameActivity extends Activity implements SensorEventListener {
                     PreviousTime=CurrentShake;
             }
         }
-    }
+
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {

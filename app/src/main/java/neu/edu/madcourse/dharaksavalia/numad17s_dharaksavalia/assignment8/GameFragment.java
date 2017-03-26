@@ -115,7 +115,7 @@ public class GameFragment extends Fragment implements SensorEventListener {
     boolean flagRandom=false;
     boolean firstMove=true;
     public boolean tutorial=WordGame.tutorialflag;
-    int n=90;
+    Integer n;
     private boolean myinternet=true;
     boolean secondTutorial=false;
     public boolean musicValue=true;
@@ -381,7 +381,7 @@ public class GameFragment extends Fragment implements SensorEventListener {
             jNotification.put("body", "Come fast, I am waiting!! ");
             jNotification.put("sound", "default");
             jNotification.put("badge", "1");
-            jNotification.put("click_action", "Two Player");
+            jNotification.put("click_action", "TwoPlayer");
 
             // If sending to a single client
             String key;
@@ -772,8 +772,10 @@ public class GameFragment extends Fragment implements SensorEventListener {
                 boolean value=true;
                 if(InternetDilaog!=null)if(InternetDilaog.isShowing())
                     value=false;
-                if(value)
-                dialog.show();
+                if(value) {
+
+                    dialog.show();
+                }
                 Button continueTut=(Button)dialog.findViewById(R.id.continuetutorialins1);
                 continueTut.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -1002,6 +1004,7 @@ public void DialogBox(String Message,int time){
             @Override
             public void run() {
                 //Toast.makeText(getActivity(),"Timer"+String.valueOf(n),Toast.LENGTH_SHORT).show();
+                if(n==null)return;
                 if(turn== GameBoardTest1.Turn.no_one) {
                     if (player != null) if (player.equals(Player.player1))
                         if (timer != null) {

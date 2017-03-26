@@ -71,12 +71,14 @@ public class Communication extends Activity {
     // This is the client registration token
     //private static final String CLIENT_REGISTRATION_TOKEN = "flmtUkY07yM:APA91bGQw8i5VdjWiDV3PLwCggUbTaAmAe0ngW4UNunh6JM9oIHqCKcnccgqutzdh0yZiuexNcm1JkwbDswo7hdNcL7F9Kzf6rMLasU6tYMCYaLB5RYVdSB40X3YA6H0ia4DB_dFnhFw";
     String token;
+    private boolean variable=false;
     DatabaseReference connectedRef;
     ValueEventListener connectedRefValue;
     DatabaseReference reference;
     ValueEventListener referenceValue;
     DatabaseReference playerRef;
     ValueEventListener playerRefValue;
+    AlertDialog.Builder builder1=null;
     Dialog userDialog;
     String requesting;
     String requestedmode;
@@ -97,6 +99,7 @@ public class Communication extends Activity {
     int gameBoardwait=15;
     Boolean internetConnectivity=false;
     Boolean flagRandom=false;
+    Dialog dilogInt;
     static private String [] pattern={"036784512", "036478512", "401367852", "425103678", "748521036", "037852146", "036785214", "214587630", "254103678",
             "043678521", "630124785", "031467852"};
     @Override
@@ -115,18 +118,10 @@ public class Communication extends Activity {
             }
         }
         setContentView(R.layout.communication_main);
-
+        Log.d("In on Create","before various option");
         variousOption();
 
-        String refString;
-        refString = "Users/" + token;
 
-        //listOfActivePlayer();
-        //reference
-    //listOfPlayers();
-        //internetAvailable();
-
-    //    inituser();
     }
     public ArrayList<String> randomWord(){
         while(flagRandom)
@@ -137,7 +132,7 @@ public class Communication extends Activity {
             }
         flagRandom=true;
         Random random=new Random();
-        int a= words9long.size();
+        int a= DictionaryLoader.words9long.size();
 
         ArrayList<Integer> integers=new ArrayList<>(9);
         for (int i=0;i<9;i++) {
@@ -200,6 +195,8 @@ public class Communication extends Activity {
         if(user!=null)
         user.setActive("notActive");
         //if(reference!=null)reference.r
+        if(startDialog!=null)if(startDialog.isShowing())startDialog.dismiss();
+        if(userDialog!=null)if(userDialog.isShowing())userDialog.dismiss();
         if(internetConnectivity)reference.setValue(user);
         handler.removeCallbacks(runnable);
         if(reference!=null) {
@@ -253,17 +250,25 @@ public class Communication extends Activity {
                     //reference
                     referenceValue=new ValueEventListener() {
                         @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            user=dataSnapshot.getValue(User.class);
-                            if(user!=null){
-                                Log.d(user.toString(),"fdas");
-                                user.setActive("Active");
-                                reference.setValue(user);
-                                //inituser();
-                                //listOfActivePlayer();
-                            }else{
-                                inituser();
-                            }
+                        public void onDataChange(final DataSnapshot dataSnapshot) {
+                            new Thread() {
+                                public void run(){
+                                user=dataSnapshot.getValue(User.class);
+                            if(user!=null)
+
+                                {
+                                    Log.d(user.toString(), "fdas");
+                                    user.setActive("Active");
+                                    reference.setValue(user);
+                                    //inituser();
+                                    //listOfActivePlayer();
+                                }else
+
+                                {
+                                    inituser();
+                                }}
+
+                            }.start();
                         }
 
                         @Override
@@ -291,58 +296,68 @@ public class Communication extends Activity {
             }
         };
         connectedRef.addValueEventListener(connectedRefValue);
-
+        Log.d("internet available ","end");
     }
-    public void DialogBox(final String Message){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    public void DialogBox(final String Message) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(Message);
         builder.setCancelable(false);
         //builder.setTitle("Start Game with ");
         builder.setPositiveButton("Start", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                Log.d("inside accept","Yipee");
-                if(startDialog!=null)if(startDialog.isShowing())
-                    startDialog.dismiss();
-                    new Thread(){
-                        @Override
-                        public void run() {
-                            super.run();
-                            pushNotification3(requesting,"yes");
-                        }
-                    }.start();
-                    Toast.makeText(Communication.this,"send suffessfullly",Toast.LENGTH_SHORT).show();
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Log.d("inside accept", "Yipee");
+                        if (startDialog != null) if (startDialog.isShowing())
+                            startDialog.dismiss();
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                super.run();
+                                pushNotification3(requesting, "yes");
+                            }
+                        }.start();
+                        Toast.makeText(Communication.this, "send suffessfullly", Toast.LENGTH_SHORT).show();
 
-                    waitforGameBoard();
+                        waitforGameBoard();
+                    }
+
+                    // Log.d(s1,s2);
+
+
                 }
-
-                // Log.d(s1,s2);
-
-
-            }
         );
-        builder.setNegativeButton("Cancel",new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog,int whichB){
-               // startDialog.dismiss();
-                final String opposideToken=requesting;
-                new Thread(){
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichB) {
+                // startDialog.dismiss();
+                final String opposideToken = requesting;
+                new Thread() {
                     @Override
-                    public void run(){
+                    public void run() {
                         super.run();
-                        pushNotification3(opposideToken,"no");
+                        pushNotification3(opposideToken, "no");
                     }
                 }.start();
                 DictionaryLoader.GameRequest.clear();
                 listenForGameRequest();
                 setVariables();
-            }});
+            }
+        });
+        new Thread() {
+        public void run() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    startDialog = builder.show();
+                }
+            });
 
-           startDialog=builder.show();
+        }
+    }.start();
     }
     public void DialogBox2(String Message){
         if(startDialog!=null)
-        if(startDialog.isShowing())startDialog.dismiss();
+            if(startDialog.isShowing())startDialog.dismiss();
         startDialog=null;
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(Message);
         //builder.setTitle("Start Game with ");
         builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
@@ -351,8 +366,19 @@ public class Communication extends Activity {
                 startDialog.dismiss();
             }
         });
-        startDialog=builder.show();
+        new Thread() {
+            public  void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        startDialog = builder.show();
+
+                    }
+                });
+            }
+        }.start();
     }
+
     public void waitforGameBoard(){
         //DialogBox("Waiting for game board");
         gameBoardwait=waitPeriod;
@@ -363,11 +389,11 @@ public class Communication extends Activity {
                 GameBoardTest1 gameBoard=dataSnapshot.getValue(GameBoardTest1.class);
                 if(gameBoard!=null){
                     if(Connecting!=null)if(Connecting.isShowing())Connecting.dismiss();
-                    if(startDialog.isShowing()) startDialog.dismiss();
+                    if(startDialog!=null)if(startDialog.isShowing()) startDialog.dismiss();
 
-                    Toast.makeText(Communication.this,"Yipee game connected",Toast.LENGTH_LONG).show();
+                   // Toast.makeText(Communication.this,"Yipee game connected",Toast.LENGTH_LONG).show();
                     setVariables();
-                    Log.d("Game Board found","Yipee");
+                    //Log.d("Game Board found","Yipee");
                     handler2.removeCallbacks(runnable2);
                     ref.removeEventListener(this);
                     Intent intent=new Intent(Communication.this, GameActivity.class);
@@ -403,24 +429,34 @@ public class Communication extends Activity {
 
         playerRefValue=new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(final DataSnapshot dataSnapshot) {
                 //allPlayers.clear();
-                activePlayers.clear();
-                int i=0;
-                for(DataSnapshot child:dataSnapshot.getChildren()){
-                    //Log.d("child",child.toString());
-                    Log.d("times=",String.valueOf(i++));
-                    Log.d("child=",child.toString());
-                    //String key=child.getKey();
-                    User user=child.getValue(User.class);
-                   // Log.d("Name=",user.getUsername());
-                    if(user!=null){
-                      allPlayers.put(user.getKey(),user);
-                        if (user.getActive().equalsIgnoreCase("Active")){
-                            activePlayers.put(user.getKey(),user);
+                new Thread() {
+                    public void run() {
+                        activePlayers.clear();
+                        int i = 0;
+                        for (
+                                DataSnapshot child : dataSnapshot.getChildren())
+
+                        {
+                            //Log.d("child",child.toString());
+                            Log.d("times=", String.valueOf(i++));
+                            Log.d("child=", child.toString());
+                            //String key=child.getKey();
+                            User user = child.getValue(User.class);
+                            // Log.d("Name=",user.getUsername());
+                            if (user != null) {
+                                allPlayers.put(user.getKey(), user);
+                                if (user.getActive().equalsIgnoreCase("Active")) {
+                                    activePlayers.put(user.getKey(), user);
+                                }
+                            }
                         }
                     }
-                }
+                    }.
+
+                    start();
+
             }
 
             @Override
@@ -436,19 +472,28 @@ public class Communication extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        internetAvailable();
-     //  user.setActive("Active");
-      //  reference.setValue(user);
+
+                Log.d("inisde internet avaible","Yipee");
+                internetAvailable();
+                //  user.setActive("Active");
+                //  reference.setValue(user);
+
+
+                if (startNewGame)
+
+                {
+                    startNewGame();
+                } else
+
+                {
+                    listenForGameRequest();
+                }
+                Log.d("endof resume","yipee");
+            }
 
 
 
-        if(startNewGame){
-         startNewGame();
-        }
-        else{
-            listenForGameRequest();
-        }
-    }
+
     private void gameRequest(){
     for(String key:DictionaryLoader.GameRequest.keySet()){
         requesting=key;
@@ -459,6 +504,7 @@ public class Communication extends Activity {
         DictionaryLoader.GameRequest.remove(key);
     }
     }
+
     public void listenForGameRequest(){
         runnable=new Runnable() {
             @Override
@@ -508,11 +554,7 @@ public class Communication extends Activity {
 
         });
     }
-    @Override
-    protected void onRestart() {
-        super.onRestart();
 
-    }
 
     private void inituser(){
         //if()
@@ -544,7 +586,7 @@ public class Communication extends Activity {
                 dr.child(token).setValue(mydetails);
                 user=mydetails;
                 if(userDialog.isShowing())
-                userDialog.dismiss();
+                    userDialog.dismiss();
 
             }
         });
@@ -562,9 +604,9 @@ public class Communication extends Activity {
             @Override
             public void afterTextChanged(Editable s) {
                 if(s.toString().length()>3){email.setVisibility(View.VISIBLE);
-                username.setBackgroundColor(Color.GREEN);
-                if(Patterns.EMAIL_ADDRESS.matcher(email.getText().toString()).matches())setbutton.setVisibility(View.VISIBLE);}
-                        else{
+                    username.setBackgroundColor(Color.GREEN);
+                    if(Patterns.EMAIL_ADDRESS.matcher(email.getText().toString()).matches())setbutton.setVisibility(View.VISIBLE);}
+                else{
                     username.setBackgroundColor(Color.RED);
                     email.setVisibility(View.INVISIBLE);
                     setbutton.setVisibility(View.INVISIBLE);
@@ -585,22 +627,31 @@ public class Communication extends Activity {
             @Override
             public void afterTextChanged(Editable s) {
                 Log.d("Inside the matcher","yippe");
-            if(Patterns.EMAIL_ADDRESS.matcher(s).matches()){
-                Log.d("Inside the matcher","it matching trying to set ");
-                email.setBackgroundColor(Color.GREEN);
-               setbutton.setVisibility(View.VISIBLE);
-            }
+                if(Patterns.EMAIL_ADDRESS.matcher(s).matches()){
+                    Log.d("Inside the matcher","it matching trying to set ");
+                    email.setBackgroundColor(Color.GREEN);
+                    setbutton.setVisibility(View.VISIBLE);
+                }
                 else{
-                email.setBackgroundColor(Color.RED);
-                setbutton.setVisibility(View.INVISIBLE);
-            }
+                    email.setBackgroundColor(Color.RED);
+                    setbutton.setVisibility(View.INVISIBLE);
+                }
             }
         });
 
 
 
+        new Thread() {
+            public void run() {
+                Communication.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        userDialog = alert.show();
+                    }
+                });
 
-        userDialog=alert.show();}
+            }
+        }.start();}
     private  void seachActiveplayer(){
 
     }
@@ -681,29 +732,29 @@ public class Communication extends Activity {
                 Boolean stop=false;
                 if(DictionaryLoader.GameReply.get(keyValue)!=null) {
                     if (DictionaryLoader.GameReply.get(keyValue).equalsIgnoreCase("yes")) {
-                        GameBoard board = new GameBoard("myturn");
-                        final DatabaseReference refgame=FirebaseDatabase.getInstance().getReference("GameBoard").child(token);
+                        //GameBoard board = new GameBoard("myturn");
+                         DatabaseReference refgame=FirebaseDatabase.getInstance().getReference("GameBoard").child(token);
 
-                        Toast.makeText(Communication.this, "YIPEE opposide party said yess", Toast.LENGTH_LONG).show();
+                       // Toast.makeText(Communication.this, "YIPEE opposide party said yess", Toast.LENGTH_LONG).show();
+                        if(runnable2!=null)
                         handler2.removeCallbacks(runnable2);
                         //Log.d("StringsWord=",randomWord().toString());
                         stop=true;
                         DictionaryLoader.GameReply.clear();
                         DictionaryLoader.GameRequest.clear();
                         setVariables();
-                        if(Connecting!=null)if(Connecting.isShowing())Connecting.dismiss();
-                        new Thread() {
-                            public void run() {
-                                refgame.setValue(new
+                        if (Connecting != null) if (Connecting.isShowing()) Connecting.dismiss();
 
-                                        GameBoardTest1(randomWord(),token,keyValue,mode
+                        refgame.setValue(new
 
-                                ));
+                                GameBoardTest1(randomWord(), token, keyValue, mode
+
+                        ));
                                 Intent intent=new Intent(Communication.this, GameActivity.class);
                                 intent.putExtra("Token",token);
                                 startActivity(intent);
-                            }
-                        }.start();
+                        return;
+
 
                     }else{
                         Toast.makeText(Communication.this, "opposide party told no", Toast.LENGTH_LONG).show();
@@ -906,6 +957,7 @@ public class Communication extends Activity {
         return s.hasNext() ? s.next().replace(",", ",\n") : "";
     }
     private void variousOption(){
+        Log.d("On Create ","Start of various option");
         Button token=(Button)findViewById(R.id.TokenButton);
         Button dataBase=(Button)findViewById(R.id.DataBaseButton);
         Button synchronous=(Button)findViewById(R.id.SynchronousButton);
