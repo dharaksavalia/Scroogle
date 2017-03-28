@@ -424,7 +424,7 @@ public class GameFragment extends Fragment implements SensorEventListener {
                 @Override
                 public void run() {
                     Log.e("Hello", "run: " + resp);
-                    Toast.makeText(getActivity(),resp,Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getActivity(),resp,Toast.LENGTH_LONG).show();
                 }
             });
         } catch (JSONException | IOException e) {

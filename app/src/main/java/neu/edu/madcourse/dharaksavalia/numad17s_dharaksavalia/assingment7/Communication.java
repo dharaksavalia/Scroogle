@@ -320,7 +320,7 @@ public class Communication extends Activity {
                             }
                         }.start();
                         Toast.makeText(Communication.this, "send suffessfullly", Toast.LENGTH_SHORT).show();
-
+                        startThinking();
                         waitforGameBoard();
                     }
 
@@ -400,6 +400,7 @@ public class Communication extends Activity {
                     //Log.d("Game Board found","Yipee");
                     handler2.removeCallbacks(runnable2);
                     ref.removeEventListener(this);
+                    stopThinking();
                     Intent intent=new Intent(Communication.this, GameActivity.class);
                     intent.putExtra("Token",key);
                     startActivity(intent);
@@ -420,7 +421,9 @@ public class Communication extends Activity {
                 if(Connecting!=null)if(Connecting.isShowing())Connecting.dismiss();
                 if(gameBoardwait<0){handler2.removeCallbacks(this);
                 if(startDialog.isShowing())startDialog.dismiss();
+                    startThinking();
                     if(Connecting!=null)if(Connecting.isShowing())Connecting.dismiss();
+                    stopThinking();
                     Toast.makeText(Communication.this,"Cannot find Game Board in "+ String.valueOf(waitPeriod)+" seconds!!!!!",Toast.LENGTH_LONG).show();
                 }
             }
@@ -727,6 +730,16 @@ public class Communication extends Activity {
         builder1.setCancelable(false);
        // Connecting=builder1.show();
         waitingforreply(keyValue,mode);
+        startThinking();
+    }
+    public void startThinking() {
+        View thinkView = findViewById(R.id.thinking);
+        thinkView.setVisibility(View.VISIBLE);
+    }
+
+    public void stopThinking() {
+        View thinkView = findViewById(R.id.thinking);
+        thinkView.setVisibility(View.GONE);
     }
     private void waitingforreply(final String keyValue,final String mode){
         gameBoardwait=waitPeriod;
@@ -741,11 +754,13 @@ public class Communication extends Activity {
                         //GameBoard board = new GameBoard("myturn");
                          DatabaseReference refgame=FirebaseDatabase.getInstance().getReference("GameBoard").child(key);
 
-                       // Toast.makeText(Communication.this, "YIPEE opposide party said yess", Toast.LENGTH_LONG).show();
+                        Toast.makeText(Communication.this, "YIPEE opposide party said yess", Toast.LENGTH_LONG).show();
+                       startThinking();
                         if(runnable2!=null)
                         handler2.removeCallbacks(runnable2);
                         //Log.d("StringsWord=",randomWord().toString());
                         stop=true;
+                        stopThinking();
                         DictionaryLoader.GameReply.clear();
                         DictionaryLoader.GameRequest.clear();
                         setVariables();
@@ -771,6 +786,7 @@ public class Communication extends Activity {
                         DictionaryLoader.GameReply.clear();
                         DictionaryLoader.GameRequest.clear();
                         listenForGameRequest();
+                        stopThinking();
 
                     }
 
@@ -782,6 +798,7 @@ public class Communication extends Activity {
                     handler2.removeCallbacks(runnable2);
                     handler2.removeCallbacks(runnable2);
                     DictionaryLoader.GameReply.clear();
+                    stopThinking();
                     stop=true;
                     if(Connecting!=null)if(Connecting.isShowing())Connecting.dismiss();
                     DictionaryLoader.GameRequest.clear();
