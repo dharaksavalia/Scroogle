@@ -82,6 +82,7 @@ public class Communication extends Activity {
     Dialog userDialog;
     String requesting;
     String requestedmode;
+    String key;
     int waitPeriod=20;
     final HashMap<String,User> allPlayers=new HashMap<>();
     final HashMap<String,User> activePlayers=new HashMap<>();
@@ -110,8 +111,8 @@ public class Communication extends Activity {
         Intent startingIntent = getIntent();
         if (startingIntent != null) {
             requesting = startingIntent.getStringExtra("Requesting:"); // Retrieve the id
-            requestedmode=startingIntent.getStringExtra("mode");
-            if(requestedmode!=null)
+            key=startingIntent.getStringExtra("mode");
+            if(key!=null)
                 if(requesting!=null)
             {Toast.makeText(Communication.this, requesting+requestedmode, Toast.LENGTH_SHORT).show();
                 startNewGame=true;
@@ -132,6 +133,8 @@ public class Communication extends Activity {
             }
         flagRandom=true;
         Random random=new Random();
+        DictionaryLoader dr=DictionaryLoader.getInstance();
+        dr.run9();
         int a= DictionaryLoader.words9long.size();
 
         ArrayList<Integer> integers=new ArrayList<>(9);
@@ -204,6 +207,7 @@ public class Communication extends Activity {
             reference.removeEventListener(referenceValue);
             reference=null;
         }
+        handler2.removeCallbacks(runnable2);
         if(connectedRef!=null) {
             connectedRef.removeEventListener(connectedRefValue);
             connectedRef=null;
@@ -382,7 +386,7 @@ public class Communication extends Activity {
     public void waitforGameBoard(){
         //DialogBox("Waiting for game board");
         gameBoardwait=waitPeriod;
-        final DatabaseReference ref =FirebaseDatabase.getInstance().getReference("GameBoard").child(requesting);
+        final DatabaseReference ref =FirebaseDatabase.getInstance().getReference("GameBoard").child(key);
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -397,7 +401,7 @@ public class Communication extends Activity {
                     handler2.removeCallbacks(runnable2);
                     ref.removeEventListener(this);
                     Intent intent=new Intent(Communication.this, GameActivity.class);
-                    intent.putExtra("Token",gameBoard.getPlayer1());
+                    intent.putExtra("Token",key);
                     startActivity(intent);
                 }
             }
@@ -498,7 +502,7 @@ public class Communication extends Activity {
     for(String key:DictionaryLoader.GameRequest.keySet()){
         requesting=key;
         startNewGame=true;
-        requestedmode=DictionaryLoader.GameRequest.get(key);
+        this.key=DictionaryLoader.GameRequest.get(key);
         handler.removeCallbacks(runnable);
         startNewGame();
         DictionaryLoader.GameRequest.remove(key);
@@ -706,13 +710,15 @@ public class Communication extends Activity {
     }
     public void sendInternetMessage(final String keyValue, final String status, final String mode){
         Thread thread=new Thread();
+        key=FirebaseDatabase.getInstance().getReference("GameBoard").push().getKey();
+//        FirebaseDatabase.getInstance().getReference("GameBoard").setValue(key);
         new Thread(new Runnable() {
             @Override
             public void run() {
                 if(status.equalsIgnoreCase("notActive"))
-                pushNotification(keyValue,mode);
+                pushNotification(keyValue,key);
                 else{
-                    pushNotification2(keyValue,mode);
+                    pushNotification2(keyValue,key);
                 }
             }
         }).start();
@@ -733,7 +739,7 @@ public class Communication extends Activity {
                 if(DictionaryLoader.GameReply.get(keyValue)!=null) {
                     if (DictionaryLoader.GameReply.get(keyValue).equalsIgnoreCase("yes")) {
                         //GameBoard board = new GameBoard("myturn");
-                         DatabaseReference refgame=FirebaseDatabase.getInstance().getReference("GameBoard").child(token);
+                         DatabaseReference refgame=FirebaseDatabase.getInstance().getReference("GameBoard").child(key);
 
                        // Toast.makeText(Communication.this, "YIPEE opposide party said yess", Toast.LENGTH_LONG).show();
                         if(runnable2!=null)
@@ -747,13 +753,13 @@ public class Communication extends Activity {
 
                         refgame.setValue(new
 
-                                GameBoardTest1(randomWord(), token, keyValue, mode
+                                GameBoardTest1(randomWord(), token, keyValue, mode,key
 
                         ));
                                 Intent intent=new Intent(Communication.this, GameActivity.class);
-                                intent.putExtra("Token",token);
+                                intent.putExtra("Token",key);
                                 startActivity(intent);
-                        return;
+
 
 
                     }else{

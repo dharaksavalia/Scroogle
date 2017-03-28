@@ -115,7 +115,7 @@ public class GameFragment extends Fragment implements SensorEventListener {
     boolean flagRandom=false;
     boolean firstMove=true;
     public boolean tutorial=WordGame.tutorialflag;
-    Integer n;
+    int  n=90;
     private boolean myinternet=true;
     boolean secondTutorial=false;
     public boolean musicValue=true;
@@ -177,7 +177,7 @@ public class GameFragment extends Fragment implements SensorEventListener {
     ValueEventListener timerValue;
     DatabaseReference playerTurn;
     ValueEventListener playerTurnValue;
-
+    GameBoardTest1 gameBoardTest1;
     HashMap<Character,Integer> ScoreMap=new HashMap<>();
     static private String [] pattern={"036784512", "036478512", "401367852", "425103678", "748521036", "037852146", "036785214", "214587630", "254103678",
                 "043678521", "630124785", "031467852"};
@@ -231,10 +231,10 @@ public class GameFragment extends Fragment implements SensorEventListener {
         //handler.removeCallbacks(runnable);
         String Str="";
         if(Score1>Score2){
-            Str="\n  YOU LOST";
+            Str="\n  YOU WON";
 
         }else if(Score1<Score2){
-            Str="\n YOU WON";
+            Str="\n YOU LOST";
         }else{
             Str="\nIT WAS A TIE";
         }
@@ -390,7 +390,7 @@ public class GameFragment extends Fragment implements SensorEventListener {
             else key=player1;
 
             jPayload.put("to",key );
-            jData.put("Token",player1);
+            jData.put("Token",gameBoardTest1.getKey());
             /*
             // If sending to multiple clients (must be more than 1 and less than 1000)
             JSONArray ja = new JSONArray();
@@ -633,9 +633,7 @@ public class GameFragment extends Fragment implements SensorEventListener {
         if(firstLevel) {
             patternAccumulator(small);
         }
-        if(secondTutorial&&(patternInput.length()==3)){
-            Log.d("inside","the thing");showDialog2();
-            firstMove=false;}
+
         if(firstLevel)
         for (int big=0;big<9;big++){
             if(mLargeTiles[big]==currentLarge)continue;
@@ -751,9 +749,7 @@ public class GameFragment extends Fragment implements SensorEventListener {
             txt.setText(String.valueOf(n));
             txt.setVisibility(View.VISIBLE);
         }
-        if(n==10){
-            DialogBox( String.valueOf(n)+" Seconds to GO ",1000);
-        }
+
         if(pauseTimer==false)
        // n--;
         if(turn== GameBoardTest1.Turn.no_one) {
@@ -762,40 +758,7 @@ public class GameFragment extends Fragment implements SensorEventListener {
         else{
 
         }
-        if(n==88) {
-            if (tutorial) {
-                final Dialog dialog = new Dialog(getActivity());
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                dialog.setCancelable(false);
-                dialog.setContentView(R.layout.dialog_box);
-                boolean value=true;
-                if(InternetDilaog!=null)if(InternetDilaog.isShowing())
-                    value=false;
-                if(value) {
 
-                    dialog.show();
-                }
-                Button continueTut=(Button)dialog.findViewById(R.id.continuetutorialins1);
-                continueTut.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        secondTutorial=true;
-                        dialog.dismiss();
-                    }
-                });
-                Button stopTut=(Button)dialog.findViewById(R.id.stoptutorialins1);
-                stopTut.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        tutorial=false;
-                        WordGame.tutorialflag=false;
-                        secondTutorial=false;
-                    }
-                });
-            }
-        }
     }
 
     public void showDialog2(){
@@ -870,14 +833,14 @@ public void DialogBox(String Message,int time){
             return;
         }
         if(accumulator.length()<3){
-            String message="Select atleast THREE letter";
-            DialogBox(message,1000);
+            //String message="Select atleast THREE letter";
+            //DialogBox(message,1000);
             return;
         }
         if(dr.verifyInput(accumulator)&& inDetectedWord(accumulator)==false){
             addDetectedWord(accumulator);
             String message="CORRECT!!!\n Click OK ";
-            DialogBox(message,2000);
+            //DialogBox(message,2000);
             calculateScore(accumulator);
             for(int large=0;large<9;large++)
             for (int small = 0; small < 9; small++) {
@@ -897,7 +860,7 @@ public void DialogBox(String Message,int time){
                 Score1 -= 3;
                 message="WRONG WORD " + "\n THREE Point Substracted from Total";
             }
-            DialogBox(message,3000);
+            //DialogBox(message,3000);
             for (int large = 0; large < 9; large++) {
                 if (mLargeTiles[large].equals(currentLarge)) {
                    // Log.d("fadas","to reset");
@@ -1004,7 +967,7 @@ public void DialogBox(String Message,int time){
             @Override
             public void run() {
                 //Toast.makeText(getActivity(),"Timer"+String.valueOf(n),Toast.LENGTH_SHORT).show();
-                if(n==null)return;
+                //if(n==null)return;
                 if(turn== GameBoardTest1.Turn.no_one) {
                     if (player != null) if (player.equals(Player.player1))
                         if (timer != null) {
@@ -1356,8 +1319,9 @@ public void DialogBox(String Message,int time){
         put the online data into game
          */
     public void putOnlineData(final GameBoardTest1 gameBoardTest1){
-        reference=FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1());
-        timer=FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getPlayer1()).child("timer");
+        this.gameBoardTest1=gameBoardTest1;
+        reference=FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getKey());
+        timer=FirebaseDatabase.getInstance().getReference("GameBoard").child(gameBoardTest1.getKey()).child("timer");
         String token = FirebaseInstanceId.getInstance().getToken();
         if(gameBoardTest1.getPlayer1().equalsIgnoreCase(token))player=Player.player1;
         else player=Player.player2;

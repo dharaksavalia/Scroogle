@@ -296,9 +296,7 @@ public class GameActivity extends Activity implements SensorEventListener {
         mMediaPlayer.reset();
         mMediaPlayer.release();
         String gameData = mGameFragment.getState();
-        getPreferences(MODE_PRIVATE).edit()
-                .putString(PREF_RESTORE, gameData)
-                .commit();
+
      //   getPreferences(MODE_APPEND).edit().putString(TUTORIAL,"false").commit();
         Log.d("UT3", "state = " + gameData);
         if(msensor!=null)

@@ -46,7 +46,9 @@ public class Tile {
         this.str=str.toUpperCase();
     }
     public String getStr(){
-        return this.str.toLowerCase();
+        if(this.str.toLowerCase()==null)return "";
+        else
+            return this.str.toLowerCase();
     }
     public Tile deepCopy() {
         Tile tile = new Tile(mGame);

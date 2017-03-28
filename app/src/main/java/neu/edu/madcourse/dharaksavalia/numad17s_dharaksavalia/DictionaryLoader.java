@@ -50,6 +50,11 @@ public class DictionaryLoader implements Runnable {
     BufferedReader br;
     BufferedReader word;
     long tsLong;
+
+    public static boolean isWords9longLoaded() {
+        return words9longLoaded;
+    }
+
     public static DictionaryLoader getInstance(DataInputStream dataInt,
                                                DataInputStream dataLong7,
                                                DataInputStream dataLong8, DataInputStream dataLong10, DataInputStream dataLong11, DataInputStream dataLong12, BufferedReader br, BufferedReader word13) {

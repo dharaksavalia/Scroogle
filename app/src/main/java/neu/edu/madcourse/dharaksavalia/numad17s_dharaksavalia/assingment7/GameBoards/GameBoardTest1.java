@@ -14,6 +14,16 @@ public class GameBoardTest1  {
     private ArrayList<String> words;
     private String player1;
     private String player2;
+    private String key;
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
     private HashMap<String,Integer> scores=new HashMap<>();
     private MyMessage myMessage;
     //DatabaseReference ValueScore1;
@@ -188,7 +198,7 @@ public class GameBoardTest1  {
     public GameBoardTest1(){
 
     }
-    public GameBoardTest1(ArrayList<String> words,String player1,String player2,String mode){
+    public GameBoardTest1(ArrayList<String> words,String player1,String player2,String mode,String key){
         this.words=words;
         this.player1=player1;
         this.player2=player2;
@@ -211,6 +221,6 @@ public class GameBoardTest1  {
         active2=0;
         tiles=new Tiles(words);
         this.myMessage=new MyMessage();
-
+        this.key=key;
     }
 }
