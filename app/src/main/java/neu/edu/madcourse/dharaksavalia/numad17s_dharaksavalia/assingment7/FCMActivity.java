@@ -152,7 +152,7 @@ public class FCMActivity extends Activity {
                 @Override
                 public void run() {
                     Log.e(TAG, "run: " + resp);
-                    Toast.makeText(FCMActivity.this,resp,Toast.LENGTH_LONG);
+                    //Toast.makeText(FCMActivity.this,resp,Toast.LENGTH_LONG).show();
                 }
             });
         } catch (JSONException | IOException e) {

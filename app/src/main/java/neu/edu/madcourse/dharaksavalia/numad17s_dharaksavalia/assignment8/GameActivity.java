@@ -77,7 +77,7 @@ public class GameActivity extends Activity implements SensorEventListener {
         setContentView(R.layout.twowordactivity_game);
         mGameFragment = (GameFragment) getFragmentManager()
                 .findFragmentById(R.id.wordfragment_game);
-        boolean restore = getIntent().getBooleanExtra(KEY_RESTORE, false);
+       // boolean restore = getIntent().getBooleanExtra(KEY_RESTORE, false);
       //  Time.start(this);
        // requestWindowFeature(Window.FEATURE_NO_TITLE);
         /*
@@ -114,7 +114,7 @@ public class GameActivity extends Activity implements SensorEventListener {
                 }
             });
         }
-        Log.d("UT3", "restore = " + restore);
+        //Log.d("UT3", "restore = " + restore);
         final ImageButton mute=(ImageButton)findViewById(R.id.stopMusic);
         this.mute=mute;
         mute.setOnClickListener(new View.OnClickListener() {

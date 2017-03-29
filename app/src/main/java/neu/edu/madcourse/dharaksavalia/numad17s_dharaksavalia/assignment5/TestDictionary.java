@@ -36,6 +36,7 @@ public class TestDictionary {
         if(detectedWord.contains(verifyInput)){
             return true;
         }
+        if(len<3)return false;
         wordInput=verifyInput;
 //Log.d("verifyInput",verifyInput);
         if (len>=3&&len<7){

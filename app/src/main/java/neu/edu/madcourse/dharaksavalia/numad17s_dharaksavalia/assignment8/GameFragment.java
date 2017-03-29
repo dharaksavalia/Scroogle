@@ -256,6 +256,7 @@ public class GameFragment extends Fragment implements SensorEventListener {
         DateFormat df = DateFormat.getTimeInstance();
         df.setTimeZone(TimeZone.getTimeZone("gmt"));
         String gmtTime = df.format(new Date());
+        if(internetThread!=null)if(internetHandler!=null)internetHandler.removeCallbacks(internetThread);
         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Leaderboard");
             Scores scores = new Scores(user.getUsername(), Locale.getDefault().getCountry(), gmtTime,Score1);
             reference1.push().setValue(scores);
@@ -832,11 +833,7 @@ public void DialogBox(String Message,int time){
             DialogBox("Not Your Trun", 1000);
             return;
         }
-        if(accumulator.length()<3){
-            //String message="Select atleast THREE letter";
-            //DialogBox(message,1000);
-            return;
-        }
+
         if(dr.verifyInput(accumulator)&& inDetectedWord(accumulator)==false){
             addDetectedWord(accumulator);
             String message="CORRECT!!!\n Click OK ";
@@ -1219,6 +1216,7 @@ public void DialogBox(String Message,int time){
     public void remove(int i){
         if(mLargeUsed.contains(mLargeTiles[i])==false)
             mLargeUsed.add(mLargeTiles[i]);
+
         for(int j=0;j<9;j++){
             if(mAvailable.contains(mSmallTiles))
                 mAvailable.remove(mSmallTiles[i][j]);

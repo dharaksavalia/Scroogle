@@ -319,7 +319,7 @@ public class Communication extends Activity {
                                 pushNotification3(requesting, "yes");
                             }
                         }.start();
-                        Toast.makeText(Communication.this, "send suffessfullly", Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(Communication.this, "send suffessfullly", Toast.LENGTH_SHORT).show();
                         startThinking();
                         waitforGameBoard();
                     }
