@@ -26,7 +26,6 @@ public class ControlFragment extends Fragment {
                         R.layout.wordfragment_control, container, false);
         View main = rootView.findViewById(R.id.wordbutton_main);
         View restart = rootView.findViewById(R.id.wordbutton_restart);
-
         View Button=rootView.findViewById(R.id.wordbutton_done);
         Button.setOnClickListener(new View.OnClickListener() {
             @Override

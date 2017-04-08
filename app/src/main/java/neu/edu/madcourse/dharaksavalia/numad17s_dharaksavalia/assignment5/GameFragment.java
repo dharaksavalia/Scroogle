@@ -585,7 +585,7 @@ public void DialogBox(String Message,int time){
         if(dr.verifyInput(accumulator)&& inDetectedWord(accumulator)==false){
             addDetectedWord(accumulator);
             String message="CORRECT!!!\n Click OK ";
-            DialogBox(message,2000);
+           // DialogBox(message,2000);
             calculateScore(accumulator);
         }
         else{

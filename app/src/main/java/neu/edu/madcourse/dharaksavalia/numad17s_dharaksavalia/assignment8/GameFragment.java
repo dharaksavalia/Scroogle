@@ -1364,7 +1364,9 @@ public void DialogBox(String Message,int time){
                 }
                 else{
                     DialogBox("Opposite Player Turn",1000);
+
                 }
+
             }
 
             @Override

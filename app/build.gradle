@@ -7,8 +7,8 @@ android {
         applicationId "neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia"
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 32
-        versionName "3.6Two Player word Game"
+        versionCode 36
+        versionName "3.7_final"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

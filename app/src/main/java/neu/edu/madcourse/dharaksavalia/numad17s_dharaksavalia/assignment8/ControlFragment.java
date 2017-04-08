@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia.R;
@@ -25,8 +26,9 @@ public class ControlFragment extends Fragment {
                 inflater.inflate(
                         R.layout.wordfragment_control, container, false);
         View main = rootView.findViewById(R.id.wordbutton_main);
-        View restart = rootView.findViewById(R.id.wordbutton_restart);
 
+        View restart = rootView.findViewById(R.id.wordbutton_restart);
+        restart.setVisibility(View.GONE);
         View Button=rootView.findViewById(R.id.wordbutton_done);
         Button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,12 +48,9 @@ public class ControlFragment extends Fragment {
                 getActivity().finish();
             }
         });
-        restart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((GameActivity) getActivity()).restartGame();
-            }
-        });
+
+        //ImageButton resume=(ImageButton)getActivity().findViewById(R.id.wordbutton_pause);
+        //resume.setVisibility(View.GONE);
 
         return rootView;
     }

@@ -472,7 +472,7 @@ public class Communication extends Activity {
             }
         };
         playerRef.addValueEventListener(playerRefValue);
-        Log.d("allPlayers=",allPlayers.toString());
+        //Log.d("allPlayers=",allPlayers.toString());
         //Log.d()
        // return allPlayers;
     }
@@ -663,10 +663,14 @@ public class Communication extends Activity {
 
     }
     private void findPlayers(String mode){
+
         Log.d("Inside find Players","yipee");
         Log.d("internet Connectivity:",String.valueOf(internetConnectivity));
         if(!internetConnectivity) {
             DialogBox2("Internet Not Available");
+            return;
+        }
+        if(allPlayers.isEmpty()){
             return;
         }
         //
@@ -693,8 +697,12 @@ public class Communication extends Activity {
             if(key.equals(token.toString()))continue;
             keyValue.add(us.getKey());
             status.add(us.getActive());
-            listofPlayer[i++]="User Name="+us.getUsername()+",Email ID="+us.emailID+",Status="+us.getActive();
+            try {
+                listofPlayer[i++] = us.getUsername() + "\n" + us.emailID + "\n" + us.getActive();
+            }
+            catch(ArrayIndexOutOfBoundsException ext){
 
+            }
         }
         ArrayAdapter adapter=new ArrayAdapter(this,android.R.layout.simple_list_item_1,listofPlayer );
         listView.setAdapter(adapter);

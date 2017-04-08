@@ -61,6 +61,6 @@
 
     </LinearLayout>
 
-    <include layout="@layout/thinking"/>
+    <include layout="@layout/waiting_for_turn"/>
 
 </FrameLayout>

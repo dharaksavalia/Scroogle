@@ -124,6 +124,7 @@ public class GameActivity extends Activity implements SensorEventListener {
             }
         });
         ImageButton resume=(ImageButton) findViewById(R.id.wordbutton_pause);
+        resume.setVisibility(View.INVISIBLE);
         resume.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -201,11 +202,14 @@ public class GameActivity extends Activity implements SensorEventListener {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                     if(dataSnapshot!=null){
                         oppositePlayerMessage=dataSnapshot.getValue(String.class);
+                        if(!oppositePlayerMessage.isEmpty()) {
 
-                        Toast.makeText(getBaseContext(),oppositePlayerMessage,Toast.LENGTH_SHORT).show();
-                        Vibrator v = (Vibrator)getSystemService(VIBRATOR_SERVICE);
-                        // Vibrate for 500 milliseconds
-                        v.vibrate(1000);
+                            oppositePlayerMessage=oppositePlayerMessage.substring(0,oppositePlayerMessage.length()-2);
+                            Toast.makeText(getBaseContext(), oppositePlayerMessage, Toast.LENGTH_SHORT).show();
+                            Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                            // Vibrate for 500 milliseconds
+                            v.vibrate(1000);
+                        }
                     }
                     }
 
@@ -252,12 +256,12 @@ public class GameActivity extends Activity implements SensorEventListener {
    // public void TimeFinished(){mGameFragment.TimeFinished();}
 
     public void startThinking() {
-        View thinkView = findViewById(R.id.wordthinking);
+        View thinkView = findViewById(R.id.thinking);
         thinkView.setVisibility(View.VISIBLE);
     }
 
     public void stopThinking() {
-        View thinkView = findViewById(R.id.wordthinking);
+        View thinkView = findViewById(R.id.thinking);
         thinkView.setVisibility(View.GONE);
     }
 
