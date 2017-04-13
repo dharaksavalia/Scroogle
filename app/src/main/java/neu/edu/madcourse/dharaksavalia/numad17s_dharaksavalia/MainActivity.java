@@ -1,5 +1,6 @@
 package neu.edu.madcourse.dharaksavalia.numad17s_dharaksavalia;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -162,6 +163,16 @@ public class MainActivity extends Activity {
         Button dictionary=(Button)findViewById(R.id.dictionary);
         Button wordGame=(Button)findViewById(R.id.wordGame);
         Button communication=(Button)findViewById(R.id.communication);
+        Button trickestPart=(Button)findViewById(R.id.trckestPart);
+        trickestPart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.setComponent(new ComponentName("edu.neu.madcourse.raj__kukadia","edu.neu.madcourse.raj__kukadia.ping.PingHomeScreenActivity"));
+                startActivity(intent);
+                //startActivity(intent);
+            }
+        });
         Button TwoPlayerWordGame=(Button)findViewById(R.id.twowordGame);
         TwoPlayerWordGame.setOnClickListener(new View.OnClickListener() {
             @Override
