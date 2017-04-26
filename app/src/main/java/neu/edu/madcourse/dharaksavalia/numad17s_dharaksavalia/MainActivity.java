@@ -164,11 +164,23 @@ public class MainActivity extends Activity {
         Button wordGame=(Button)findViewById(R.id.wordGame);
         Button communication=(Button)findViewById(R.id.communication);
         Button trickestPart=(Button)findViewById(R.id.trckestPart);
+        Button finalProject=(Button)findViewById(R.id.finalButton);
         trickestPart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_MAIN);
-                intent.setComponent(new ComponentName("edu.neu.madcourse.raj__kukadia","edu.neu.madcourse.raj__kukadia.ping.PingHomeScreenActivity"));
+                //intent.setAction("dharak");
+                intent.setComponent(new ComponentName("edu.neu.madcourse.raj__kukadia","edu.neu.madcourse.raj__kukadia.ping.WelcomeActivity"));
+                startActivity(intent);
+                //startActivity(intent);
+            }
+        });
+        finalProject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                //intent.setAction("dharak");
+                intent.setComponent(new ComponentName("edu.neu.madcourse.raj__kukadia","edu.neu.madcourse.raj__kukadia.ping.WelcomeActivity"));
                 startActivity(intent);
                 //startActivity(intent);
             }

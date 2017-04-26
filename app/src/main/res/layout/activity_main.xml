@@ -46,7 +46,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Dictionary" />
-
+            <Button
+                android:id="@+id/finalButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="FinalProject" />
             <Button
                 android:id="@+id/aboutButton"
                 android:layout_width="match_parent"
